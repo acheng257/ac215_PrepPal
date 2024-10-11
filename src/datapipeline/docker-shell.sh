@@ -1,27 +1,33 @@
 #!/bin/bash
 
+# exit immediately if a command exits with a non-zero status
 set -e
 
-export BASE_DIR=$(pwd)
-export SECRETS_DIR=$(pwd)/../secrets/
-export GCS_BUCKET_NAME="preppal-data"
-export GCP_PROJECT="preppal"
-export GCP_ZONE="us-east1"
-export GOOGLE_APPLICATION_CREDENTIALS="../../secrets/data-service-account.json"
+# Set vairables
+export BASE_DIR="$(pwd)"
+export SECRETS_DIR="$(pwd)/../../../secrets/" # CHANGE
+export GCP_PROJECT="preppal-438123" 
+export GOOGLE_APPLICATION_CREDENTIALS="/secrets/data-service-account.json" 
+export IMAGE_NAME="datapipeline"
 
 
-echo "Building image"
-docker build -t data-version-cli -f Dockerfile .
+# Create the network if we don't have it yet
+docker network inspect datapipeline-network >/dev/null 2>&1 || docker network create datapipeline-network
 
-echo "Running container"
-docker run --rm --name data-version-cli -ti \
---privileged \
---cap-add SYS_ADMIN \
---device /dev/fuse \
--v "$BASE_DIR":/app \
--v "$SECRETS_DIR":/secrets \
--v ~/.gitconfig:/etc/gitconfig \
--e GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS \
--e GCP_PROJECT=$GCP_PROJECT \
--e GCP_ZONE=$GCP_ZONE \
--e GCS_BUCKET_NAME=$GCS_BUCKET_NAME data-version-cli
+# Build the image based on the Dockerfile
+docker build -t $IMAGE_NAME -f Dockerfile .
+
+# Run All Containers
+docker-compose run --rm --service-ports $IMAGE_NAME
+
+
+# Build the image based on the Dockerfile
+# docker build -t $IMAGE_NAME -f Dockerfile .
+
+# Run Container
+# docker run --rm --name $IMAGE_NAME -ti \
+# -v "$BASE_DIR":/app \
+# -v "$SECRETS_DIR":/secrets \
+# -e GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS \
+# -e GCP_PROJECT=$GCP_PROJECT \
+# $IMAGE_NAME

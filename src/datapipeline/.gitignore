@@ -1,1 +1,4 @@
-/data
+# misc
+.DS_Store
+/docker-volumes
+/rag_data

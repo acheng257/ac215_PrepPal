@@ -1,15 +1,18 @@
 [[source]]
-name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
+name = "pypi"
+
+[packages]
+numpy = "*"
+isodate = "*"
+google-cloud-storage = "*"
+pandas = "*"
+sentence-transformers = "*"
+langchain = "*"
+chromadb = "*"
 
 [dev-packages]
 
-[packages]
-google-cloud-storage = "*"
-pandas = "*"
-dvc = "*"
-dvc-gs = "*"
-
 [requires]
-python_version = "3.11"
+python_version = "3.12"
