@@ -72,13 +72,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--chunk_type",         
         default="entire_recipe",
-        help="entire_recipe | sliding_window"
-    )
-
-    parser.add_argument(
-        "--instructions",
-        action="store_true",            
-        help="Include or exclude recipe instructions from chunking",
+        help="entire_recipe | sliding_window | semantic_split"
     )
 
     args = parser.parse_args()

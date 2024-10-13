@@ -11,6 +11,7 @@ pandas = "*"
 sentence-transformers = "*"
 langchain = "*"
 chromadb = "*"
+langchain-community = "*"
 
 [dev-packages]
 
