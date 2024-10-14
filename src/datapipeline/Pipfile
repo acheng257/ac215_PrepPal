@@ -12,6 +12,7 @@ sentence-transformers = "*"
 langchain = "*"
 chromadb = "*"
 langchain-community = "*"
+torch = "*"
 
 [dev-packages]
 
