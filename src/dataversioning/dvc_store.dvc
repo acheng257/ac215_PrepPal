@@ -1,6 +1,6 @@
 outs:
-- md5: d751713988987e9331980363e24189ce.dir
-  size: 0
-  nfiles: 0
+- md5: ea75b18bb718fa88ee330a77da591ac8.dir
+  size: 1479299517
+  nfiles: 6
   hash: md5
   path: dvc_store

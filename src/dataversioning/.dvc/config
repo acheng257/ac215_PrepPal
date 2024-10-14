@@ -1,4 +1,6 @@
 [core]
-    remote = data
+    remote = dvc_store
 ['remote "data"']
     url = gs://preppal-data/data
+['remote "dvc_store"']
+    url = gs://preppal-data/dvc_store
