@@ -3,33 +3,33 @@ import hashlib
 import os
 import shutil
 import shutil
+import time
 from google.cloud import storage
 import pandas as pd
 import chromadb
 from sentence_transformers import SentenceTransformer
 from langchain.text_splitter import CharacterTextSplitter
-from semantic_splitter import SemanticChunker
 from preprocess_recipes import data_cleaning
 
 CHROMADB_HOST = "datapipeline-chromadb"
 CHROMADB_PORT = 8000
 
 # Load the SentenceTransformers model
-model = SentenceTransformer('sentence-transformers/paraphrase-mpnet-base-v2')
+model = SentenceTransformer('sentence-transformers/multi-qa-MiniLM-L6-cos-v1')
 tokenizer = model.tokenizer
 
 
 gcp_project = "preppal-438123" 
 bucket_name = "preppal-data" 
 parent_folder = "rag_data"
+
 child_folder_1 = "knowledge_base"
 child_folder_2 = "users"
+
 unprocessed_recipes = "unprocessed_recipes_data"
 processed_recipes = "processed_recipes_data"
 chunked_recipes = "chunked_recipes"
-
-embbeded_recipes_folder = "embedded_recipes"
-embbeded_recipes_files = "embedding"
+embedded_recipes = "embedded_recipes"
 
 user_recipe_text = "recipe_text"
 user_recipe_chunk = "recipe_chunk"
@@ -121,16 +121,15 @@ def clean_dataset(download=True, upload=True):
     CHUNK DATA
 """
 
-# Function to generate embeddings for text chunks using SentenceTransformer
-def generate_text_embeddings(chunks, batch_size=32):
-    return model.encode(chunks, batch_size=batch_size)  # Customize batch size as needed
-
 def chunk_user(text, method="entire_recipe"):
-    new_df = pd.DataFrame(columns=['chunk'])
+    new_df = pd.DataFrame()
+
+    text_chunk = []
+    text_document = []
 
     if method == 'entire_recipe':
-        new_df['chunk'] = [text]
-        new_df['document'] = [text]
+        text_chunk.append(text)
+        text_document.append(text)
         
     elif method == 'sliding_window':
         # Use LangChain's CharacterTextSplitter for sliding window chunking
@@ -146,25 +145,21 @@ def chunk_user(text, method="entire_recipe"):
             
         # Convert the chunked texts into the DataFrame
         for doc in chunked_texts:
-            new_df = pd.concat([new_df, pd.DataFrame([{'chunk': doc.page_content, 'document': text}])], ignore_index=True)
-    
-    elif method == 'semantic_split':
-        # Initialize the SemanticChunker from LangChain using the SentenceTransformer embedding function
-        text_splitter = SemanticChunker(embedding_function=generate_text_embeddings)
+            text_chunk.append(doc.page_content)
+            text_document.append(text)
 
-        # Perform the splitting with semantic awareness
-        chunked_texts = text_splitter.create_documents([text])
-            
-        # Convert the chunked texts into the DataFrame
-        for doc in chunked_texts:
-            new_df = pd.concat([new_df, pd.DataFrame([{'chunk': doc.page_content, 'document': text}])], ignore_index=True)
+    new_df['chunk'] =  text_chunk
+    new_df['document'] =  text_document
     
     return new_df
         
 
 def chunk_knowledge_base(df, method="entire_recipe"):
-    new_df = pd.DataFrame(columns=['chunk'])
+    new_df = pd.DataFrame()
     print("Method:", method)
+
+    text_chunk = []
+    text_document = []
 
     for index, row in df.iterrows():
         # Ensure all fields are converted to strings and handle missing values
@@ -189,19 +184,20 @@ def chunk_knowledge_base(df, method="entire_recipe"):
             "Instructions: " + instructions
         )
 
+        if index % 10000 == 0:
+            print("Reached index", index)
+
         if method == 'entire_recipe':
+            
             # Tokenize the text and count the number of tokens
             tokenized = tokenizer([text], return_tensors="pt")
             num_tokens = len(tokenized['input_ids'][0])
 
             if num_tokens <= 512:
-                new_df = pd.concat([new_df, pd.DataFrame([{'chunk': text, 'document': text}])], ignore_index=True)
-            else:
-                print(f"Skipping recipe at index {index} because it exceeds 512 tokens. Number of tokens: {num_tokens}")
-        
+                text_chunk.append(text)
+                text_document.append(text)
+
         elif method == 'sliding_window':
-            if index % 10000 == 0:
-                print("Reached index", index)
 
             # Use LangChain's CharacterTextSplitter for sliding window chunking
             text_splitter = CharacterTextSplitter(
@@ -216,24 +212,17 @@ def chunk_knowledge_base(df, method="entire_recipe"):
             
             # Convert the chunked texts into the DataFrame
             for doc in chunked_texts:
-                new_df = pd.concat([new_df, pd.DataFrame([{'chunk': doc.page_content, 'document': text}])], ignore_index=True)
-        
-        elif method == 'semantic_split':
-            # Initialize the SemanticChunker from LangChain using the SentenceTransformer embedding function
-            text_splitter = SemanticChunker(embedding_function=generate_text_embeddings)
+                text_chunk.append(doc.page_content)
+                text_document.append(text)
 
-            # Perform the splitting with semantic awareness
-            chunked_texts = text_splitter.create_documents([text])
-            
-            # Convert the chunked texts into the DataFrame
-            for doc in chunked_texts:
-                new_df = pd.concat([new_df, pd.DataFrame([{'chunk': doc.page_content, 'document': text}])], ignore_index=True)
+    new_df['chunk'] =  text_chunk
+    new_df['document'] =  text_document
 
     return new_df
 
 # For knowledge base: parent_folder = "rag_data"; child_folder = "knowledge_base"; user_id=None; recipe_id=None; user_saved=False
 # For users: parent_folder = "rag_data"; child_folder = "users"; user_id=# (string); recipe_id=# (string); user_saved=True
-def chunk(method="entire_recipe", user_id=None, recipe_id=None, user_saved=False, download=True, upload=True):
+def chunk(method="entire_recipe", user_id=None, recipe_id=None, user_saved=False, download=True, upload=True): 
     print("Chunk recipes")
 
     # Knowledge base data
@@ -248,7 +237,6 @@ def chunk(method="entire_recipe", user_id=None, recipe_id=None, user_saved=False
 
         # Chunk
         df = pd.read_csv(local_file_path)
-        df = df.head(100) # CHANGE
         df = chunk_knowledge_base(df, method) 
         df['user_id'] = user_id
         df['user_saved'] = user_saved
@@ -257,7 +245,8 @@ def chunk(method="entire_recipe", user_id=None, recipe_id=None, user_saved=False
         chunked_file_path = os.path.join(folder, f"{chunked_recipes}_{method}.jsonl")
 
         with open(chunked_file_path, "w") as json_file:
-            json_file.write(df.to_json(orient='records', lines=True))
+            for _, row in df.iterrows():
+                json_file.write(row.to_json() + '\n')
 
         # Upload 
         if upload:
@@ -301,49 +290,44 @@ def generate_query_embedding(query):
 	query_embedding = model.encode(query)
 	return query_embedding
 
-def save_embeddings(df, folder, file_name):
-    file_path = os.path.join(folder, file_name)
-    with open(file_path, "w") as json_file:
-        json_file.write(df.to_json(orient='records', lines=True))
 
-
-def embed(method="entire_recipe", user_id=None, recipe_id=None, batch_size=32, download=True, upload=True):
+def embed(method="entire_recipe", user_id=None, recipe_id=None, batch_size=100, download=True, upload=True):
     print("Embed recipes")
     if user_id == None:
         folder = os.path.join(parent_folder, child_folder_1)
 
         if download:
             print("download")
-            download_to_disk(folder, f"{chunked_recipes}.jsonl")
+            download_to_disk(folder, f"{chunked_recipes}_{method}.jsonl")
         local_file_path = os.path.join(folder, f"{chunked_recipes}_{method}.jsonl")
 
         df = pd.read_json(local_file_path, lines=True)
-        # df = df.head(50) # CHANGE
 
         # Split the chunks into batches
         chunks = df['chunk'].values
 
+        embeddings = model.encode(chunks, batch_size=batch_size)
+        embeddings_list = embeddings.tolist()
+
+        embedded_file_path = os.path.join(folder, f"{embedded_recipes}_{method}.jsonl")
         # Folder to save embeddings
-        output_folder = os.path.join(parent_folder, child_folder_1, f"{embbeded_recipes_folder}_{method}")
+        output_folder = os.path.join(parent_folder, child_folder_1, f"{embedded_recipes}_{method}")
         os.makedirs(output_folder, exist_ok=True)
 
-        # Process each batch
-        for batch_num, i in enumerate(range(0, len(chunks), batch_size)):
-            print(f"Embedding batch {batch_num}")
+        num_chunks = 10
+        for batch_num, i in enumerate(range(0, len(chunks), num_chunks)):
+            # Get the range of indices for the current file
+            start_idx = i  
+            end_idx = min(i + num_chunks, len(chunks))  
+            df_chunk = df.iloc[start_idx:end_idx]  
 
-            batch = chunks[i:i+batch_size]
-            # Embed the batch of chunks
-            embeddings = model.encode(batch, batch_size=batch_size)
+            embeddings_chunk = embeddings_list[start_idx:end_idx]
+            df_chunk = df_chunk.assign(embedding=embeddings_chunk)
 
-            # Add the embeddings to the respective DataFrame subset
-            batch_df = df.iloc[batch_num * batch_size:(batch_num + 1) * batch_size].copy()
-            embeddings_list = embeddings.tolist()
-            batch_df['embedding'] = embeddings_list 
-
-            # Save the batch to a JSONL file
-            save_embeddings(batch_df, output_folder, f"{embbeded_recipes_files}_{batch_num}.jsonl")
-
-            print(f"Saved batch {batch_num} embeddings to {output_folder}")
+            # Save each chunk as a separate file
+            embedded_file_path = os.path.join(output_folder, f"embedding_{batch_num}.jsonl")
+            with open(embedded_file_path, "w") as json_file:
+                json_file.write(df_chunk.to_json(orient='records', lines=True))
 
         # Upload to GCS
         if upload:
@@ -352,7 +336,7 @@ def embed(method="entire_recipe", user_id=None, recipe_id=None, batch_size=32, d
 
     else:
         folder = os.path.join(parent_folder, child_folder_2, user_id, user_recipe_chunk, method)
-        print(folder)
+
         if download:
             print("download")
             download_to_disk(folder, f"{recipe_id}.jsonl")
@@ -362,31 +346,21 @@ def embed(method="entire_recipe", user_id=None, recipe_id=None, batch_size=32, d
 
         chunks = df['chunk'].values  
 
+        embeddings = model.encode(chunks, batch_size=batch_size)
+        embeddings_list = embeddings.tolist()
+        df['embedding'] = embeddings_list
+
         # Upload or save the updated DataFrame if needed
         output_folder = os.path.join(parent_folder, child_folder_2, user_id, user_recipe_embed, method)
         os.makedirs(output_folder, exist_ok=True)
+        embedded_file_path = os.path.join(output_folder, f"{recipe_id}.jsonl")
 
-        # Process each batch
-        for batch_num, i in enumerate(range(0, len(chunks), batch_size)):
-            print(f"Embedding batch {batch_num}")
-
-            batch = chunks[i:i+batch_size]
-            # Embed the batch of chunks
-            embeddings = model.encode(batch, batch_size=batch_size)
-
-            # Add the embeddings to the respective DataFrame subset
-            batch_df = df.iloc[batch_num * batch_size:(batch_num + 1) * batch_size].copy()
-            embeddings_list = embeddings.tolist()
-            batch_df['embedding'] = embeddings_list 
-
-            # Save the batch to a JSONL file
-            save_embeddings(batch_df, output_folder, f"{recipe_id}.jsonl")
-
-            print(f"Saved batch {batch_num} embeddings to {output_folder}")
+        with open(embedded_file_path, "w") as json_file:
+            json_file.write(df.to_json(orient='records', lines=True))
 
         if upload:
             print("upload")
-            upload_all_files_in_folder_to_gcs(output_folder)
+            upload_to_gcs(folder, f"{recipe_id}.jsonl")
 
 
 """
@@ -438,63 +412,63 @@ def load_text_embeddings(df, collection, source_type, batch_size=500, index=None
     print(f"Finished inserting {total_inserted} items into collection '{collection.name}'")
 
 
-def load(method="entire_recipe", user_id=None, recipe_id=None, download=True):
-    print("Load recipes in database")
-    # Connect to chroma DB
-    client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT)
+# def load(method="entire_recipe", user_id=None, recipe_id=None, download=True):
+#     print("Load recipes in database")
+#     # Connect to chroma DB
+#     client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT)
 
-    # Get a collection object from an existing collection, by name. If it doesn't exist, create it.
-    collection_name = f"{method}_collection"
-    print("Acessing collection:", collection_name)
+#     # Get a collection object from an existing collection, by name. If it doesn't exist, create it.
+#     collection_name = f"{method}_collection"
+#     print("Acessing collection:", collection_name)
 
-    if user_id == None:
-        folder = os.path.join(parent_folder, child_folder_1, f"{embbeded_recipes_folder}_{method}")
-        # Download
-        if download:
-            print("download")
-            download_all_files_in_folder_to_disk(folder)
+#     if user_id == None:
+#         folder = os.path.join(parent_folder, child_folder_1, f"{embbeded_recipes_folder}_{method}")
+#         # Download
+#         if download:
+#             print("download")
+#             download_all_files_in_folder_to_disk(folder)
 
-        # If collection doesn't exist, create it.
-        try:
-            # Clear out any existing items in the collection
-            client.delete_collection(name=collection_name)
-            print(f"Deleted existing collection '{collection_name}'")
-        except Exception:
-            print(f"Collection '{collection_name}' did not exist. Creating new.")
+#         # If collection doesn't exist, create it.
+#         try:
+#             # Clear out any existing items in the collection
+#             client.delete_collection(name=collection_name)
+#             print(f"Deleted existing collection '{collection_name}'")
+#         except Exception:
+#             print(f"Collection '{collection_name}' did not exist. Creating new.")
 
-        collection = client.create_collection(name=collection_name, metadata={"hnsw:space": "cosine"})
-        print(f"Created new empty collection '{collection_name}'")
-        print("Collection:", collection)
+#         collection = client.create_collection(name=collection_name, metadata={"hnsw:space": "cosine"})
+#         print(f"Created new empty collection '{collection_name}'")
+#         print("Collection:", collection)
 
-        # Get the list of embedding files
-        jsonl_files = glob.glob(os.path.join(folder, f"embedding_*.jsonl"))
-        print("Number of files to process:", len(jsonl_files))
+#         # Get the list of embedding files
+#         jsonl_files = glob.glob(os.path.join(folder, f"embedding_*.jsonl"))
+#         print("Number of files to process:", len(jsonl_files))
 
-        # Process
-        for index, jsonl_file in enumerate(jsonl_files):
-            print("Processing file:", jsonl_file)
+#         # Process
+#         for index, jsonl_file in enumerate(jsonl_files):
+#             print("Processing file:", jsonl_file)
 
-            data_df = pd.read_json(jsonl_file, lines=True)
-            print("Shape:", data_df.shape)
-            print(data_df.head())
+#             data_df = pd.read_json(jsonl_file, lines=True)
+#             print("Shape:", data_df.shape)
+#             print(data_df.head())
 
-            # Load data
-            load_text_embeddings(data_df, collection, source_type="knowledge_base", index=index)
+#             # Load data
+#             load_text_embeddings(data_df, collection, source_type="knowledge_base", index=index)
 
-    else:
-        # If user_id is provided, process single user-specific file
-        folder = os.path.join(parent_folder, child_folder_2, user_id, user_recipe_embed, method)
+#     else:
+#         # If user_id is provided, process single user-specific file
+#         folder = os.path.join(parent_folder, child_folder_2, user_id, user_recipe_embed, method)
 
-        if download:
-            print("download")
-            download_to_disk(folder, f"{recipe_id}.jsonl")
+#         if download:
+#             print("download")
+#             download_to_disk(folder, f"{recipe_id}.jsonl")
 
-        collection = client.get_collection(name=collection_name)
+#         collection = client.get_collection(name=collection_name)
 
-        local_file_path = os.path.join(folder, f"{recipe_id}.jsonl")
-        print(f"Processing user-specific file: {local_file_path}")
+#         local_file_path = os.path.join(folder, f"{recipe_id}.jsonl")
+#         print(f"Processing user-specific file: {local_file_path}")
 
-        # Load user data
-        data_df = pd.read_json(local_file_path, lines=True)
-        print(data_df.head())
-        load_text_embeddings(data_df, collection, source_type="user", index=recipe_id)
+#         # Load user data
+#         data_df = pd.read_json(local_file_path, lines=True)
+#         print(data_df.head())
+#         load_text_embeddings(data_df, collection, source_type="user", index=recipe_id)
