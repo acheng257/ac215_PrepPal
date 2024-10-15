@@ -1,30 +1,38 @@
 ## AC215 PrepPal - Milestone 2
 
-```
-The files are empty placeholders only. You may adjust this template as appropriate for your project.
-Never commit large data files,trained models, personal API Keys/secrets to GitHub
-```
-
 #### Project Milestone 2 Organization
 
 ```
-├── Readme.md
+├── README.md
 ├── data # DO NOT UPLOAD DATA TO GITHUB, only .gitkeep to keep the directory or a really small sample
 ├── notebooks
-│   └── eda.ipynb
+│   └── data_cleaning.ipynb
 ├── references
+│   └── Doub_et_al.pdf
+│   └── Lebersorger_Schneider.pdf
 ├── reports
-│   └── Statement of Work_Sample.pdf
+│   └── PrepPal_Statement_of_Work.pdf
 └── src
+    ├── dataversioning
+    │   ├── docker_entrypoint.sh
+    │   ├── docker-shell.sh
+    │   ├── Dockerfile
+    │   ├── dvc_store.dvc
+    │   ├── Pipfile
+    │   ├── Pipfile.lock
+    │   ├── test_connection.py
     ├── datapipeline
+    │   ├── cli.py
+    │   ├── docker-compose.yml
+    │   ├── docker-entrypoint.sh
+    │   ├── docker-shell.sh
     │   ├── Dockerfile
     │   ├── Pipfile
     │   ├── Pipfile.lock
-    │   ├── dataloader.py
-    │   ├── docker-shell.sh
-    │   ├── preprocess_cv.py
     │   ├── preprocess_rag.py
-    ├── docker-compose.yml
+    │   ├── preprocess_recipes.py
+    │   ├── semantic_splitter.py
+    │   ├── README.md
     └── models
         ├── Dockerfile
         ├── docker-shell.sh
@@ -35,63 +43,37 @@ Never commit large data files,trained models, personal API Keys/secrets to GitHu
 
 # AC215 - Milestone2 - PrepPal
 
-**Team Members**
+**Team Members:** <br>
 Ioana-Andreea Cristescu, Jonas Raedler, Rosetta Hu, Alice Cheng
 
-
-**Group Name**
+**Group Name** <br>
 PrepPal
 
-**Project**
-This project aims to develop an AI-powered meal-planning application that simplifies recipe discovery and ingredient management while minimizing food waste. The application leverages two separate foundational models, as well as speech recognition and transcription, to provide a seamless and personalized user experience, making it a complex, yet interesting and rewarding endeavor.
+**Project:** <br>
+In this project, we aim to develop an AI-powered meal-planning application that streamlines recipe discovery and ingredient management. Powered by a Retrieval-Augmented Generation (RAG) model, the app suggests personalized recipes from a database of 300,000 meals, using available pantry ingredients and user preferences. Users can easily manage their pantry and saved recipes, with the app dynamically adjusting recommendations based on updates. A fine-tuned model enhances the user experience by prioritizing recipes that align with personal tastes and pantry stock, helping reduce food waste and simplify meal preparation.
 
 ### Milestone2
 
-In this milestone, we have the components for data management, including versioning, as well as the fine-tuned language models. We also created VM instances to utilize GPUs on the Google Cloud Platform (GCP) for fine-tuning our models.
+In this milestone, we have the components for data management, including versioning, data cleaning and creation, as well as the containerized RAG pipeline and fine-tuned language models. We also created VM instances to utilize GPUs on the Google Cloud Platform (GCP) for fine-tuning our models.
 
-**Data**
-We gathered a dataset of 100,000 cheese images representing approximately 1,500 different varieties. The dataset, approximately 100GB in size, was collected from the following sources: (1), (2), (3). We have stored it in a private Google Cloud Bucket.
-Additionally, we compiled 250 bibliographical sources on cheese, including books and reports, from sources such as (4) and (5).
+### Instructions tu run our application 
 
-**Data Pipeline Containers**
+**GCP Setup:** <br>
+1. Virtual Machine (explain how to set it up + add image)
+2. GCP Bucket 
 
-1. One container processes the 100GB dataset by resizing the images and storing them back to Google Cloud Storage (GCS).
+**Containerized Components:** <br>
+1. Data Versioning Container
+2. Data Pipeline Containers
+3. Model Container 
 
-   **Input:** Source and destination GCS locations, resizing parameters, and required secrets (provided via Docker).
-
-   **Output:** Resized images stored in the specified GCS location.
-
-2. Another container prepares data for the RAG model, including tasks such as chunking, embedding, and populating the vector database.
-
-## Data Pipeline Overview
-
-1. **`src/datapipeline/preprocess_cv.py`**
-   This script handles preprocessing on our 100GB dataset. It reduces the image sizes to 128x128 (a parameter that can be changed later) to enable faster iteration during processing. The preprocessed dataset is now reduced to 10GB and stored on GCS.
-
-2. **`src/datapipeline/preprocess_rag.py`**
-   This script prepares the necessary data for setting up our vector database. It performs chunking, embedding, and loads the data into a vector database (ChromaDB).
-
-3. **`src/datapipeline/Pipfile`**
-   We used the following packages to help with preprocessing:
-
-   - `special cheese package`
-
-4. **`src/preprocessing/Dockerfile(s)`**
-   Our Dockerfiles follow standard conventions, with the exception of some specific modifications described in the Dockerfile/described below.
-
-## Running Dockerfile
-
-Instructions for running the Dockerfile can be added here.
-To run Dockerfile - `Instructions here`
-
-**Models container**
+<!-- **Models container**
 
 - This container has scripts for model training, rag pipeline and inference
-- Instructions for running the model container - `Instructions here`
+- Instructions for running the model container - `Instructions here` -->
 
-**Notebooks/Reports**
+**Notebooks/Reports:** <br>
 This folder contains code that is not part of container - for e.g: Application mockup, EDA, any 🔍 🕵️‍♀️ 🕵️‍♂️ crucial insights, reports or visualizations.
 
----
-
-You may adjust this template as appropriate for your project.
+### Application Mock-up
+Add image 

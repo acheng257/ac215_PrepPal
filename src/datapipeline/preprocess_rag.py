@@ -248,7 +248,7 @@ def chunk(method="entire_recipe", user_id=None, recipe_id=None, user_saved=False
 
         # Chunk
         df = pd.read_csv(local_file_path)
-        # df = df.head(100) # CHANGE
+        df = df.head(100) # CHANGE
         df = chunk_knowledge_base(df, method) 
         df['user_id'] = user_id
         df['user_saved'] = user_saved
@@ -314,7 +314,7 @@ def embed(method="entire_recipe", user_id=None, recipe_id=None, batch_size=32, d
 
         if download:
             print("download")
-            download(folder, f"{chunked_recipes}.jsonl")
+            download_to_disk(folder, f"{chunked_recipes}.jsonl")
         local_file_path = os.path.join(folder, f"{chunked_recipes}_{method}.jsonl")
 
         df = pd.read_json(local_file_path, lines=True)
