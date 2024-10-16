@@ -72,7 +72,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--chunk_type",         
         default="entire_recipe",
-        help="entire_recipe | sliding_window | semantic_split"
+        help="entire_recipe | sliding_window"
     )
 
     args = parser.parse_args()
