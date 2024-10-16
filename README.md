@@ -31,7 +31,6 @@
     │   ├── Pipfile.lock
     │   ├── preprocess_rag.py
     │   ├── preprocess_recipes.py
-    │   ├── semantic_splitter.py
     │   ├── README.md
     └── models
         ├── Dockerfile
@@ -54,26 +53,40 @@ In this project, we aim to develop an AI-powered meal-planning application that 
 
 ### Milestone2
 
-In this milestone, we have the components for data management, including versioning, data cleaning and creation, as well as the containerized RAG pipeline and fine-tuned language models. We also created VM instances to utilize GPUs on the Google Cloud Platform (GCP) for fine-tuning our models.
+In this milestone, we created a virtual machine instance with GPU on Google Cloud Platform to run and host our embedding and fine-tuned models. We set up a GCP bucket for data storage and implemented robust data versioning practices. One of the key developments in this milestone was building a RAG pipeline, which involved cleaning, chunking, embedding, and loading a dataset of around 300,000 recipes into a vector database. Additionally, we synthetically generated a dataset to fine-tune a large language model and integrated it with the RAG retrieval system. For further details, please refer to each container outlined below.
 
 ### Instructions tu run our application 
 
 **GCP Setup:** <br>
-1. Virtual Machine (explain how to set it up + add image)
+1. Virtual Machine 
+   * Create a VM Instance from [GCP](https://console.cloud.google.com/compute/instances)
+      - Region: us-east4-a (can choose any region that supports the type of machine chosen)
+      - Machine Configuration:
+         - GPU type: NVIDIA T4
+         - Machine Type: g2-standard-4
+         - Memory: 200 GB (at least)
+      - You can choose a lower tier GPU that runs with 4-8 vCPUs. We had to upgrade to NVIDIA L4 due to unavailability of other GPUs.
+   * SSH into your newly created instance
+   * Install Docker on the newly created instance by running: `sudo apt install docker.io`
+   * Install docker-compose: 
+      - `sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose`
+      - `chmod +x /usr/local/bin/docker-compose`
+      - To test your installation of Compose, run the following command: `docker-compose --version`
+   * Install Git: sudo apt install git
+   * Clone App Repo: git clone https://github.com/acheng257/ac215_PrepPal.git
+
+![Virtual Machine](./assets/VM.png)
+
 2. GCP Bucket 
 
 **Containerized Components:** <br>
 1. Data Versioning Container
-2. Data Pipeline Containers
+2. [RAG Data Pipeline Containers](./src/datapipeline/README.md)
+   * The RAG Data Pipeline includes two integrated containers: one for the data pipeline and another for ChromaDB. The data pipeline container manages tasks such as cleaning, chunking, embedding, and integrating data into the vector database, while the ChromaDB container hosts the vector database. RAG allows efficient retrieval of relevant information from the knowledge base, with the capability to dynamically process and add user-uploaded data without altering the pre-existing knowledge base. This ensures flexibility while maintaining the integrity of the original data.
 3. Model Container 
 
-<!-- **Models container**
-
-- This container has scripts for model training, rag pipeline and inference
-- Instructions for running the model container - `Instructions here` -->
-
 **Notebooks/Reports:** <br>
-This folder contains code that is not part of container - for e.g: Application mockup, EDA, any 🔍 🕵️‍♀️ 🕵️‍♂️ crucial insights, reports or visualizations.
+These folders contains code that is not part of any container - for e.g: Application mockup, EDA, crucial insights, reports or visualizations.
 
 ### Application Mock-up
 Add image 
