@@ -1,6 +1,6 @@
 import argparse
 
-from preprocess_rag import chunk, clean_dataset, embed
+from preprocess_rag import chunk, clean_dataset, embed, load
 
 # Generate the inputs arguments parser
 parser = argparse.ArgumentParser(description="Command description.")
@@ -19,8 +19,8 @@ def main(args=None):
         if args.embed:
             embed(method=args.chunk_type, download=args.download, upload=args.upload)
 
-        # if args.load:
-        #     load(method=args.chunk_type, download=args.download)
+        if args.load:
+            load(method=args.chunk_type, download=args.download)
 
 
 if __name__ == "__main__":

@@ -38,6 +38,9 @@ ADD --chown=app:app Pipfile Pipfile.lock /app/
 
 RUN pipenv sync
 
+# Upgrade torch to the latest version
+RUN pipenv run pip install --upgrade torch
+
 # Add the rest of the source code. This is done last so we don't invalidate all
 # layers when we change a line of code.
 ADD --chown=app:app . /app

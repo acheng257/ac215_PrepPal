@@ -314,11 +314,11 @@ def embed(method="entire_recipe", user_id=None, recipe_id=None, batch_size=100, 
         output_folder = os.path.join(parent_folder, child_folder_1, f"{embedded_recipes}_{method}")
         os.makedirs(output_folder, exist_ok=True)
 
-        num_chunks = 10
-        for batch_num, i in enumerate(range(0, len(chunks), num_chunks)):
+        num_recipes = 30000
+        for batch_num, i in enumerate(range(0, len(chunks), num_recipes)):
             # Get the range of indices for the current file
             start_idx = i  
-            end_idx = min(i + num_chunks, len(chunks))  
+            end_idx = min(i + num_recipes, len(chunks))  
             df_chunk = df.iloc[start_idx:end_idx]  
 
             embeddings_chunk = embeddings_list[start_idx:end_idx]
@@ -412,63 +412,63 @@ def load_text_embeddings(df, collection, source_type, batch_size=500, index=None
     print(f"Finished inserting {total_inserted} items into collection '{collection.name}'")
 
 
-# def load(method="entire_recipe", user_id=None, recipe_id=None, download=True):
-#     print("Load recipes in database")
-#     # Connect to chroma DB
-#     client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT)
+def load(method="entire_recipe", user_id=None, recipe_id=None, download=True):
+    print("Load recipes in database")
+    # Connect to chroma DB
+    client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT)
 
-#     # Get a collection object from an existing collection, by name. If it doesn't exist, create it.
-#     collection_name = f"{method}_collection"
-#     print("Acessing collection:", collection_name)
+    # Get a collection object from an existing collection, by name. If it doesn't exist, create it.
+    collection_name = f"{method}_collection"
+    print("Acessing collection:", collection_name)
 
-#     if user_id == None:
-#         folder = os.path.join(parent_folder, child_folder_1, f"{embbeded_recipes_folder}_{method}")
-#         # Download
-#         if download:
-#             print("download")
-#             download_all_files_in_folder_to_disk(folder)
+    if user_id == None:
+        folder = os.path.join(parent_folder, child_folder_1, f"{embedded_recipes}_{method}")
+        # Download
+        if download:
+            print("download")
+            download_all_files_in_folder_to_disk(folder)
 
-#         # If collection doesn't exist, create it.
-#         try:
-#             # Clear out any existing items in the collection
-#             client.delete_collection(name=collection_name)
-#             print(f"Deleted existing collection '{collection_name}'")
-#         except Exception:
-#             print(f"Collection '{collection_name}' did not exist. Creating new.")
+        # If collection doesn't exist, create it.
+        try:
+            # Clear out any existing items in the collection
+            client.delete_collection(name=collection_name)
+            print(f"Deleted existing collection '{collection_name}'")
+        except Exception:
+            print(f"Collection '{collection_name}' did not exist. Creating new.")
 
-#         collection = client.create_collection(name=collection_name, metadata={"hnsw:space": "cosine"})
-#         print(f"Created new empty collection '{collection_name}'")
-#         print("Collection:", collection)
+        collection = client.create_collection(name=collection_name, metadata={"hnsw:space": "cosine"})
+        print(f"Created new empty collection '{collection_name}'")
+        print("Collection:", collection)
 
-#         # Get the list of embedding files
-#         jsonl_files = glob.glob(os.path.join(folder, f"embedding_*.jsonl"))
-#         print("Number of files to process:", len(jsonl_files))
+        # Get the list of embedding files
+        jsonl_files = glob.glob(os.path.join(folder, f"embedding_*.jsonl"))
+        print("Number of files to process:", len(jsonl_files))
 
-#         # Process
-#         for index, jsonl_file in enumerate(jsonl_files):
-#             print("Processing file:", jsonl_file)
+        # Process
+        for index, jsonl_file in enumerate(jsonl_files):
+            print("Processing file:", jsonl_file)
 
-#             data_df = pd.read_json(jsonl_file, lines=True)
-#             print("Shape:", data_df.shape)
-#             print(data_df.head())
+            data_df = pd.read_json(jsonl_file, lines=True)
+            print("Shape:", data_df.shape)
+            print(data_df.head())
 
-#             # Load data
-#             load_text_embeddings(data_df, collection, source_type="knowledge_base", index=index)
+            # Load data
+            load_text_embeddings(data_df, collection, source_type="knowledge_base", index=index)
 
-#     else:
-#         # If user_id is provided, process single user-specific file
-#         folder = os.path.join(parent_folder, child_folder_2, user_id, user_recipe_embed, method)
+    else:
+        # If user_id is provided, process single user-specific file
+        folder = os.path.join(parent_folder, child_folder_2, user_id, user_recipe_embed, method)
 
-#         if download:
-#             print("download")
-#             download_to_disk(folder, f"{recipe_id}.jsonl")
+        if download:
+            print("download")
+            download_to_disk(folder, f"{recipe_id}.jsonl")
 
-#         collection = client.get_collection(name=collection_name)
+        collection = client.get_collection(name=collection_name)
 
-#         local_file_path = os.path.join(folder, f"{recipe_id}.jsonl")
-#         print(f"Processing user-specific file: {local_file_path}")
+        local_file_path = os.path.join(folder, f"{recipe_id}.jsonl")
+        print(f"Processing user-specific file: {local_file_path}")
 
-#         # Load user data
-#         data_df = pd.read_json(local_file_path, lines=True)
-#         print(data_df.head())
-#         load_text_embeddings(data_df, collection, source_type="user", index=recipe_id)
+        # Load user data
+        data_df = pd.read_json(local_file_path, lines=True)
+        print(data_df.head())
+        load_text_embeddings(data_df, collection, source_type="user", index=recipe_id)
