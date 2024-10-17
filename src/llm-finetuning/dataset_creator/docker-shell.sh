@@ -3,7 +3,7 @@
 # exit immediately if a command exits with a non-zero status
 set -e
 
-# Set vairables
+# Set variables
 export BASE_DIR="$(pwd)"
 export SECRETS_DIR="$(pwd)/../../../../secrets/" # CHANGE
 export GCP_PROJECT="preppal-438123" 
