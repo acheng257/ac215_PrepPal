@@ -83,6 +83,21 @@ In this milestone, we created a virtual machine instance with GPU on Google Clou
         - Region: us-east1
     * Create a folder `dvc_store` inside the bucket for data versioning using dvc
     * Create other folders inside the bucket to store data
+3. Service Account
+    * Navigate to IAM & Admin > [Service Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts)
+    * Click + Create Service Account
+    * Name the service account and click Create and Continue.
+    * Assign a role with the premission to access the GCS Bucket above:
+      - Storage Admin (full access to the bucket)
+    * Click on the service account and navigate to the tab "KEYS"
+    * Click in the button "ADD Key (Create New Key)" and Select "JSON". This will download a private key JSON file.
+    * Create a local **secrets** folder
+      ```
+           |-ac215_Preppal
+           |-secrets
+        ```
+    * Copy the above key JSON file into the secrets folder and rename it to `data-service-account.json`
+
 
 **Containerized Components:** <br>
 1. [Data Versioning Container](./src/dataversioning/README.md)
