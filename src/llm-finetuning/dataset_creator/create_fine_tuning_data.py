@@ -10,7 +10,7 @@ from sklearn.model_selection import train_test_split
 from google.cloud import storage
 
 
-OUTPUT_FOLDER = "fine_tuning_data"
+OUTPUT_FOLDER = "fine_tuning_data_small"
 GCS_BUCKET_NAME = os.environ["GCS_BUCKET_NAME"]
 
 
@@ -232,7 +232,7 @@ def generate():
     # Make dataset folders
     os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
-    NUM_ITERATIONS = 20000  # INCREASE TO CREATE A LARGE DATASET (1 qa pair per iteration - we will try 20.000)
+    NUM_ITERATIONS = 34  # INCREASE TO CREATE A LARGE DATASET (1 iteration is 1214 tokens; trained for 3 epochs that's about 3 cents; 34 iterations is $1)
 
     # Loop to generate and save the content
     for i in range(0, NUM_ITERATIONS):
@@ -322,7 +322,7 @@ def upload():
     # Upload
     for index, data_file in enumerate(data_files):
         filename = os.path.basename(data_file)
-        destination_blob_name = os.path.join("llm-finetune-dataset", filename)
+        destination_blob_name = os.path.join("llm-finetune-dataset-small", filename)
         blob = bucket.blob(destination_blob_name)
         print("Uploading file:", data_file, destination_blob_name)
         blob.upload_from_filename(data_file, timeout=timeout)
