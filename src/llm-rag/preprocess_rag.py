@@ -3,7 +3,6 @@ import hashlib
 import os
 import shutil
 import shutil
-import time
 from google.cloud import storage
 import pandas as pd
 import chromadb
@@ -11,7 +10,7 @@ from sentence_transformers import SentenceTransformer
 from langchain.text_splitter import CharacterTextSplitter
 from preprocess_recipes import data_cleaning
 
-CHROMADB_HOST = "datapipeline-chromadb"
+CHROMADB_HOST = "llm-rag-chromadb"
 CHROMADB_PORT = 8000
 
 # Load the SentenceTransformers model

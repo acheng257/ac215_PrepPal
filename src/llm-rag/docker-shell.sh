@@ -8,11 +8,11 @@ export BASE_DIR="$(pwd)"
 export SECRETS_DIR="$(pwd)/../../../secrets/" # CHANGE
 export GCP_PROJECT="preppal-438123" 
 export GOOGLE_APPLICATION_CREDENTIALS="/secrets/data-service-account.json" 
-export IMAGE_NAME="datapipeline"
+export IMAGE_NAME="llm-rag"
 
 
 # Create the network if we don't have it yet
-docker network inspect datapipeline-network >/dev/null 2>&1 || docker network create datapipeline-network
+docker network inspect llm-rag-network >/dev/null 2>&1 || docker network create llm-rag-network
 
 # Build the image based on the Dockerfile
 docker build -t $IMAGE_NAME -f Dockerfile .

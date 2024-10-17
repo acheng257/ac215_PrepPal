@@ -7,20 +7,18 @@ parser = argparse.ArgumentParser(description="Command description.")
 
 def main(args=None):
     print("CLI Arguments:", args)
-     
-    if args.data_type == "rag":
 	
-        if args.clean_dataset:
-            clean_dataset(download=args.download, upload=args.upload)
+    if args.clean_dataset:
+        clean_dataset(download=args.download, upload=args.upload)
 
-        if args.chunk:
-            chunk(method=args.chunk_type, download=args.download, upload=args.upload)
+    if args.chunk:
+        chunk(method=args.chunk_type, download=args.download, upload=args.upload)
 
-        if args.embed:
-            embed(method=args.chunk_type, download=args.download, upload=args.upload)
+    if args.embed:
+        embed(method=args.chunk_type, download=args.download, upload=args.upload)
 
-        if args.load:
-            load(method=args.chunk_type, download=args.download)
+    if args.load:
+        load(method=args.chunk_type, download=args.download)
 
 
 if __name__ == "__main__":
@@ -61,12 +59,6 @@ if __name__ == "__main__":
         "--upload",
         action="store_true",            
         help="Enable or disable upload",
-    )
-	
-    parser.add_argument(
-        "--data_type",         
-        default="rag",
-        help="rag | fine_tune"
     )
 
     parser.add_argument(
