@@ -5,13 +5,17 @@
 ```
 ├── README.md
 ├── data # DO NOT UPLOAD DATA TO GITHUB, only .gitkeep to keep the directory or a really small sample
+├── assets
+│   ├── PrepPal.png
+│   └── VM.png
 ├── notebooks
 │   └── data_cleaning.ipynb
 ├── references
-│   └── Doub_et_al.pdf
+│   ├── Doub_et_al.pdf
 │   └── Lebersorger_Schneider.pdf
 ├── reports
-│   └── PrepPal_Statement_of_Work.pdf
+│   ├── PrepPal_Statement_of_Work.pdf
+│   └── dataversioning.md
 └── src
     ├── dataversioning
     │   ├── docker_entrypoint.sh
@@ -21,7 +25,8 @@
     │   ├── Pipfile
     │   ├── Pipfile.lock
     │   ├── test_connection.py
-    ├── datapipeline
+    │   └── README.md
+    ├── llm-rag
     │   ├── cli.py
     │   ├── docker-compose.yml
     │   ├── docker-entrypoint.sh
@@ -31,13 +36,25 @@
     │   ├── Pipfile.lock
     │   ├── preprocess_rag.py
     │   ├── preprocess_recipes.py
-    │   ├── README.md
-    └── models
-        ├── Dockerfile
-        ├── docker-shell.sh
-        ├── infer_model.py
-        ├── model_rag.py
-        └── train_model.py
+    |   ├── model_rag.py
+    │   └── README.md
+    ├── llm-finetuning
+    │   ├── dataset_creator
+    │   │   ├── create_fine_tuning_data.py
+    │   │   ├── docker-entrypoint.sh
+    │   │   ├── docker-shell.sh
+    │   │   ├── Dockerfile
+    │   │   ├── Pipfile
+    │   │   ├── Pipfile.lock
+    │   │   └── README.md
+    ├── ├── gemini_finetuner
+    │   │   ├── cli.py
+    │   │   ├── docker-entrypoint.sh
+    │   │   ├── docker-shell.sh
+    │   │   ├── Dockerfile
+    │   │   ├── Pipfile
+    │   │   ├── Pipfile.lock
+    └── └── └── README.md
 ```
 
 # AC215 - Milestone2 - PrepPal
@@ -83,7 +100,7 @@ In this milestone, we created a virtual machine instance with GPU on Google Clou
         - Region: us-east1
     * Create a folder `dvc_store` inside the bucket for data versioning using dvc
     * Create other folders inside the bucket to store data
-3. Service Account
+3. GCP Bucket Service Account
     * Navigate to IAM & Admin > [Service Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts)
     * Click + Create Service Account
     * Name the service account and click Create and Continue.
@@ -97,14 +114,25 @@ In this milestone, we created a virtual machine instance with GPU on Google Clou
            |-secrets
         ```
     * Copy the above key JSON file into the secrets folder and rename it to `data-service-account.json`
+4. Vertex AI API Service Account 
+    * Navigate to IAM & Admin > [Service Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts)
+    * Click + Create Service Account
+    * Name the service account and click Create and Continue.
+    * Assign a role with the premission to access the GCS Bucket above:
+      - Storage Admin 
+      - Vertex AI User
+    * Click on the service account and navigate to the tab "KEYS"
+    * Click in the button "ADD Key (Create New Key)" and Select "JSON". This will download a private key JSON file.
+    * Copy the above key JSON file into the secrets folder created in the previous step and rename it to `preppal-llm-service-account.json`
 
 
 **Containerized Components:** <br>
 1. [Data Versioning Container](./src/dataversioning/README.md)
     * The DVC container sets up version control using open-source DVC (Data Version Control) to efficiently manage data versions. The pipeline connects to Google Cloud Storage (GCS) and mounts a GCS bucket to a local directory. Additionally, it binds this mounted directory to another path to serve as the storage location for DVC-managed data. This setup allows us to seamlessly track, version, and manage large datasets that are stored in the cloud.
-3. [RAG Data Pipeline Containers](./src/llm-rag/README.md)
+2. [LLM RAG System Containers](./src/llm-rag/README.md)
    * The RAG Data Pipeline includes two integrated containers: one for the data pipeline and another for ChromaDB. The data pipeline container manages tasks such as cleaning, chunking, embedding, and integrating data into the vector database, while the ChromaDB container hosts the vector database. RAG allows efficient retrieval of relevant information from the knowledge base, with the capability to dynamically process and add user-uploaded data without altering the pre-existing knowledge base. This ensures flexibility while maintaining the integrity of the original data.
-4. Model Container 
+3. [LLM Data Set Creator Container](./src/llm-finetuning/dataset_creator/README.md)
+4. [LLM Fine-tuning Container](./src/llm-finetuning/gemini_finetuner/README.md)
 
 **Notebooks/Reports:** <br>
 These folders contains code that is not part of any container - for e.g: Application mockup, EDA, crucial insights, reports or visualizations.
