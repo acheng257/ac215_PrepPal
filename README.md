@@ -55,7 +55,7 @@ In this project, we aim to develop an AI-powered meal-planning application that 
 
 In this milestone, we created a virtual machine instance with GPU on Google Cloud Platform to run and host our embedding and fine-tuned models. We set up a GCP bucket for data storage and implemented robust data versioning practices. One of the key developments in this milestone was building a RAG pipeline, which involved cleaning, chunking, embedding, and loading a dataset of around 300,000 recipes into a vector database. Additionally, we synthetically generated a dataset to fine-tune a large language model and integrated it with the RAG retrieval system. For further details, please refer to each container outlined below.
 
-### Instructions tu run our application 
+### Instructions to run our application 
 
 **GCP Setup:** <br>
 1. Virtual Machine 
@@ -89,4 +89,4 @@ In this milestone, we created a virtual machine instance with GPU on Google Clou
 These folders contains code that is not part of any container - for e.g: Application mockup, EDA, crucial insights, reports or visualizations.
 
 ### Application Mock-up
-Add image 
+![Mockup](./assets/PrepPal.png)
