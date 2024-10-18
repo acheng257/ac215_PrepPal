@@ -158,6 +158,7 @@ Fine-tuned LLM Response:
 Rank 1: Chicken Casserole. Rank 1 has been chosen for this recipe because you have 4 out of 11 ingredients in your pantry! Here are the ingredients you still need: chicken, celery, cream of chicken soup, slivered almonds, eggs, mayonnaise, potato chips. Rank 2: Grown-Up Carrot Cake. Rank 2 has been chosen for this recipe because you have 3 out of 15 ingredients in your pantry! Here are the ingredients you still need: cinnamon, bicarbonate of soda, brown sugar, eggs, sunflower oil, orange, lemon, carrots, walnuts, unsalted butter, icing sugar, cream cheese. Rank 3: Orange Congealed Salad. Rank 3 has been chosen for this recipe because you have 1 out of 5 ingredients in your pantry! Here are the ingredients you still need: orange jello, mayonnaise, milk, nuts. Rank 4: Flank Steak Teriyaki. Rank 4 has been chosen for this recipe because you have 0 out of 6 ingredients in your pantry! Here are the ingredients you still need: soy sauce, onion flakes, vinegar, powdered ginger, n, garlic. Rank 5: Artichoke Dip. Rank 5 has been chosen for this recipe because you have 0 out of 3 ingredients in your pantry! Here are the ingredients you still need: artichokes, mayonnaise, parmesan cheese.
 ```
 
+
 ### Training Metrics
 Training Monitor:
 

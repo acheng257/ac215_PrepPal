@@ -50,16 +50,14 @@
     │   │   ├── docker-shell.sh
     │   │   ├── Dockerfile
     │   │   ├── Pipfile
-    │   │   ├── Pipfile.lock
-    │   │   └── README.md
+    └── └── └── Pipfile.lock
     ├── ├── gemini_finetuner
     │   │   ├── cli.py
     │   │   ├── docker-entrypoint.sh
     │   │   ├── docker-shell.sh
     │   │   ├── Dockerfile
     │   │   ├── Pipfile
-    │   │   ├── Pipfile.lock
-    └── └── └── README.md
+    └── └── └── Pipfile.lock
 ```
 
 # AC215 - Milestone2 - PrepPal
