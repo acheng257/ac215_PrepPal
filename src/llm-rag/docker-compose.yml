@@ -11,6 +11,7 @@ services:
             - ../llm-rag:/app
         environment:
             GOOGLE_APPLICATION_CREDENTIALS: $GOOGLE_APPLICATION_CREDENTIALS
+            FINETUNING_GOOGLE_APPLICATION_CREDENTIALS: $FINETUNING_GOOGLE_APPLICATION_CREDENTIALS
             GCP_PROJECT: $GCP_PROJECT
         # deploy:
         #     resources:

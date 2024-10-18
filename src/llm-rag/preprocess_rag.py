@@ -386,29 +386,36 @@ def load_text_embeddings(df, collection, source_type, batch_size=500, index=None
 
     # Metadata is already in the dataframe
     total_inserted = 0
+    error_counter = 0
     
     # Process data in batches
     for i in range(0, df.shape[0], batch_size):
-        batch = df.iloc[i:i+batch_size].copy().reset_index(drop=True)
+        try: 
+            batch = df.iloc[i:i+batch_size].copy().reset_index(drop=True)
 
-        # Extract IDs, documents, embeddings, and metadata
-        ids = batch["id"].tolist()
-        documents = batch["document"].tolist()
-        embeddings = batch["embedding"].tolist()
-        metadatas = batch[["user_id", "user_saved"]].to_dict(orient='records')
+            # Extract IDs, documents, embeddings, and metadata
+            ids = batch["id"].tolist()
+            documents = batch["document"].tolist()
+            embeddings = batch["embedding"].tolist()
+            metadatas = batch[["user_id", "user_saved"]].to_dict(orient='records')
 
-        # Insert into the collection
-        collection.add(
-            ids=ids,
-            documents=documents,
-            metadatas=metadatas,
-            embeddings=embeddings
-        )
-        
-        total_inserted += len(batch)
-        print(f"Inserted {total_inserted} items...")
+            # Insert into the collection
+            collection.add(
+                ids=ids,
+                documents=documents,
+                metadatas=metadatas,
+                embeddings=embeddings
+            )
+            
+            total_inserted += len(batch)
+            print(f"Inserted {total_inserted} items...")
+        except Exception as e:
+            print("Error:", e)
+            error_counter += 1
+
 
     print(f"Finished inserting {total_inserted} items into collection '{collection.name}'")
+    print(f"There have been {error_counter} errors.")
 
 
 def load(method="entire_recipe", user_id=None, recipe_id=None, download=True):
@@ -444,7 +451,8 @@ def load(method="entire_recipe", user_id=None, recipe_id=None, download=True):
         print("Number of files to process:", len(jsonl_files))
 
         # Process
-        for index, jsonl_file in enumerate(jsonl_files):
+        # UPDATE HERE
+        for index, jsonl_file in enumerate(jsonl_files[1:3]):
             print("Processing file:", jsonl_file)
 
             data_df = pd.read_json(jsonl_file, lines=True)

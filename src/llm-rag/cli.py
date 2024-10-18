@@ -1,6 +1,8 @@
 import argparse
 
 from preprocess_rag import chunk, clean_dataset, embed, load
+from model_rag import chat
+
 
 # Generate the inputs arguments parser
 parser = argparse.ArgumentParser(description="Command description.")
@@ -19,6 +21,9 @@ def main(args=None):
 
     if args.load:
         load(method=args.chunk_type, download=args.download)
+
+    if args.chat:
+        chat(method=args.chunk_type)
 
 
 if __name__ == "__main__":
@@ -65,6 +70,12 @@ if __name__ == "__main__":
         "--chunk_type",         
         default="entire_recipe",
         help="entire_recipe | sliding_window"
+    )
+
+    parser.add_argument(
+        "--chat",
+        action="store_true",
+        help="Chat with Fine-Tuned, RAG-enabled LLM",
     )
 
     args = parser.parse_args()
