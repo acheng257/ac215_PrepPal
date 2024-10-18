@@ -7,12 +7,12 @@ This project uses DVC (Data Version Control) to manage data throughout the devel
 - Have the latest Docker installed
 - Cloned repository from [here](https://github.com/acheng257/ac215_PrepPal) to local machine
 
-### 1. Run `docker-shell.sh`
+#### 1. Run `docker-shell.sh`
 
 - Inside the `data-versioning` folder
 - Run `sh docker-shell.sh`
 
-#### 2. Add the dataset (changes) to registry
+#### 2. Add the Dataset (Changes) to Registry
 
 `dvc add dvc_store`
 
@@ -20,7 +20,7 @@ This project uses DVC (Data Version Control) to manage data throughout the devel
 
 `dvc push`
 
-#### 4. Update Git to track DVC changes (outside the container)
+#### 4. Update Git to Rrack DVC changes (Outside the Container)
 
 - First run git status `git status`
 - Add changes `git add .`
@@ -28,6 +28,15 @@ This project uses DVC (Data Version Control) to manage data throughout the devel
 - Add a dataset tag `git tag -a 'dataset_v{#}' -m 'rag dataset'`
 - Push changes `git push --atomic origin main dataset_v{#}`
 
-#### 5. Retrieve Data (inside the container)
+#### 5. Retrieve Data (Inside the Container)
 
 `dvc pull`
+
+#### Look at Past Versions
+
+`git log --oneline`
+
+<details>
+  <summary>Click to see an example log</summary>
+  ![](../../reports/git_log.png)
+</details>
