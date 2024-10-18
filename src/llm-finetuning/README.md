@@ -160,8 +160,10 @@ Rank 1: Chicken Casserole. Rank 1 has been chosen for this recipe because you ha
 
 ### Training Metrics
 Training Monitor:
-<img src="images/training_validation_metric_preppal_v1.png"  width="800">
+
+<img src="../../reports/fine_tuning_images/training_validation_metric_preppal_v1.png"  width="800">
 
 Data distribution:
-<img src="images/data_distribution_1.png"  width="800">
-<img src="images/data_distribution_2.png"  width="800">
+
+<img src="../../reports/fine_tuning_images/data_distribution_1.png"  width="800">
+<img src="../../reports/fine_tuning_images/data_distribution_2.png"  width="800">
