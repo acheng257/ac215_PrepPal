@@ -5,6 +5,7 @@ import re
 import os
 import glob
 import json
+import gcsfs
 
 from sklearn.model_selection import train_test_split
 from google.cloud import storage
@@ -12,6 +13,8 @@ from google.cloud import storage
 
 OUTPUT_FOLDER = "fine_tuning_data_small"
 GCS_BUCKET_NAME = os.environ["GCS_BUCKET_NAME"]
+DATASET = "preppal-data/llm_finetuning_data/reduced_dataset.csv"
+PROJECT_NAME = os.environ["GCP_PROJECT"]
 
 
 # --------------- Helper Functions --------------------
@@ -225,8 +228,10 @@ def generate():
     print("generate()")
 
     # This CSV only contains recipes with ingredients that occur at least 500 times in 2 million+ recipes
-    df = pd.read_csv("data/reduced_original_dataset.csv")
-
+    fs = gcsfs.GCSFileSystem(project=PROJECT_NAME)
+    with fs.open(DATASET) as f:
+        df = pd.read_csv(f)
+    
     ingr_freq_dict = get_ingr_freq_dict(df)
 
     # Make dataset folders
@@ -236,7 +241,7 @@ def generate():
 
     # Loop to generate and save the content
     for i in range(0, NUM_ITERATIONS):
-        if i % 1000 == 0:
+        if i % 2 == 0:
             print(f"Generating batch: {i}")
 
         question, answer = generate_answer_question_pairs(df, ingr_freq_dict)
