@@ -91,4 +91,15 @@ We utilized a dataset containing 522,517 recipes from 312 different categories, 
    * Load the embeddings and associated metadata into the collection
 
 ### Chat with LLM
+   Chat with the LLM using the RAG system:
+
+   `python cli.py --chat --chunk_type entire_recipe`
+
+   `python cli.py --chat --chunk_type sliding_window`
+
+   This will: <br>
+   * Takes a sample query
+   * Retrieves relevant context from the vector database
+   * Sends the query and context to the LLM
+   * Displays the LLM's response
 

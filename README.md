@@ -15,7 +15,12 @@
 │   └── Lebersorger_Schneider.pdf
 ├── reports
 │   ├── PrepPal_Statement_of_Work.pdf
-│   └── dataversioning.md
+│   ├── dataversioning.md
+│   ├── finetuning_images
+│   │   ├── data_distribution_1.png
+│   │   ├── data_distribution_2.png
+│   │   ├── model_evaluation_before_and_after_rag_and_finetuning.pdf
+│   └── └── training_validation_metric_preppal_v1.png
 └── src
     ├── dataversioning
     │   ├── docker_entrypoint.sh
