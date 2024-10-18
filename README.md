@@ -16,6 +16,8 @@
 ├── reports
 │   ├── PrepPal_Statement_of_Work.pdf
 │   ├── dataversioning.md
+│   ├── git_log.png
+│   ├── model_evaluation_before_and_after_rag_and_finetuning.pdf
 │   ├── finetuning_images
 │   │   ├── data_distribution_1.png
 │   │   ├── data_distribution_2.png
@@ -77,75 +79,72 @@ In this project, we aim to develop an AI-powered meal-planning application that 
 
 In this milestone, we created a virtual machine instance with GPU on Google Cloud Platform to run and host our embedding and fine-tuned models. We set up a GCP bucket for data storage and implemented robust data versioning practices. One of the key developments in this milestone was building a RAG pipeline, which involved cleaning, chunking, embedding, and loading a dataset of around 300,000 recipes into a vector database. Additionally, we synthetically generated a dataset to fine-tune a large language model and integrated it with the RAG retrieval system. For further details, please refer to each container outlined below.
 
-### Instructions to run our application 
+### Instructions to run our application
 
 **GCP Setup:** <br>
-1. Virtual Machine 
-   * Create a VM Instance from [GCP](https://console.cloud.google.com/compute/instances)
-      - Region: us-east4-a (can choose any region that supports the type of machine chosen)
-      - Machine Configuration:
-         - GPU type: NVIDIA T4
-         - Machine Type: g2-standard-4
-         - Memory: 200 GB (at least)
-      - You can choose a lower tier GPU that runs with 4-8 vCPUs. We had to upgrade to NVIDIA L4 due to unavailability of other GPUs.
-   * SSH into your newly created instance
-   * Install Docker on the newly created instance by running: `sudo apt install docker.io`
-   * Install docker-compose: 
-      - `sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose`
-      - `chmod +x /usr/local/bin/docker-compose`
-      - To test your installation of Compose, run the following command: `docker-compose --version`
-   * Install Git: sudo apt install git
-   * Clone App Repo: git clone https://github.com/acheng257/ac215_PrepPal.git
+
+1. Virtual Machine
+   - Create a VM Instance from [GCP](https://console.cloud.google.com/compute/instances)
+     - Region: us-east4-a (can choose any region that supports the type of machine chosen)
+     - Machine Configuration:
+       - GPU type: NVIDIA T4
+       - Machine Type: g2-standard-4
+       - Memory: 200 GB (at least)
+     - You can choose a lower tier GPU that runs with 4-8 vCPUs. We had to upgrade to NVIDIA L4 due to unavailability of other GPUs.
+   - SSH into your newly created instance
+   - Install Docker on the newly created instance by running: `sudo apt install docker.io`
+   - Install docker-compose:
+     - `sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose`
+     - `chmod +x /usr/local/bin/docker-compose`
+     - To test your installation of Compose, run the following command: `docker-compose --version`
+   - Install Git: sudo apt install git
+   - Clone App Repo: git clone https://github.com/acheng257/ac215_PrepPal.git
 
 ![Virtual Machine](./assets/VM.png)
 
 2. GCP Bucket
-    * Navigate to Storage > [Buckets](https://console.cloud.google.com/storage/browser) and click create bucket
-        - Name: any unique bucket name
-        - Region: us-east1
-    * Create a folder `dvc_store` inside the bucket for data versioning using dvc
-    * Create other folders inside the bucket to store data
+   - Navigate to Storage > [Buckets](https://console.cloud.google.com/storage/browser) and click create bucket
+     - Name: any unique bucket name
+     - Region: us-east1
+   - Create a folder `dvc_store` inside the bucket for data versioning using dvc
+   - Create other folders inside the bucket to store data
 3. GCP Bucket Service Account
-    * Navigate to IAM & Admin > [Service Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts)
-    * Click + Create Service Account
-    * Name the service account and click Create and Continue.
-    * Assign a role with the premission to access the GCS Bucket above:
-      - Storage Admin (full access to the bucket)
-    * Click on the service account and navigate to the tab "KEYS"
-    * Click in the button "ADD Key (Create New Key)" and Select "JSON". This will download a private key JSON file.
-    * Create a local **secrets** folder
-      ```
-           |-ac215_Preppal
-           |-secrets
-        ```
-    * Copy the above key JSON file into the secrets folder and rename it to `data-service-account.json`
-4. Vertex AI API Service Account 
-    * Navigate to IAM & Admin > [Service Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts)
-    * Click + Create Service Account
-    * Name the service account and click Create and Continue.
-    * Assign a role with the premission to access the GCS Bucket above:
-      - Storage Admin 
-      - Vertex AI User
-    * Click on the service account and navigate to the tab "KEYS"
-    * Click in the button "ADD Key (Create New Key)" and Select "JSON". This will download a private key JSON file.
-    * Copy the above key JSON file into the secrets folder created in the previous step and rename it to `preppal-llm-service-account.json`
-
+   - Navigate to IAM & Admin > [Service Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts)
+   - Click + Create Service Account
+   - Name the service account and click Create and Continue.
+   - Assign a role with the premission to access the GCS Bucket above:
+     - Storage Admin (full access to the bucket)
+   - Click on the service account and navigate to the tab "KEYS"
+   - Click in the button "ADD Key (Create New Key)" and Select "JSON". This will download a private key JSON file.
+   - Create a local **secrets** folder
+     ```
+          |-ac215_Preppal
+          |-secrets
+     ```
+   - Copy the above key JSON file into the secrets folder and rename it to `data-service-account.json`
+4. Vertex AI API Service Account
+   - Navigate to IAM & Admin > [Service Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts)
+   - Click + Create Service Account
+   - Name the service account and click Create and Continue.
+   - Assign a role with the premission to access the GCS Bucket above:
+     - Storage Admin
+     - Vertex AI User
+   - Click on the service account and navigate to the tab "KEYS"
+   - Click in the button "ADD Key (Create New Key)" and Select "JSON". This will download a private key JSON file.
+   - Copy the above key JSON file into the secrets folder created in the previous step and rename it to `preppal-llm-service-account.json`
 
 **Containerized Components:** <br>
+
 1. [Data Versioning Container](./src/dataversioning/README.md)
-    * The DVC container sets up version control using open-source DVC (Data Version Control) to efficiently manage data versions. The pipeline connects to Google Cloud Storage (GCS) and mounts a GCS bucket to a local directory. Additionally, it binds this mounted directory to another path to serve as the storage location for DVC-managed data. This setup allows us to seamlessly track, version, and manage large datasets that are stored in the cloud.
+   - The DVC container sets up version control using open-source DVC (Data Version Control) to efficiently manage data versions. The pipeline connects to Google Cloud Storage (GCS) and mounts a GCS bucket to a local directory. Additionally, it binds this mounted directory to another path to serve as the storage location for DVC-managed data. This setup allows us to seamlessly track, version, and manage large datasets that are stored in the cloud.
 2. [LLM RAG System Containers](./src/llm-rag/README.md)
-   * The RAG Data Pipeline includes two integrated containers: one for the data pipeline and another for ChromaDB. The data pipeline container manages tasks such as cleaning, chunking, embedding, and integrating data into the vector database, while the ChromaDB container hosts the vector database. RAG allows efficient retrieval of relevant information from the knowledge base, with the capability to dynamically process and add user-uploaded data without altering the pre-existing knowledge base. This ensures flexibility while maintaining the integrity of the original data.
+   - The RAG Data Pipeline includes two integrated containers: one for the data pipeline and another for ChromaDB. The data pipeline container manages tasks such as cleaning, chunking, embedding, and integrating data into the vector database, while the ChromaDB container hosts the vector database. RAG allows efficient retrieval of relevant information from the knowledge base, with the capability to dynamically process and add user-uploaded data without altering the pre-existing knowledge base. This ensures flexibility while maintaining the integrity of the original data.
 3. [LLM Fine-Tuning Containers](./src/llm-finetuning/README.md)
-    * The LLM Fine-Tuning folder includes two containers: one for the generation, preparation, and upload of the fine-tuning dataset, the other for the actual fine-tuning of the Gemini model. The Gemini model is fine-tuned to rank provided recipes based on available ingredients in a pantry. The process begins with generating a fine-tuning dataset using a large recipe collection from the All-Recipes Dataset, then cleaning and preparing it for use. The generated dataset is then uploaded to a GCP bucket, so that it is available for the actual fine-tuning process. Once fine-tuned, the model is able to answer questions by ranking recipes and identifying missing ingredients, providing a structured output for easy further computations. The folder includes scripts for generating, preparing, and uploading data, as well as running the fine-tuning and testing the model interactively.
-
-
-
-
-
+   - The LLM Fine-Tuning folder includes two containers: one for the generation, preparation, and upload of the fine-tuning dataset, the other for the actual fine-tuning of the Gemini model. The Gemini model is fine-tuned to rank provided recipes based on available ingredients in a pantry. The process begins with generating a fine-tuning dataset using a large recipe collection from the All-Recipes Dataset, then cleaning and preparing it for use. The generated dataset is then uploaded to a GCP bucket, so that it is available for the actual fine-tuning process. Once fine-tuned, the model is able to answer questions by ranking recipes and identifying missing ingredients, providing a structured output for easy further computations. The folder includes scripts for generating, preparing, and uploading data, as well as running the fine-tuning and testing the model interactively.
 
 **Notebooks/Reports:** <br>
 These folders contains code that is not part of any container - for e.g: Application mockup, EDA, crucial insights, reports or visualizations.
 
 ### Application Mock-up
+
 ![Mockup](./assets/PrepPal.png)

@@ -38,5 +38,5 @@ This project uses DVC (Data Version Control) to manage data throughout the devel
 
 <details>
   <summary>Click to see an example log</summary>
-  ![](../../reports/git_log.png)
+  <img src="../../reports/git_log.png" alt="Log Image">
 </details>
