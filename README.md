@@ -136,8 +136,13 @@ In this milestone, we created a virtual machine instance with GPU on Google Clou
     * The DVC container sets up version control using open-source DVC (Data Version Control) to efficiently manage data versions. The pipeline connects to Google Cloud Storage (GCS) and mounts a GCS bucket to a local directory. Additionally, it binds this mounted directory to another path to serve as the storage location for DVC-managed data. This setup allows us to seamlessly track, version, and manage large datasets that are stored in the cloud.
 2. [LLM RAG System Containers](./src/llm-rag/README.md)
    * The RAG Data Pipeline includes two integrated containers: one for the data pipeline and another for ChromaDB. The data pipeline container manages tasks such as cleaning, chunking, embedding, and integrating data into the vector database, while the ChromaDB container hosts the vector database. RAG allows efficient retrieval of relevant information from the knowledge base, with the capability to dynamically process and add user-uploaded data without altering the pre-existing knowledge base. This ensures flexibility while maintaining the integrity of the original data.
-3. [LLM Data Set Creator Container](./src/llm-finetuning/dataset_creator/README.md)
-4. [LLM Fine-tuning Container](./src/llm-finetuning/gemini_finetuner/README.md)
+3. [LLM Fine-Tuning Containers](./src/llm-finetuning/README.md)
+    * The LLM Fine-Tuning folder includes two containers: one for the generation, preparation, and upload of the fine-tuning dataset, the other for the actual fine-tuning of the Gemini model. The Gemini model is fine-tuned to rank provided recipes based on available ingredients in a pantry. The process begins with generating a fine-tuning dataset using a large recipe collection from the All-Recipes Dataset, then cleaning and preparing it for use. The generated dataset is then uploaded to a GCP bucket, so that it is available for the actual fine-tuning process. Once fine-tuned, the model is able to answer questions by ranking recipes and identifying missing ingredients, providing a structured output for easy further computations. The folder includes scripts for generating, preparing, and uploading data, as well as running the fine-tuning and testing the model interactively.
+
+
+
+
+
 
 **Notebooks/Reports:** <br>
 These folders contains code that is not part of any container - for e.g: Application mockup, EDA, crucial insights, reports or visualizations.

@@ -14,7 +14,7 @@ This presented us with several challenges:
 - we needed a ranking algorithm given some recipes so that we could fine-tune the LLM for our specific task
 
 ### Collection of Recipes
-For the large collection of recipes, we used the [All-Recipes Dataset](https://huggingface.co/datasets/corbt/all-recipes) available through HuggingFace. This dataset contains 2,231,142 recipes with their respective titles, their ingredients (and their quantities), and their cooking directions. After cleaning (dropping all recipes that contain weird characters, as well as all recipes that contain ingredients that occur less than 501 times), we were left with 1,297,716 recipes. Both the original dataset (full_dataset.csv) and the cleaned version (reduced_dataset.csv) have been stored in a private GCP (Google Cloud Platform) data bucket. All of this has been performed in explore_finetuning_data.ipynb.
+For the large collection of recipes, we used the [All-Recipes Dataset](https://huggingface.co/datasets/corbt/all-recipes) available through HuggingFace. This dataset contains 2,231,142 recipes with their respective titles, their ingredients (and their quantities), and their cooking directions. After cleaning (dropping all recipes that contain weird characters, as well as all recipes that contain ingredients that occur less than 501 times), we were left with 1,297,716 recipes. Both the original dataset (full_dataset.csv) and the cleaned version (reduced_dataset.csv) have been stored in a private GCP (Google Cloud Platform) data bucket. All of this has been performed in the notebook explore_finetuning_data.ipynb.
 
 ### Reasonable Pantry
 Given the cleaned dataset, we computed an ingredient-frequency dictionary and used a weighted-sampling algorithm (using the frequencies as weights) to sample 35 non-reccuring ingredients. This is the random pantry we used in each fine-tuning datapoint (each fine-tuning datapoint had a different random pantry).
@@ -167,3 +167,6 @@ Data distribution:
 
 <img src="../../reports/fine_tuning_images/data_distribution_1.png"  width="800">
 <img src="../../reports/fine_tuning_images/data_distribution_2.png"  width="800">
+
+
+
