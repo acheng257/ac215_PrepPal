@@ -21,7 +21,6 @@
 │   ├── finetuning_images
 │   │   ├── data_distribution_1.png
 │   │   ├── data_distribution_2.png
-│   │   ├── model_evaluation_before_and_after_rag_and_finetuning.pdf
 │   └── └── training_validation_metric_preppal_v1.png
 └── src
     ├── dataversioning
