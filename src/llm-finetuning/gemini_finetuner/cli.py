@@ -33,10 +33,10 @@ def train(wait_for_job=False):
         source_model=GENERATIVE_SOURCE_MODEL,
         train_dataset=TRAIN_DATASET,
         validation_dataset=VALIDATION_DATASET,
-        epochs=3, # change to 2-3
+        epochs=3,
         adapter_size=4,
         learning_rate_multiplier=1.0,
-        tuned_model_display_name="preppal-small-v1",
+        tuned_model_display_name="preppal-v1",
     )
     print("Training job started. Monitoring progress...\n\n")
     
@@ -59,7 +59,7 @@ def train(wait_for_job=False):
 
 def chat():
     print("chat()")
-    # Get the model endpoint from Vertex AI: https://console.cloud.google.com/vertex-ai/studio/tuning?project=ac215-project
+    # Get the model endpoint from Vertex AI: https://console.cloud.google.com/vertex-ai/studio/tuning?project=preppal-finetuning
     MODEL_ENDPOINT = "projects/582280928569/locations/us-central1/endpoints/3898306381651902464" # Finetuned model
     
     generative_model = GenerativeModel(MODEL_ENDPOINT)

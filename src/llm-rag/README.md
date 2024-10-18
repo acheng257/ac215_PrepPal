@@ -1,6 +1,6 @@
 ## Building a RAG system with Vector DB and LLM
 
-This is the part of the application where we build a Retrieval-Augmented Generation (RAG) system using a vector database. The system will clean the dataset, chunk text documents, create embeddings, and store them in a vector database. The vector database embeddings will be used by the LLM to enhance its response and provide recipes that allign with user preferences. 
+This is the part of the application where we build a Retrieval-Augmented Generation (RAG) system using a vector database. The system will clean the dataset, chunk text documents, create embeddings, and store them in a vector database. The vector database embeddings will be used by the LLM to enhance its response and provide recipes that align with user preferences. 
 
 **Data** <br>
 We utilized a dataset containing 522,517 recipes from 312 different categories, sourced from the [Food.com - Recipes dataset](https://www.kaggle.com/datasets/irkaal/foodcom-recipes-and-reviews) on Kaggle. This dataset includes details such as cooking times, servings, ingredients, nutritional information, and step-by-step instructions for each recipe. The raw dataset was stored in a Google Cloud Platform (GCP) private bucket.
