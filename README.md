@@ -1,10 +1,12 @@
-## AC215 PrepPal - Milestone 2
+## AC215 PrepPal - Milestone 3
 
-#### Project Milestone 2 Organization
+#### Project Milestone 3 Organization
 
 ```
 ├── README.md
 ├── data # DO NOT UPLOAD DATA TO GITHUB, only .gitkeep to keep the directory or a really small sample
+├── midterm_presentation
+│   └── PrepPalMidterm.pdf
 ├── assets
 │   ├── PrepPal.png
 │   └── VM.png
@@ -62,7 +64,7 @@
     └── └── └── README.md
 ```
 
-# AC215 - Milestone2 - PrepPal
+# AC215 - Milestone3 - PrepPal
 
 **Team Members:** <br>
 Ioana-Andreea Cristescu, Jonas Raedler, Rosetta Hu, Alice Cheng
@@ -72,6 +74,10 @@ PrepPal
 
 **Project:** <br>
 In this project, we aim to develop an AI-powered meal-planning application that streamlines recipe discovery and ingredient management. Powered by a Retrieval-Augmented Generation (RAG) model, the app suggests personalized recipes from a database of 300,000 meals, using available pantry ingredients and user preferences. Users can easily manage their pantry and saved recipes, with the app dynamically adjusting recommendations based on updates. A fine-tuned model enhances the user experience by prioritizing recipes that align with personal tastes and pantry stock, helping reduce food waste and simplify meal preparation.
+
+### Milestone3
+
+In this milestone, we present our PrePal application in the form of an investor pitch. The presentation for the midterm can be found in the midterm_presentation folder.
 
 ### Milestone2
 
