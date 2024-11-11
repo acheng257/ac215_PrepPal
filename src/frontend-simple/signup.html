@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up Form</title>
+  <link rel="stylesheet" href="signup.css" />
+</head>
+<body>
+  <header class="header">
+    <h1 class="title">PrepPal</h1>
+  </header>
+  <div class="container">
+    <h2 class="title">Sign Up</h2>
+    <form class="form" onsubmit="handleSubmit(event)">
+      <div>
+        <input
+          type="email"
+          placeholder="Email"
+          class="input-field"
+          id="email"
+          required
+        />
+      </div>
+      <div>
+        <input
+          type="password"
+          placeholder="Password"
+          class="input-field"
+          id="password"
+          required
+        />
+      </div>
+      <div>
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          class="input-field"
+          id="confirmPassword"
+          required
+        />
+      </div>
+      <button type="submit" class="submit-button">Sign Up</button>
+    </form>
+    <p class="footer-text">
+      Already have an account?
+      <a href="login.html" class="login-link">Login</a>
+    </p>
+  </div>
+
+  <script>
+    // JavaScript -- TODO: need to move to JS file
+    function handleSubmit(event) {
+      event.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      
+      if (password !== confirmPassword) {
+        alert("Passwords don't match!");
+        return;
+      }
+      
+      // Handle signup logic here; need to add to database and update React state to know which user is logged in
+      alert("Form submitted successfully!");
+      window.location.assign("index.html");
+    }
+  </script>
+</body>
+</html>

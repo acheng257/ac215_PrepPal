@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PrepPal</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script src="https://unpkg.com/react/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone/babel.min.js"></script>
+
+    <script type="text/babel">
+      const { useState } = React;
+
+      function Pantry() {
+        const [ingredients, setIngredients] = useState([]);
+        const [newIngredients, setNewIngredients] = useState("");
+
+        const handleQuantityChange = (index, delta) => {
+          setIngredients((prev) => {
+            const updatedIngredients = prev.map((ing, i) => 
+              i === index ? { ...ing, quantity: ing.quantity + delta } : ing
+            );
+
+            // Remove the ingredient card if the quantity is 0 or less
+            return updatedIngredients.filter(ing => ing.quantity > 0);
+          });
+        };
+
+        const handleSubmit = () => {
+          const parsed = newIngredients.split(",").map((item) => {
+            const [name, quantity] = item.trim().split(" ");
+            return { name, quantity: parseInt(quantity) || 0 };
+          });
+          setIngredients((prev) => [...prev, ...parsed]);
+          setNewIngredients("");
+        };
+
+        return (
+          <div className="container">
+            <header class="header">
+                <h1 class="title">PrepPal</h1>
+                <div class="user-info">
+                    <span>Welcome, John Doe</span>
+                    <div class="avatar">👤</div>
+                </div>
+            </header>
+
+            <nav class="nav">
+                <ul>
+                    <li><a href="pantry.html">My Pantry</a></li>
+                    <li>Recipes</li>
+                </ul>
+            </nav>
+
+            <main className="main">
+              <h2 className="main-heading">Your Pantry</h2>
+
+              <div className="grid">
+                <div className="ingredient-list">
+                  {ingredients.map((ing, index) => (
+                    <div key={index} className="ingredient-item">
+                      <span className="ingredient-name">{ing.name}</span>
+                      <div className="quantity-controls">
+                        <button
+                          onClick={() => handleQuantityChange(index, -1)}
+                          className="quantity-btn"
+                        >
+                          -
+                        </button>
+                        <span className="quantity">{ing.quantity}</span>
+                        <button
+                          onClick={() => handleQuantityChange(index, 1)}
+                          className="quantity-btn"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="ingredient-input">
+                  <textarea
+                    value={newIngredients}
+                    onChange={(e) => setNewIngredients(e.target.value)}
+                    placeholder="Enter ingredients (ex: apple 3, onion 2)"
+                    className="textarea"
+                  ></textarea>
+                  <button onClick={handleSubmit} className="submit-btn">
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </main>
+          </div>
+        );
+      }
+
+      ReactDOM.render(<Pantry />, document.getElementById("root"));
+    </script>
+  </body>
+</html>
