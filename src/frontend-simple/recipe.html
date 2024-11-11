@@ -1,107 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PrepPal</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <div id="root"></div>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PrepPal - Recipe Page</title>
+  <link rel="stylesheet" href="recipe.css">
+</head>
+<body>
+  <header class="header">
+    <h1 class="title">PrepPal</h1>
+    <div class="user-info">
+        <span>Welcome, John Doe</span>
+        <div class="avatar">👤</div>
+    </div>
+  </header>
 
-    <script src="https://unpkg.com/react/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom/umd/react-dom.development.js" crossorigin></script>
-    <script src="https://unpkg.com/babel-standalone/babel.min.js"></script>
+  <nav class="nav">
+      <ul>
+          <li><a href="pantry.html">My Pantry</a></li>
+          <li><a href="recipe.html">Recipes</a></li>
+      </ul>
+  </nav>
 
-    <script type="text/babel">
-      const { useState } = React;
-
-      function Pantry() {
-        const [ingredients, setIngredients] = useState([]);
-        const [newIngredients, setNewIngredients] = useState("");
-
-        const handleQuantityChange = (index, delta) => {
-          setIngredients((prev) => {
-            const updatedIngredients = prev.map((ing, i) => 
-              i === index ? { ...ing, quantity: ing.quantity + delta } : ing
-            );
-
-            // Remove the ingredient card if the quantity is 0 or less
-            return updatedIngredients.filter(ing => ing.quantity > 0);
-          });
-        };
-
-        const handleSubmit = () => {
-          const parsed = newIngredients.split(",").map((item) => {
-            const [name, quantity] = item.trim().split(" ");
-            return { name, quantity: parseInt(quantity) || 0 };
-          });
-          setIngredients((prev) => [...prev, ...parsed]);
-          setNewIngredients("");
-        };
-
-        return (
-          <div className="container">
-            <header class="header">
-                <h1 class="title">PrepPal</h1>
-                <div class="user-info">
-                    <span>Welcome, John Doe</span>
-                    <div class="avatar">👤</div>
-                </div>
-            </header>
-
-            <nav class="nav">
-                <ul>
-                    <li><a href="pantry.html">My Pantry</a></li>
-                    <li>Recipes</li>
-                </ul>
-            </nav>
-
-            <main className="main">
-              <h2 className="main-heading">Your Pantry</h2>
-
-              <div className="grid">
-                <div className="ingredient-list">
-                  {ingredients.map((ing, index) => (
-                    <div key={index} className="ingredient-item">
-                      <span className="ingredient-name">{ing.name}</span>
-                      <div className="quantity-controls">
-                        <button
-                          onClick={() => handleQuantityChange(index, -1)}
-                          className="quantity-btn"
-                        >
-                          -
-                        </button>
-                        <span className="quantity">{ing.quantity}</span>
-                        <button
-                          onClick={() => handleQuantityChange(index, 1)}
-                          className="quantity-btn"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="ingredient-input">
-                  <textarea
-                    value={newIngredients}
-                    onChange={(e) => setNewIngredients(e.target.value)}
-                    placeholder="Enter ingredients (ex: apple 3, onion 2)"
-                    className="textarea"
-                  ></textarea>
-                  <button onClick={handleSubmit} className="submit-btn">
-                    Submit
-                  </button>
-                </div>
-              </div>
-            </main>
+  <main class="main-content">
+    <div class="recipe-card">
+      <div class="recipe-grid">
+        <div class="left-column">
+          <h2 class="recipe-name">Sample Recipe</h2>
+          <div class="recipe-details">
+            <div>
+              <h3 class="section-title">Serving Size</h3>
+              <p class="text">4 servings</p>
+            </div>
+            <div>
+              <h3 class="section-title">Total Time</h3>
+              <p class="text">45 minutes</p>
+            </div>
+            <div>
+              <h3 class="section-title">Ingredients</h3>
+              <ul class="ingredients-list">
+                <li>2 cups flour</li>
+                <li>1 cup sugar</li>
+                <li>3 eggs</li>
+              </ul>
+            </div>
           </div>
-        );
-      }
-
-      ReactDOM.render(<Pantry />, document.getElementById("root"));
-    </script>
-  </body>
+        </div>
+        <div class="right-column">
+          <div class="nutrition-card">
+            <h3 class="section-title">Nutrition Facts</h3>
+            <div class="nutrition-details">
+              <p class="text">Calories: 350</p>
+              <p class="text">Sugar: 15g</p>
+              <p class="text">Protein: 8g</p>
+            </div>
+          </div>
+          <div class="instructions-card">
+            <h3 class="section-title">Instructions</h3>
+            <div class="instructions-text">
+              1. Mix ingredients
+              2. Bake at 350°F
+              3. Let cool
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
 </html>

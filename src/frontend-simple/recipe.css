@@ -9,6 +9,7 @@
   
   body {
     background-color: #fff;
+    background-image: url('assets/recipe_background.png');
   }
   
   .container {
@@ -142,7 +143,6 @@
   
   .app-container {
     min-height: 100vh;
-    background-image: url('assets/preppal_background.png');
     background-size: contain;
     background-repeat: repeat;
     background-position: center;
