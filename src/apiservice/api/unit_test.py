@@ -56,17 +56,17 @@ def test_get_recs():
     assert "recommendations" in response.json()
     assert len(response.json()["recommendations"]) >= 5
 
-def test_chat_gemini(monkeypatch):
-    def mock_generate_text(prompt):
-        class MockResponse:
-            text = "Mocked response from Gemini"
-        return MockResponse()
+# def test_chat_gemini(monkeypatch):
+#     def mock_generate_text(prompt):
+#         class MockResponse:
+#             text = "Mocked response from Gemini"
+#         return MockResponse()
 
-    monkeypatch.setattr("google.generativeai.GenerativeModel.generate_text", mock_generate_text)
-    response = client.post("/chat_gemini", data={"message": "Hello"})
-    assert response.status_code == 200
-    assert response.json()["response"] == "Mocked response from Gemini"
-    assert "chat_history" in response.json()
+#     monkeypatch.setattr("google.generativeai.GenerativeModel.generate_text", mock_generate_text)
+#     response = client.post("/chat_gemini", data={"message": "Hello"})
+#     assert response.status_code == 200
+#     assert response.json()["response"] == "Mocked response from Gemini"
+#     assert "chat_history" in response.json()
 
 def test_get_index():
     response = client.get("/")

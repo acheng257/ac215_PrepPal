@@ -2,10 +2,9 @@ from fastapi import FastAPI, File, UploadFile, Form, Body, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional, Dict
 import os
-import google.generativeai as genai
-from transformers import pipeline
+# import google.generativeai as genai
+# from transformers import pipeline
 
-# Setup FastAPI app
 app = FastAPI(title="AI-Powered Chat and Recommendation API", version="v2")
 
 # Enable CORS Middleware
@@ -96,3 +95,8 @@ async def chat(message: str = Form(...)):
 @app.get("/")
 async def get_index():
     return {"message": "Welcome to Preppal"}
+
+@app.post("/test")
+async def test():
+    print("test successful")
+    return {"message": "Test successful"}
