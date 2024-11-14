@@ -8,7 +8,7 @@ import styles from './Header.module.css';
 const navItems = [
     { name: 'Home', path: '/', sectionId: '', icon: <Home fontSize="small" /> },
     { name: 'My Pantry', path: '/pantry', sectionId: '', icon: <BreakfastDining fontSize="small" /> },
-    { name: 'Recipes', path: '/recipe', sectionId: '', icon: <LocalDining fontSize="small" /> },
+    { name: 'Recipes', path: '/preppal', sectionId: '', icon: <LocalDining fontSize="small" /> },
     { name: 'Chatbot', path: '/chat', sectionId: '', icon: <SmartToy fontSize="small" /> },
     { name: 'Username', path: '/', sectionId: '', icon: <AccountCircle fontSize="small" /> }
 ];
