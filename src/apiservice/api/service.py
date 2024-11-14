@@ -21,6 +21,34 @@ file_content = None
 users = {'test@test.com': 'aaa'}
 pantry = {}
 
+# for testing
+recipes = [
+    {
+      "name": 'Pasta Primavera',
+      "cookingTime": '25 mins',
+      "ingredients": ['pasta', 'vegetables', 'olive oil'],
+      "calories": 320
+    },
+    {
+      "name": 'Grilled Salmon',
+      "cookingTime": '20 mins',
+      "ingredients": ['salmon', 'lemon', 'herbs'],
+      "calories": 420
+    },
+    {
+      "name": 'Chicken Stir-Fry',
+      "cookingTime": '15 mins',
+      "ingredients": ['chicken', 'vegetables', 'soy sauce'],
+      "calories": 500
+    },
+    {
+      "name": 'Quinoa Bowl',
+      "cookingTime": '30 mins',
+      "ingredients": ['quinoa', 'avocado', 'chickpeas'],
+      "calories": 400
+    }
+  ]
+
 # Replace with our own model
 # recommendation_model = pipeline("text-generation")
 
@@ -64,15 +92,17 @@ async def update_pantry(add: Optional[Dict[str, int]] = Body(None), subtract: Op
 @app.post("/get_recs")
 async def get_recs(filters: dict = Body(...), more_recommendations: bool = False):
 
-    recommendation_model = None
-    prompt = f"Based on the following filters: {filters}, suggest some recipes."
-    recommendations = recommendation_model(prompt, max_length=50, num_return_sequences=5)
-    recipes = [rec['generated_text'] for rec in recommendations]
+    # recommendation_model = None
+    # prompt = f"Based on the following filters: {filters}, suggest some recipes."
+    # recommendations = recommendation_model(prompt, max_length=50, num_return_sequences=5)
+    # recipes = [rec['generated_text'] for rec in recommendations]
 
-    if more_recommendations:
-        more_recs = recommendation_model(prompt + " Provide more options.", max_length=50, num_return_sequences=5)
-        recipes.extend([rec['generated_text'] for rec in more_recs])
+    # if more_recommendations:
+    #     more_recs = recommendation_model(prompt + " Provide more options.", max_length=50, num_return_sequences=5)
+    #     recipes.extend([rec['generated_text'] for rec in more_recs])
 
+    # return {"recommendations": recipes}
+    print("Success")
     return {"recommendations": recipes}
 
 # General chatbot endpoint
