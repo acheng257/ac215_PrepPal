@@ -1,0 +1,180 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;700&family=Playfair+Display:wght@400;700&display=swap');
+
+/* * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Playfair Display', serif;
+} */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  /* background-image: url('assets/pantry_bg.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed; */
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #ddd;
+  background-color: #9A7E6F;
+  width: 100%;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  background-color: #e0e0e0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.nav {
+  border-bottom: 1px solid #ddd;
+  padding: 8px 16px;
+  background-color: #54473F;
+}
+
+.nav ul {
+  display: flex;
+  gap: 16px;
+  list-style: none;
+}
+
+.nav li {
+  font-weight: 500;
+}
+
+.nav li a {
+  text-decoration: none;
+  font-weight: 500;
+  color: inherit;
+  padding: 8px;
+  transition: color 0.3s, background-color 0.3s;
+}
+
+.nav li a:hover {
+  color: #ffffff;
+  background-color: #9A7E6F;
+  border-radius: 4px;
+}
+
+.main {
+  padding: 16px;
+  flex: 1;
+}
+
+.mainHeading {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.ingredientList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.emptyMessage {
+  color: #666;
+}
+
+.ingredientItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.ingredientName {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.quantityControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quantityBtn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.quantityBtn:hover {
+  background-color: #f0f0f0;
+}
+
+.quantity {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.ingredientInput {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.textarea {
+  width: 100%;
+  height: 80px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.submitBtn {
+  align-self: flex-start;
+  padding: 8px 16px;
+  background-color: #54473F;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submitBtn:hover {
+  background-color: #3b302b;
+}
