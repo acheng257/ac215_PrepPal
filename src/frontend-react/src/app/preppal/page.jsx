@@ -14,6 +14,48 @@ const PrepPal = () => {
   });
   const [recommendations, setRecommendations] = useState([]);
   const router = useRouter();
+  const [chatMessage, setChatMessage] = useState('');
+  const [chatHistory, setChatHistory] = useState([]);
+
+  const handleSendChat = async () => {
+    if (!chatMessage) return; // Don't send if there's no message
+  
+    const apiUrl = 'http://localhost:9000/chat_gemini';
+  
+    setChatHistory((prev) => [
+      ...prev,
+      { sender: 'User', text: chatMessage }
+    ]);
+  
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: chatMessage }),
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        setChatHistory((prev) => [
+          ...prev,
+          { sender: 'Bot', text: data.response }
+        ]);
+      } else {
+        const errorData = await response.json();
+        alert(errorData.detail || 'Failed to fetch response');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred. Please try again.');
+    }
+  
+    // Clear the chat message input after sending
+    setChatMessage('');
+  };
+  
+  
 
   const handleSubmit = async () => {
     const apiUrl = 'http://localhost:9000/get_recs';
@@ -141,11 +183,29 @@ const PrepPal = () => {
           </div>
         </div>
 
-        <div className={styles.chatbotSection}>
+        {/* <div className={styles.chatbotSection}>
           <div className={styles.chatHistory}>Chat history will appear here...</div>
           <div className={styles.chatInput}>
             <input type="text" placeholder="Ask about recipes or cooking tips..." />
-            <button>Send</button>
+            <button onClick={handleSendChat}>Send</button>
+          </div>
+        </div> */}
+        <div className={styles.chatbotSection}>
+          <div className={styles.chatHistory}>
+            {chatHistory.map((message, index) => (
+              <div key={index} className={styles.chatMessage}>
+                <strong>{message.sender}:</strong> {message.text}
+              </div>
+            ))}
+          </div>
+          <div className={styles.chatInput}>
+            <input
+              type="text"
+              placeholder="Ask about recipes or cooking tips..."
+              value={chatMessage}
+              onChange={(e) => setChatMessage(e.target.value)}
+            />
+            <button onClick={handleSendChat}>Send</button>
           </div>
         </div>
       </main>
