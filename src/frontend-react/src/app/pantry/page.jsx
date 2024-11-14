@@ -7,12 +7,41 @@ const Pantry = () => {
   const [ingredients, setIngredients] = useState([]);
   const [newIngredients, setNewIngredients] = useState('');
 
+  const updatePantry = async (add, subtract) => {
+    const apiUrl = 'http://localhost:9000';
+    try {
+      const response = await fetch(`${apiUrl}/update_pantry`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ add, subtract }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(errorData.detail);
+      } else {
+        const data = await response.json();
+        console.log(data.message);
+      }
+    } catch (error) {
+      console.error('Error updating pantry:', error);
+    }
+  };
+
   const handleQuantityChange = (index, delta) => {
     setIngredients((prev) => {
       const updatedIngredients = prev.map((ing, i) =>
         i === index ? { ...ing, quantity: ing.quantity + delta } : ing
-      );
-      return updatedIngredients.filter((ing) => ing.quantity > 0);
+      ).filter((ing) => ing.quantity > 0);
+
+      const ingredient = prev[index];
+      const action = delta > 0 ? { [ingredient.name]: delta } : { [ingredient.name]: -delta };
+
+      updatePantry(delta > 0 ? action : null, delta < 0 ? action : null);
+
+      return updatedIngredients;
     });
   };
 
@@ -21,18 +50,26 @@ const Pantry = () => {
       const [name, quantity] = item.trim().split(' ');
       return { name, quantity: parseInt(quantity) || 0 };
     });
+
     setIngredients((prev) => [...prev, ...parsed]);
     setNewIngredients('');
+
+    const addItems = parsed.reduce((acc, { name, quantity }) => {
+      if (quantity > 0) acc[name] = quantity;
+      return acc;
+    }, {});
+
+    updatePantry(addItems, null);
   };
 
   return (
     <div className={styles.container}>
       {/* Hero Section */}
       <section className={styles.hero}>
-          <div className={styles.heroContent}>
-              <h1>Your Pantry</h1>
-              <p>Welcome to your pantry! Upload new ingredients or edit existing ones below.</p>
-          </div>
+        <div className={styles.heroContent}>
+          <h1>Your Pantry</h1>
+          <p>Welcome to your pantry! Upload new ingredients or edit existing ones below.</p>
+        </div>
       </section>
 
       <main className={styles.main}>

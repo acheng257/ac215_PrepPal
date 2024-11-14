@@ -18,7 +18,7 @@ app.add_middleware(
 
 chat_history = []
 file_content = None
-users = {}
+users = {'test@test.com': 'aaa'}
 pantry = {}
 
 # Replace with our own model

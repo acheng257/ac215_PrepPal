@@ -4,11 +4,13 @@ import React, { useState } from 'react';
 import styles from './styles.module.css';
 import Link from 'next/link'
 import Header from '@/components/layout/Header'
+import { useRouter } from 'next/navigation';
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const router = useRouter();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -20,24 +22,22 @@ const SignUp = () => {
     }
 
     try {
-      const response = await fetch(`${apiUrl}/test`, {
+      const formData = new FormData();
+      formData.append('username', email);
+      formData.append('password', password);
+
+      const response = await fetch(`${apiUrl}/register`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          username: email,
-          password: password,
-        }),
+        body: formData,
       });
 
       if (response.ok) {
         const data = await response.json();
         alert(data.message);
-        window.location.assign('index.html');
+        router.push('/preppal');
       } else {
         const errorData = await response.json();
-        alert(errorData.detail);
+        alert(errorData.detail || 'Registration failed');
       }
     } catch (error) {
       console.error('Error:', error);
