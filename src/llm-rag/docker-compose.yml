@@ -13,14 +13,8 @@ services:
             GOOGLE_APPLICATION_CREDENTIALS: $GOOGLE_APPLICATION_CREDENTIALS
             FINETUNING_GOOGLE_APPLICATION_CREDENTIALS: $FINETUNING_GOOGLE_APPLICATION_CREDENTIALS
             GCP_PROJECT: $GCP_PROJECT
-        # deploy:
-        #     resources:
-        #         reservations:
-        #             devices:
-        #                 - driver: nvidia
-        #                   count: all
-        #                   capabilities: [gpu]
-        # runtime: nvidia  # Use NVIDIA runtime for GPU access
+            CHROMADB_HOST: llm-rag-chromadb
+            CHROMADB_PORT: 8000
         depends_on:
             - chromadb
     chromadb:
