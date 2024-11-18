@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
-from api.routers import pantry, llm_rag_chat, auth
+from api.routers import pantry, auth
 
 # Setup FastAPI app
 app = FastAPI(title="API Server", description="API Server", version="v1")

@@ -19,6 +19,9 @@ pillow = "*"
 chromadb = "*"
 tensorflow = "*"
 firebase-admin = "*"
+numpy = "*"
+sentence_transformers = "*"
+tf_keras = "*"
 
 [requires]
 python_version = "3.12"

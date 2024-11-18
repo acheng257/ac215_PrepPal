@@ -26,7 +26,7 @@ const SignUp = () => {
       formData.append('username', email);
       formData.append('password', password);
 
-      const response = await fetch(`${apiUrl}/register`, {
+      const response = await fetch(`${apiUrl}/signup`, {
         method: 'POST',
         body: formData,
       });
