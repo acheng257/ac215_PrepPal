@@ -8,8 +8,10 @@ USER_DB_FILE = "user_db.json"
 # Initialize GCS client
 storage_client = storage.Client()
 
+
 def get_bucket():
     return storage_client.bucket(GCS_BUCKET_NAME)
+
 
 def load_user_db():
     """
@@ -21,6 +23,7 @@ def load_user_db():
         return {}
     user_data = blob.download_as_text()
     return json.loads(user_data)
+
 
 def save_user_db(user_db):
     """

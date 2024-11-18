@@ -3,6 +3,7 @@ from api.utils.gcs_utils import load_user_db, save_user_db
 
 router = APIRouter()
 
+
 @router.post("/login")
 async def login(username: str = Form(...), password: str = Form(...)):
     """
@@ -15,6 +16,7 @@ async def login(username: str = Form(...), password: str = Form(...)):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     return {"user_id": user["user_id"]}
+
 
 @router.post("/signup")
 async def signup(username: str = Form(...), password: str = Form(...)):

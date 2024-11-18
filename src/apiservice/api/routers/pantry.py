@@ -13,11 +13,13 @@ GCS_PANTRY_FOLDER = os.getenv("GCS_PANTRY_FOLDER", "pantry")
 # Initialize GCS client
 storage_client = storage.Client()
 
+
 def get_bucket():
     """
     Fetches the GCS bucket instance.
     """
     return storage_client.bucket(GCS_BUCKET_NAME)
+
 
 @router.get("/{user_id}")
 async def get_user_pantry(user_id: str):
@@ -38,6 +40,7 @@ async def get_user_pantry(user_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
+
 @router.put("/{user_id}")
 async def update_user_pantry(user_id: str, pantry_data: dict):
     """
@@ -49,15 +52,13 @@ async def update_user_pantry(user_id: str, pantry_data: dict):
         blob = bucket.blob(file_path)
 
         # Upload pantry data as JSON
-        blob.upload_from_string(
-            data=json.dumps(pantry_data),
-            content_type="application/json"
-        )
+        blob.upload_from_string(data=json.dumps(pantry_data), content_type="application/json")
 
         return {"message": "Pantry updated successfully", "user_id": user_id}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
 
 @router.delete("/{user_id}")
 async def delete_user_pantry(user_id: str):
