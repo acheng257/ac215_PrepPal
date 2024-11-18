@@ -23,13 +23,13 @@ export default function WhatIs() {
                     <p>
                         Although many recipe recommendation systems exist, we take a unique angle on it by prioritizing food waste reduction.
                         PrepPal prioritizes recommending recipes that use up more of the ingredients that a user already has, ensuring that
-                        ingredients are used up before going bad and also offering more convenience to the user as they do not have to 
+                        ingredients are used up before going bad and also offering more convenience to the user as they do not have to
                         go out to buy as many ingredients that they might only use once.
                     </p>
 
                     <p>
                         Our virtual pantry management system makes it easy for users to keep track of the ingredients in their pantry and also
-                        helps inform our recommendation system. Simply enter the ingredients and quantities on our website when you get new 
+                        helps inform our recommendation system. Simply enter the ingredients and quantities on our website when you get new
                         ingredients, and our system will automatically remove the ingredients that are used up in recipes you cook.
                     </p>
 

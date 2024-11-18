@@ -7,9 +7,10 @@ from model_rag import chat
 # Generate the inputs arguments parser
 parser = argparse.ArgumentParser(description="Command description.")
 
+
 def main(args=None):
     print("CLI Arguments:", args)
-	
+
     if args.clean_dataset:
         clean_dataset(download=args.download, upload=args.upload)
 
@@ -53,24 +54,20 @@ if __name__ == "__main__":
         action="store_true",
         help="Load embeddings to vector db",
     )
-	
+
     parser.add_argument(
         "--download",
-        action="store_true",            
+        action="store_true",
         help="Enable or disable download",
     )
 
     parser.add_argument(
         "--upload",
-        action="store_true",            
+        action="store_true",
         help="Enable or disable upload",
     )
 
-    parser.add_argument(
-        "--chunk_type",         
-        default="entire_recipe",
-        help="entire_recipe | sliding_window"
-    )
+    parser.add_argument("--chunk_type", default="entire_recipe", help="entire_recipe | sliding_window")
 
     parser.add_argument(
         "--chat",

@@ -1,5 +1,6 @@
 from google.cloud import storage
 
+
 def check_gcs_connection():
     try:
         client = storage.Client()
@@ -12,6 +13,7 @@ def check_gcs_connection():
         print(f"Failed to connect to GCS: {e}")
         return None
 
+
 def list_gcs_buckets(client):
     try:
         buckets = client.list_buckets()
@@ -21,6 +23,7 @@ def list_gcs_buckets(client):
             print(bucket.name)
     except Exception as e:
         print(f"Failed to list GCS buckets: {e}")
+
 
 if __name__ == "__main__":
     client = check_gcs_connection()

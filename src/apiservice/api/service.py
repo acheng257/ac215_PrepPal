@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
-from api.routers import login, pantry, llm_rag_chat
+from api.routers import login
 
 # Setup FastAPI app
 app = FastAPI(title="API Server", description="API Server", version="v1")
@@ -19,6 +19,7 @@ app.add_middleware(
 @app.get("/")
 async def get_index():
     return {"message": "Welcome to Preppal"}
+
 
 # Additional routers here
 app.include_router(login.router, prefix="/login")

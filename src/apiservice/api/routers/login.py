@@ -1,12 +1,13 @@
-from fastapi import FastAPI, Form, HTTPException, APIRouter
+from fastapi import Form, HTTPException, APIRouter
 from firebase_admin import credentials, auth, initialize_app
 import os
 
 # Initialize Firebase Admin SDK
-cred = credentials.Certificate(os.environ['FIREBASE_AUTH'])
+cred = credentials.Certificate(os.environ["FIREBASE_AUTH"])
 initialize_app(cred)
 
 router = APIRouter()
+
 
 # Login Route
 @router.post("/")
@@ -20,9 +21,11 @@ async def login(username: str = Form(...), password: str = Form(...)):
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
+
 @router.get("/hi")
-async def login():
-    return {"hi":"hi"}
+async def login_hi():
+    return {"hi": "hi"}
+
 
 # Sign-Up Route
 @router.post("/signup")
@@ -44,4 +47,3 @@ async def reset_password(email: str = Form(...)):
         return {"message": "Password reset email sent", "link": link}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-

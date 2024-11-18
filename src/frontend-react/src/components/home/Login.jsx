@@ -13,7 +13,7 @@ const Login = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    
+
     // TODO: Add login logic, e.g., API request to validate user credentials
     alert("Form submitted successfully!");
     window.location.assign('index.html');
@@ -22,7 +22,7 @@ const Login = () => {
   return (
     <div className={styles.appContainer}>
       <Header />
-      
+
       <div className={styles.container}>
         <h2 className={styles.title}>Log In</h2>
         <form className={styles.form} onSubmit={handleSubmit}>
