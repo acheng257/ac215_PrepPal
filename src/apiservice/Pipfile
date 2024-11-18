@@ -16,7 +16,7 @@ uvicorn = "*"
 fastapi = "*"
 python-multipart = "*"
 pillow = "*"
-chromadb = "==0.5.7"
+chromadb = "*"
 tensorflow = "*"
 firebase-admin = "*"
 

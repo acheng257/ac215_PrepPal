@@ -1,7 +1,7 @@
 # Use the official Debian-hosted Python image
 FROM python:3.9-slim-buster
 
-ARG DEBIAN_PACKAGES="build-essential git screen vim"
+ARG DEBIAN_PACKAGES="build-essential git screen vim wget"
 
 # Prevent apt from showing prompts
 ENV DEBIAN_FRONTEND=noninteractive
@@ -23,6 +23,8 @@ RUN set -ex; \
     apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends $DEBIAN_PACKAGES && \
+        # sqlite3 \
+        # libsqlite3-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     pip install --no-cache-dir --upgrade pip && \

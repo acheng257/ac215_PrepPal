@@ -13,7 +13,7 @@ export PERSISTENT_DIR=$(pwd)/../../../persistent-folder/
 export GCP_PROJECT="preppal-438123" 
 export GOOGLE_APPLICATION_CREDENTIALS="/secrets/data-service-account.json" 
 export MODEL_ENDPOINT_GOOGLE_APPLICATION_CREDENTIALS="/secrets/preppal-llm-service-account.json"
-export GCS_BUCKET_NAME=""
+export GCS_BUCKET_NAME="preppal-data"
 export CHROMADB_HOST="llm-rag-chromadb"
 export CHROMADB_PORT=8000
 

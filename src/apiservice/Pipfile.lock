@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "343042c10a5f0bee2129272ded48416e7abf339bfccf16fb8b1bbe477db048bd"
+            "sha256": "ba89c1b98913156540ee716911970dc210ff62f4a124518af7ca53dc0c401611"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -348,12 +348,12 @@
         },
         "chromadb": {
             "hashes": [
-                "sha256:2358f92804cd198b125de73076ec48f9f55c729df119919a76a6716ad0e465f6",
-                "sha256:3432865025ef3ceeaee0a59b265a784d8b5978cb7c41593c74ddd2427c776c94"
+                "sha256:9dd3827b5e04b4ff0a5ea0df28a78bac88a09f45be37fcd7fe20f879b57c43cf",
+                "sha256:cfbb3e5aeeb1dd532b47d80ed9185e8a9886c09af41c8e6123edf94395d76aec"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==0.5.7"
+            "version": "==0.5.18"
         },
         "click": {
             "hashes": [
@@ -499,7 +499,7 @@
                 "sha256:2ceb087315e6af43f256704b871d99326b1f12a9d6ce99beaedec99ba26a0ace",
                 "sha256:c20100d4c4c41070cf365f1d8ddf5365915291b5eb11b83829fbd1c999b5122f"
             ],
-            "markers": "platform_python_implementation != 'PyPy'",
+            "markers": "python_version >= '3.7'",
             "version": "==2.23.0"
         },
         "google-api-python-client": {
@@ -1248,7 +1248,7 @@
                 "sha256:f870204a840a60da0b12273ef34f7051e98c3b5961b61b0c2c1be6dfd64fbcd3",
                 "sha256:ffa75af20b44f8dba823498024771d5ac50620e6915abac414251bd971b4529f"
             ],
-            "markers": "python_version >= '3.9'",
+            "markers": "python_version <= '3.11'",
             "version": "==1.26.4"
         },
         "oauthlib": {
