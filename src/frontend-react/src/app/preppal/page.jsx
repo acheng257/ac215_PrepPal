@@ -19,14 +19,14 @@ const PrepPal = () => {
 
   const handleSendChat = async () => {
     if (!chatMessage) return; // Don't send if there's no message
-  
+
     const apiUrl = 'http://localhost:9000/chat_gemini';
-  
+
     setChatHistory((prev) => [
       ...prev,
       { sender: 'User', text: chatMessage }
     ]);
-  
+
     try {
       const response = await fetch(apiUrl, {
         method: 'POST',
@@ -35,7 +35,7 @@ const PrepPal = () => {
         },
         body: JSON.stringify({ message: chatMessage }),
       });
-  
+
       if (response.ok) {
         const data = await response.json();
         setChatHistory((prev) => [
@@ -50,12 +50,12 @@ const PrepPal = () => {
       console.error('Error:', error);
       alert('An error occurred. Please try again.');
     }
-  
+
     // Clear the chat message input after sending
     setChatMessage('');
   };
-  
-  
+
+
 
   const handleSubmit = async () => {
     const apiUrl = 'http://localhost:9000/get_recs';
@@ -84,7 +84,7 @@ const PrepPal = () => {
   };
 
   const handleRecipeClick = (recipe) => {
-  
+
     // Manually construct the URL with query parameters
     const queryParams = new URLSearchParams({
       name: recipe.name,
@@ -92,7 +92,7 @@ const PrepPal = () => {
       calories: recipe.calories,
       ingredients: JSON.stringify(recipe.ingredients), // Stringify array for URL compatibility
     });
-  
+
     // Use router.push with the constructed URL
     router.push(`/recipe?${queryParams.toString()}`);
   };
@@ -158,9 +158,9 @@ const PrepPal = () => {
           <div className={styles.recipeGrid}>
             {recommendations.length > 0 ? (
               recommendations.map((recipe, index) => (
-                <div 
-                  key={index} 
-                  className={styles.recipeCard} 
+                <div
+                  key={index}
+                  className={styles.recipeCard}
                   onClick={() => handleRecipeClick(recipe)}
                   style={{ cursor: 'pointer' }}
                 >

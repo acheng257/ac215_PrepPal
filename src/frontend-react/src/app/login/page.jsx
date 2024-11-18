@@ -13,7 +13,7 @@ const Login = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
+
     const formData = new FormData();
     formData.append('username', email);
     formData.append('password', password);
@@ -41,7 +41,7 @@ const Login = () => {
   return (
     <div className={styles.appContainer}>
       <Header />
-      
+
       <div className={styles.container}>
         <h2 className={styles.title}>Log In</h2>
         <form className={styles.form} onSubmit={handleSubmit}>
@@ -77,5 +77,3 @@ const Login = () => {
 };
 
 export default Login;
-
-

@@ -20,6 +20,7 @@ app.add_middleware(
 async def get_index():
     return {"message": "Welcome to Preppal"}
 
+
 # Additional routers here
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(pantry.router, prefix="/pantry")

@@ -1,6 +1,6 @@
 ## Building a RAG system with Vector DB and LLM
 
-This is the part of the application where we build a Retrieval-Augmented Generation (RAG) system using a vector database. The system will clean the dataset, chunk text documents, create embeddings, and store them in a vector database. The vector database embeddings will be used by the LLM to enhance its response and provide recipes that align with user preferences. 
+This is the part of the application where we build a Retrieval-Augmented Generation (RAG) system using a vector database. The system will clean the dataset, chunk text documents, create embeddings, and store them in a vector database. The vector database embeddings will be used by the LLM to enhance its response and provide recipes that align with user preferences.
 
 **Data** <br>
 We utilized a dataset containing 522,517 recipes from 312 different categories, sourced from the [Food.com - Recipes dataset](https://www.kaggle.com/datasets/irkaal/foodcom-recipes-and-reviews) on Kaggle. This dataset includes details such as cooking times, servings, ingredients, nutritional information, and step-by-step instructions for each recipe. The raw dataset was stored in a Google Cloud Platform (GCP) private bucket.
@@ -39,10 +39,10 @@ We utilized a dataset containing 522,517 recipes from 312 different categories, 
 ### Prerequisites
    * Download the recipes dataset from [Kaggle](https://www.kaggle.com/datasets/irkaal/foodcom-recipes-and-reviews)
    * Create the folder `/rag_data/knowledge_base` inside the GCP bucket you previosuly created
-   * Store the dataset in the `/rag_data/knowledge_base` folder 
+   * Store the dataset in the `/rag_data/knowledge_base` folder
 
 ### Running the containers
-   * Make sure you are inside the llm-rag folder 
+   * Make sure you are inside the llm-rag folder
    * Run `sh docker-shell.sh`
 
 ### Clean Dataset
@@ -102,4 +102,3 @@ We utilized a dataset containing 522,517 recipes from 312 different categories, 
    * Retrieves relevant context from the vector database
    * Sends the query and context to the LLM
    * Displays the LLM's response
-

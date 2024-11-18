@@ -6,8 +6,8 @@ set -e
 # Set vairables
 export BASE_DIR="$(pwd)"
 export SECRETS_DIR="$(pwd)/../../../secrets/" # CHANGE
-export GCP_PROJECT="preppal-438123" 
-export GOOGLE_APPLICATION_CREDENTIALS="/secrets/data-service-account.json" 
+export GCP_PROJECT="preppal-438123"
+export GOOGLE_APPLICATION_CREDENTIALS="/secrets/data-service-account.json"
 export FINETUNING_GOOGLE_APPLICATION_CREDENTIALS="/secrets/preppal-llm-service-account.json"
 export IMAGE_NAME="llm-rag"
 

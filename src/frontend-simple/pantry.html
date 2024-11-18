@@ -22,7 +22,7 @@
 
         const handleQuantityChange = (index, delta) => {
           setIngredients((prev) => {
-            const updatedIngredients = prev.map((ing, i) => 
+            const updatedIngredients = prev.map((ing, i) =>
               i === index ? { ...ing, quantity: ing.quantity + delta } : ing
             );
 

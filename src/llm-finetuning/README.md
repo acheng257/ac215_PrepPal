@@ -1,14 +1,14 @@
 # LLM Fine-tuning
 <br>
 
-This part of the application is where our LLM of choice (`gemini-1.5-flash-002`) is fine-tuned. This includes 
+This part of the application is where our LLM of choice (`gemini-1.5-flash-002`) is fine-tuned. This includes
 - the generation of a dataset for fine-tuning
 - fine-tuning the Gemini model
 
-## Data 
+## Data
 Our goal for the fine-tuned LLM was for it to be able to rank recipes based on ingredients available in some pantry. Thus, rather than optimizing it to be particularly verbose and great in a conversation, we wanted it to be able to take natural language (i.e. a collection of recipes) as input, and return a clearly structured and uniformly formatted output, in which the recipes are ranked based on the fit with the ingredients available. This will then allow us to use this output for further (and easier, due to the uniform format) calculation.
 
-This presented us with several challenges: 
+This presented us with several challenges:
 - we needed a large collection of recipes
 - we needed a reasonable pantry (just random ingredients would not have been particularly useful, as we wanted to fine-tune the LLM to pick the best recipes based on ingredient fit. If a pantry only contains very specific ingredients, there often will be no or only very little fit.)
 - we needed a ranking algorithm given some recipes so that we could fine-tune the LLM for our specific task
@@ -153,7 +153,7 @@ query = "Here are the ingredients you have available in your pantry: salt, sugar
 The response:
 
 ```
-Fine-tuned LLM Response: 
+Fine-tuned LLM Response:
 
 Rank 1: Chicken Casserole. Rank 1 has been chosen for this recipe because you have 4 out of 11 ingredients in your pantry! Here are the ingredients you still need: chicken, celery, cream of chicken soup, slivered almonds, eggs, mayonnaise, potato chips. Rank 2: Grown-Up Carrot Cake. Rank 2 has been chosen for this recipe because you have 3 out of 15 ingredients in your pantry! Here are the ingredients you still need: cinnamon, bicarbonate of soda, brown sugar, eggs, sunflower oil, orange, lemon, carrots, walnuts, unsalted butter, icing sugar, cream cheese. Rank 3: Orange Congealed Salad. Rank 3 has been chosen for this recipe because you have 1 out of 5 ingredients in your pantry! Here are the ingredients you still need: orange jello, mayonnaise, milk, nuts. Rank 4: Flank Steak Teriyaki. Rank 4 has been chosen for this recipe because you have 0 out of 6 ingredients in your pantry! Here are the ingredients you still need: soy sauce, onion flakes, vinegar, powdered ginger, n, garlic. Rank 5: Artichoke Dip. Rank 5 has been chosen for this recipe because you have 0 out of 3 ingredients in your pantry! Here are the ingredients you still need: artichokes, mayonnaise, parmesan cheese.
 ```
@@ -167,6 +167,3 @@ Data distribution:
 
 <img src="../../reports/fine_tuning_images/data_distribution_1.png"  width="800">
 <img src="../../reports/fine_tuning_images/data_distribution_2.png"  width="800">
-
-
-

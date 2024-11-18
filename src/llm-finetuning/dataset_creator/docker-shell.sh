@@ -6,8 +6,8 @@ set -e
 # Set variables
 export BASE_DIR="$(pwd)"
 export SECRETS_DIR="$(pwd)/../../../../secrets/" # CHANGE
-export GCP_PROJECT="preppal-438123" 
-export GOOGLE_APPLICATION_CREDENTIALS="/secrets/data-service-account.json" 
+export GCP_PROJECT="preppal-438123"
+export GOOGLE_APPLICATION_CREDENTIALS="/secrets/data-service-account.json"
 export GCS_BUCKET_NAME="preppal-data"
 export IMAGE_NAME="llm-dataset-creator"
 

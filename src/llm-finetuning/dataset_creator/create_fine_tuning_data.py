@@ -24,7 +24,7 @@ def get_cleaned_ingredient(ingredient):
     lower_ingr = ingredient.lower()
     result = re.search(r"\W?\w?\s", lower_ingr)
     if result and result.start() == 0:
-        lower_ingr = lower_ingr[result.end():]
+        lower_ingr = lower_ingr[result.end() :]
 
     while lower_ingr and lower_ingr[0] in bad_starts:
         lower_ingr = lower_ingr[1:]
@@ -39,7 +39,6 @@ def get_ingr_freq_dict(recipe_data):
     # builds an ingredient frequency dictionary
     ingr_dict = {}
     for recipe in all_recipes:
-
         # gives a list of ingredients:str
         ingredients = recipe[2:-2].strip("[]").split('", "')
 
@@ -54,14 +53,13 @@ def get_ingr_freq_dict(recipe_data):
 
     return ingr_dict
 
-def get_random_weighted_pantry(items_with_frequencies, sample_size=35):
 
+def get_random_weighted_pantry(items_with_frequencies, sample_size=35):
     # This is custom-defined
     available_ingredients = ["salt", "sugar", "water", "olive oil", "pepper"]
     items, frequencies = zip(*items_with_frequencies)
 
     while len(available_ingredients) < sample_size:
-
         # sample a random ingredient and add to pantry if it's not in there yet
         sampled_item = random.choices(items, weights=frequencies, k=1)[0]
         if sampled_item not in available_ingredients:
@@ -90,7 +88,7 @@ def format_recipe(recipe):
     for i, direction in enumerate(directions):
         formatted_output += f"Step {i + 1}. {direction} "
 
-    formatted_output += f"END OF RECIPE.    "
+    formatted_output += "END OF RECIPE.    "
     return formatted_output, base_ingredients
 
 
@@ -142,16 +140,12 @@ def sort_recipes(formatted_output, pantry, sorting="balanced"):
         # Combine relative score and penalty (you can tweak the weights)
         return relative_score - 1 * penalty
 
-
     if sorting == "relative":
-        key = lambda x: len(get_intersection(pantry, x[1])) / len(x[1])
-        sorted_recipes = sorted(formatted_output, key=key, reverse=True)
+        sorted_recipes = sorted(formatted_output, key=lambda x: len(get_intersection(pantry, x[1])) / len(x[1]), reverse=True)
     elif sorting == "absolute":
-        key = lambda x: len(x[1]) - len(get_intersection(pantry, x[1]))
-        sorted_recipes = sorted(formatted_output, key=key)
+        sorted_recipes = sorted(formatted_output, key=lambda x: len(x[1]) - len(get_intersection(pantry, x[1])))
     elif sorting == "balanced":
-        key = lambda x: weighted_score(x[1])
-        sorted_recipes = sorted(formatted_output, key=key, reverse=True)
+        sorted_recipes = sorted(formatted_output, key=lambda x: weighted_score(x[1]), reverse=True)
     else:
         sorted_recipes = None
 
@@ -165,7 +159,7 @@ def get_question_as_string(list_of_recipe_tuples, pantry):
     string_output = string_output[:-2] + ". "
 
     string_output += "Here are the suggested recipes: "
-    for (whole_recipe, _) in list_of_recipe_tuples:
+    for whole_recipe, _ in list_of_recipe_tuples:
         string_output += f"{whole_recipe}"
 
     string_output += ". Based on the items in my pantry, how would you rank these recipes? I want to use as many ingredients from my pantry as possible."
@@ -181,7 +175,6 @@ def get_answer_as_string(list_of_recipe_tuples, pantry, sorting="balanced"):
     string_output = ""
 
     for rank, (whole_recipe, recipe_ingredients) in enumerate(list_of_recipe_tuples):
-        
         recipe_title = whole_recipe.split(". INGREDIENTS AND THEIR QUANTITIES")[0].split("TITLE OF RECIPE: ")[-1]
 
         intersection = get_intersection(pantry, recipe_ingredients)
@@ -206,7 +199,6 @@ def get_answer_as_string(list_of_recipe_tuples, pantry, sorting="balanced"):
 
 
 def generate_answer_question_pairs(recipe_data, ingr_dict):
-
     RECIPES_TO_RANK = 5
 
     # get a list of ingredient-frequency tuples
@@ -231,7 +223,7 @@ def generate():
     fs = gcsfs.GCSFileSystem(project=PROJECT_NAME)
     with fs.open(DATASET) as f:
         df = pd.read_csv(f)
-    
+
     ingr_freq_dict = get_ingr_freq_dict(df)
 
     # Make dataset folders
@@ -265,7 +257,6 @@ def prepare():
     output_pairs = []
     errors = []
     for i, output_file in enumerate(output_files):
-        
         if i % 1000 == 0:
             print("Processing file:", output_file)
 
@@ -283,7 +274,7 @@ def prepare():
 
     # Save the dataset
     output_pairs_df = pd.DataFrame(output_pairs)
-    output_pairs_df.drop_duplicates(subset=['question'], inplace=True)
+    output_pairs_df.drop_duplicates(subset=["question"], inplace=True)
     output_pairs_df = output_pairs_df.dropna()
     print("Shape:", output_pairs_df.shape)
     print(output_pairs_df.head())
@@ -291,13 +282,17 @@ def prepare():
     output_pairs_df.to_csv(filename, index=False)
 
     # Build training formats
-    output_pairs_df['text'] = "human: " + output_pairs_df['question'] + "\n" + "bot: " + output_pairs_df['answer']
+    output_pairs_df["text"] = "human: " + output_pairs_df["question"] + "\n" + "bot: " + output_pairs_df["answer"]
 
     # Gemini Data prep: https://cloud.google.com/vertex-ai/generative-ai/docs/models/gemini-supervised-tuning-prepare
     # {"contents":[{"role":"user","parts":[{"text":"..."}]},{"role":"model","parts":[{"text":"..."}]}]}
     output_pairs_df["contents"] = output_pairs_df.apply(
-        lambda row: [{"role": "user", "parts": [{"text": row["question"]}]},
-                     {"role": "model", "parts": [{"text": row["answer"]}]}], axis=1)
+        lambda row: [
+            {"role": "user", "parts": [{"text": row["question"]}]},
+            {"role": "model", "parts": [{"text": row["answer"]}]},
+        ],
+        axis=1,
+    )
 
     # Test train split
     df_train, df_test = train_test_split(output_pairs_df, test_size=0.15, random_state=42)
@@ -309,9 +304,9 @@ def prepare():
 
     # JSONL
     with open(os.path.join(OUTPUT_FOLDER, "train.jsonl"), "w") as json_file:
-        json_file.write(df_train[["contents"]].to_json(orient='records', lines=True))
+        json_file.write(df_train[["contents"]].to_json(orient="records", lines=True))
     with open(os.path.join(OUTPUT_FOLDER, "test.jsonl"), "w") as json_file:
-        json_file.write(df_test[["contents"]].to_json(orient='records', lines=True))
+        json_file.write(df_test[["contents"]].to_json(orient="records", lines=True))
 
 
 def upload():
@@ -331,7 +326,6 @@ def upload():
         blob = bucket.blob(destination_blob_name)
         print("Uploading file:", data_file, destination_blob_name)
         blob.upload_from_filename(data_file, timeout=timeout)
-
 
 
 def main(args=None):
