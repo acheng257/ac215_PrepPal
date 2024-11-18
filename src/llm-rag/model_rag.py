@@ -3,7 +3,6 @@ import os
 
 from preprocess_rag import generate_query_embedding
 from vertexai.generative_models import GenerativeModel
-from google.oauth2 import service_account
 
 CHROMADB_HOST = "llm-rag-chromadb"
 CHROMADB_PORT = 8000
