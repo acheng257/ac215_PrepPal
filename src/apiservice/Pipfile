@@ -3,25 +3,25 @@ name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
 
+[[source]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cpu"
+verify_ssl = true
+
 [dev-packages]
 
 [packages]
-user-agent = "*"
+chromadb = "==0.5.7"
+fastapi = "*"
 requests = "*"
 google-cloud-storage = "*"
 google-generativeai = "*"
-google-cloud-aiplatform = "*"
-pandas = "*"
+google-cloud-aiplatform = ">=1.38"
 uvicorn = "*"
-fastapi = "*"
+sentence-transformers = "*"
+user-agent = "*"
 python-multipart = "*"
-pillow = "*"
-chromadb = "*"
-tensorflow = "*"
-firebase-admin = "*"
-numpy = "*"
-sentence_transformers = "*"
-tf_keras = "*"
+
 
 [requires]
 python_version = "3.12"

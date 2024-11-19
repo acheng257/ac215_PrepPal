@@ -1,4 +1,5 @@
 import os
+import numpy as np
 from typing import Dict
 from fastapi import HTTPException
 import traceback
@@ -25,9 +26,8 @@ generation_config = {
 # Define Embedding Model
 embedding_model = SentenceTransformer("sentence-transformers/multi-qa-MiniLM-L6-cos-v1")
 
-# Connect to chroma DB and get the collection
-method = "entire_recipe"
 client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT)
+method = "entire_recipe"
 collection_name = f"{method}_collection"
 collection = client.get_collection(name=collection_name)
 
@@ -43,23 +43,32 @@ def generate_recommendation_list(content_dict: Dict):
     ingredients = content_dict["ingredients"]
     # other_info = ""
 
+    ingredients_query = f"I want to use {ingredients} to cook a recipe."
+
     try:
         # Create embeddings for the message content
-        query_embedding = generate_query_embedding(ingredients)
+        query_embedding = generate_query_embedding(ingredients_query)
+
+        if isinstance(query_embedding, np.ndarray):
+            query_embedding = query_embedding.tolist()
         # Retrieve chunks based on embedding value
         results = collection.query(query_embeddings=[query_embedding], n_results=5)
 
-        INPUT_PROMPT = f"""
-            I want to use {ingredients} to cook a recipe.\n
-            Here are the ingredients I have available in my pantry: {pantry}\n
+        possible_recipes = f"""
             Possible Recipes:\n
             {"\n".join(results["documents"][0])}
+        """
+
+        INPUT_PROMPT = f"""
+            {ingredients_query}\n
+            Here are the ingredients I have available in my pantry: {pantry}\n
+            {possible_recipes}
             \n\nBased on the items in my pantry, how would you rank these recipes? I want to use as many ingredients from my pantry as possible.
         """
 
         # CHANGE GOOGLE CREDENTIAL SECRET FOR A BRIEF WHILE
         original_key_path = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
-        fine_tuning_key_path = os.getenv("FINETUNING_GOOGLE_APPLICATION_CREDENTIALS")
+        fine_tuning_key_path = os.getenv("MODEL_ENDPOINT_GOOGLE_APPLICATION_CREDENTIALS")
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = fine_tuning_key_path
 
         # Generate Recipe Recommendation List
@@ -74,7 +83,8 @@ def generate_recommendation_list(content_dict: Dict):
         # CHANGE GOOGLE CREDENTIAL SECRET BACK
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = original_key_path
 
-        return recipe_recommendations
+        print(recipe_recommendations)
+        return {"ranking": recipe_recommendations, "possible_recipes": possible_recipes}
 
     except Exception as e:
         print(f"Error generating response: {str(e)}")

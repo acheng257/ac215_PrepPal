@@ -62,8 +62,8 @@ const PrepPal = () => {
 
 
   const handleSubmit = async () => {
-    const apiUrl = 'http://localhost:9000/get_recs';
-
+    const apiUrl = 'http://localhost:9000/recipes/get_recs';
+    console.log("FILTERS ", filters); // added
     try {
       const response = await fetch(apiUrl, {
         method: 'POST',

@@ -23,8 +23,6 @@ RUN set -ex; \
     apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends $DEBIAN_PACKAGES && \
-        # sqlite3 \
-        # libsqlite3-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     pip install --no-cache-dir --upgrade pip && \
@@ -33,7 +31,10 @@ RUN set -ex; \
     mkdir -p /app && \
     chown app:app /app
 
+
 EXPOSE 9000
+
+RUN find /usr -name '*.pyc' -delete
 
 # Switch to the new user
 USER app
@@ -43,10 +44,11 @@ WORKDIR /app
 ADD --chown=app:app Pipfile Pipfile.lock /app/
 
 RUN pipenv sync
-
+RUN pipenv run pip install --upgrade torch
 # Add the rest of the source code. This is done last so we don't invalidate all
 # layers when we change a line of code.
 ADD --chown=app:app . /app
+
 
 # Entry point
 ENTRYPOINT ["/bin/bash","./docker-entrypoint.sh"]
