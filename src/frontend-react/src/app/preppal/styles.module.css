@@ -137,11 +137,13 @@
 
 .chatHistory {
   height: 128px;
-  background-color: #f3f4f6;
-  border-radius: 4px;
-  margin-bottom: 16px;
-  padding: 16px;
-  color: #6b7280;
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .chatInput {
