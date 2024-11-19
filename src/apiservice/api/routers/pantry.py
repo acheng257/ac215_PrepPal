@@ -25,6 +25,7 @@ def get_bucket():
 async def get_user_pantry(user_id: str):
     """
     Fetches the pantry data for a specific user from the GCS bucket.
+    If the pantry does not exist, it creates a new pantry with default data.
     """
     try:
         file_path = f"{GCS_PANTRY_FOLDER}/{user_id}.json"
@@ -32,7 +33,10 @@ async def get_user_pantry(user_id: str):
         blob = bucket.blob(file_path)
 
         if not blob.exists():
-            raise HTTPException(status_code=404, detail="User pantry not found")
+            # initialize a pantry
+            default_pantry_json = json.dumps({})
+            blob.upload_from_string(default_pantry_json, content_type="application/json")
+            return {"user_id": user_id, "pantry": {}}
 
         pantry_data = blob.download_as_text()
         return {"user_id": user_id, "pantry": json.loads(pantry_data)}

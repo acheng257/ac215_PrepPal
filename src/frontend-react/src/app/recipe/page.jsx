@@ -12,6 +12,7 @@ const Recipe = () => {
   const cookingTime = searchParams.get('cookingTime') || '45 minutes';
   const calories = searchParams.get('calories') || '350';
   const ingredients = JSON.parse(searchParams.get('ingredients') || '[]'); // Parse back to array
+  const [user, setUser] = useState(DataService.GetUser());
 
   return (
     <div className={styles.appContainer}>

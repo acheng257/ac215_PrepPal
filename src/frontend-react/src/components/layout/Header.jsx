@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Home, Info, Podcasts, SmartToy, AccountCircle, LocalDining, BreakfastDining } from '@mui/icons-material';
 import styles from './Header.module.css';
+import DataService from '@/services/DataService';
 
 const navItems = [
     { name: 'Home', path: '/', sectionId: '', icon: <Home fontSize="small" /> },
@@ -18,6 +19,7 @@ export default function Header() {
     const router = useRouter();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [user, setUser] = useState(DataService.GetUser())
 
     useEffect(() => {
         if (typeof window !== 'undefined') {

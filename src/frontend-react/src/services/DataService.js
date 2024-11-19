@@ -20,6 +20,15 @@ const DataService = {
     Init: function () {
         // Any application initialization logic comes here
     },
+    GetUser: () => {
+        if (typeof window !== "undefined") {
+            const storedUser = localStorage.getItem('userId');
+            if (storedUser) {
+                return JSON.parse(storedUser);
+            }
+        }
+        return null;
+    },
     GetPantry: async function (user_id) {
         return await api.get(BASE_API_URL + "/pantry/" + user_id);
     },

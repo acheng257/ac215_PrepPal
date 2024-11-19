@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './styles.module.css';
 import Header from '@/components/layout/Header';
 import { useRouter } from 'next/navigation';
+import DataService from '@/services/DataService';
 
 const PrepPal = () => {
   const [filters, setFilters] = useState({
@@ -16,6 +17,9 @@ const PrepPal = () => {
   const router = useRouter();
   const [chatMessage, setChatMessage] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
+  const [user, setUser] = useState(DataService.GetUser());
+
+  console.log("user is: ", user)
 
   const handleSendChat = async () => {
     if (!chatMessage) return; // Don't send if there's no message
@@ -183,13 +187,6 @@ const PrepPal = () => {
           </div>
         </div>
 
-        {/* <div className={styles.chatbotSection}>
-          <div className={styles.chatHistory}>Chat history will appear here...</div>
-          <div className={styles.chatInput}>
-            <input type="text" placeholder="Ask about recipes or cooking tips..." />
-            <button onClick={handleSendChat}>Send</button>
-          </div>
-        </div> */}
         <div className={styles.chatbotSection}>
           <div className={styles.chatHistory}>
             {chatHistory.map((message, index) => (

@@ -1,20 +1,21 @@
 'use client';
 
+import { useState } from 'react';
+import DataService from '@/services/DataService';
+
 import Hero from '@/components/home/Hero';
 import WhatIs from '@/components/home/WhatIs';
-import SignUp from '@/components/home/Signup'
-import Login from '@/components/home/Login'
-import Pantry from '@/components/home/Pantry'
-import Recipe from '@/components/home/Recipe'
-import PrepPal from '@/components/home/PrepPal';
 
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import React from 'react';
 
 export default function Home() {
+    const [user, setUser] = useState(DataService.GetUser());
+
+    console.log("user is: ", user)
     return (
         <>
-            <Hero />
+            {/* <Hero /> */}
+            <Hero user={user} setUser={setUser} />
             <WhatIs></WhatIs>
         </>
     )
