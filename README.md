@@ -1,6 +1,6 @@
-## AC215 PrepPal - Milestone 3
+## AC215 PrepPal - Milestone 4
 
-#### Project Milestone 3 Organization
+#### Project Milestone 4 Organization
 
 ```
 ├── README.md
@@ -9,7 +9,11 @@
 │   └── PrepPalMidterm.pdf
 ├── assets
 │   ├── PrepPal.png
-│   └── VM.png
+│   ├── VM.png
+│   ├── Design
+│   │   ├── SolutionArchitecture1.jpg
+│   │   ├── SolutionArchitecture2.jpg
+│   └── └── TechnicalArchitecture.jpgg
 ├── notebooks
 │   └── data_cleaning.ipynb
 ├── references
@@ -19,48 +23,50 @@
 │   ├── PrepPal_Statement_of_Work.pdf
 │   ├── dataversioning.md
 │   ├── git_log.png
+│   ├── milestone2.md
+│   ├── milestone3.md
 │   ├── model_evaluation_before_and_after_rag_and_finetuning.pdf
 │   ├── finetuning_images
 │   │   ├── data_distribution_1.png
 │   │   ├── data_distribution_2.png
 │   └── └── training_validation_metric_preppal_v1.png
-└── src
-    ├── dataversioning
-    │   ├── docker_entrypoint.sh
-    │   ├── docker-shell.sh
-    │   ├── Dockerfile
-    │   ├── dvc_store.dvc
-    │   ├── Pipfile
-    │   ├── Pipfile.lock
-    │   ├── test_connection.py
-    │   └── README.md
-    ├── llm-rag
-    │   ├── cli.py
-    │   ├── docker-compose.yml
-    │   ├── docker-entrypoint.sh
-    │   ├── docker-shell.sh
-    │   ├── Dockerfile
-    │   ├── Pipfile
-    │   ├── Pipfile.lock
-    │   ├── preprocess_rag.py
-    │   ├── preprocess_recipes.py
-    |   ├── model_rag.py
-    │   └── README.md
-    ├── llm-finetuning
-    │   ├── dataset_creator
-    │   │   ├── create_fine_tuning_data.py
-    │   │   ├── docker-entrypoint.sh
-    │   │   ├── docker-shell.sh
-    │   │   ├── Dockerfile
-    │   │   ├── Pipfile
-    └── └── └── Pipfile.lock
-    ├── ├── gemini_finetuner
-    │   │   ├── cli.py
-    │   │   ├── docker-entrypoint.sh
-    │   │   ├── docker-shell.sh
-    │   │   ├── Dockerfile
-    │   │   ├── Pipfile
-    └── └── └── Pipfile.lock
+├── src
+│   ├── dataversioning
+│   │   ├── docker_entrypoint.sh
+│   │   ├── docker-shell.sh
+│   │   ├── Dockerfile
+│   │   ├── dvc_store.dvc
+│   │   ├── Pipfile
+│   │   ├── Pipfile.lock
+│   │   ├── check_connection.py
+│   │   └── README.md
+│   ├── llm-rag
+│   │   ├── cli.py
+│   │   ├── docker-compose.yml
+│   │   ├── docker-entrypoint.sh
+│   │   ├── docker-shell.sh
+│   │   ├── Dockerfile
+│   │   ├── Pipfile
+│   │   ├── Pipfile.lock
+│   │   ├── preprocess_rag.py
+│   │   ├── preprocess_recipes.py
+│   |   ├── model_rag.py
+│   │   └── README.md
+│   ├── llm-finetuning
+│   │   ├── dataset_creator
+│   │   │   ├── create_fine_tuning_data.py
+│   │   │   ├── docker-entrypoint.sh
+│   │   │   ├── docker-shell.sh
+│   │   │   ├── Dockerfile
+│   │   │   ├── Pipfile
+│   └── └── └── Pipfile.lock
+│   ├── ├── gemini_finetuner
+│   │   │   ├── cli.py
+│   │   │   ├── docker-entrypoint.sh
+│   │   │   ├── docker-shell.sh
+│   │   │   ├── Dockerfile
+│   │   │   ├── Pipfile
+└── └── └── └── Pipfile.lock
 ```
 
 # AC215 - Milestone4 - PrepPal
