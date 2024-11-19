@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
+import { React, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import styles from './styles.module.css';
+import DataService from '@/services/DataService';
 
 const Recipe = () => {
   const searchParams = useSearchParams();

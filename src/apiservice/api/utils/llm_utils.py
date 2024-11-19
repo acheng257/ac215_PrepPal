@@ -42,9 +42,18 @@ generative_model = GenerativeModel(GENERATIVE_MODEL, system_instruction=[SYSTEM_
 chat_sessions: Dict[str, ChatSession] = {}
 
 
-def create_chat_session() -> ChatSession:
+def create_chat_session(recommendations) -> ChatSession:
     """Create a new chat session with the model"""
-    return generative_model.start_chat()
+    chat_session = generative_model.start_chat()
+    if recommendations:
+        initialize_session_with_context(chat_session, recommendations)
+    return chat_session
+
+
+def initialize_session_with_context(chat_session: ChatSession, recommendations: str):
+    """Initialize a chat session with recipe context."""
+    context_message = f"Here are some recipe recommendations the user currently has:\n{recommendations}. They may refer to this list of recommendations in their query."
+    chat_session.send_message([context_message])
 
 
 def generate_chat_response(chat_session: ChatSession, message: Dict) -> str:
