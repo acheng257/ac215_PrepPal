@@ -7,7 +7,7 @@ router = APIRouter()
 @router.post("/get_recs")
 async def get_recs(body: dict):
     print("BODY", body)
-    data = body["filters"]
+    data = body
     # cooking_time = data["cookingTime"]
     # serving_size = data["servings"]
     # cuisine = data["cuisine"]

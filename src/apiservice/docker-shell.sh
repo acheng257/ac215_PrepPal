@@ -17,8 +17,6 @@ export GCS_BUCKET_NAME="preppal-data"
 export CHROMADB_HOST="llm-rag-chromadb"
 export CHROMADB_PORT=8000
 
-export FIREBASE_AUTH="/secrets/fire-base-admin.json"
-
 # Create network if we don't have it yet
 docker network inspect llm-rag-network >/dev/null 2>&1 || docker network create llm-rag-network
 
@@ -38,6 +36,5 @@ docker run --rm --name $IMAGE_NAME -ti \
 -e GCS_BUCKET_NAME=$GCS_BUCKET_NAME \
 -e CHROMADB_HOST=$CHROMADB_HOST \
 -e CHROMADB_PORT=$CHROMADB_PORT \
--e FIREBASE_AUTH=$FIREBASE_AUTH \
 --network llm-rag-network \
 $IMAGE_NAME

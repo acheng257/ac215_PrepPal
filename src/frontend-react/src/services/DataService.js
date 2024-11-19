@@ -48,6 +48,9 @@ const DataService = {
     GetChatMessageImage: function (model, image_path) {
         return BASE_API_URL + "/" + model + "/" + image_path;
     },
+    GetRecipeRecommendation: async function (body) {
+        return await api.post(BASE_API_URL + "/recipes/get_recs", body);
+    }
 }
 
 export default DataService;

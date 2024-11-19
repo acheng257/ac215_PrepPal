@@ -96,13 +96,10 @@ const PrepPal = () => {
   };
 
   const handleSubmit = async () => {
-    const apiUrl = `${DataService.BASE_API_URL}/recipes/get_recs`;
-
+    //const apiUrl = `${DataService.BASE_API_URL}`;
     try {
-      const response = await DataService.api.post(apiUrl, {
-        filters,
-        more_recommendations: false,
-      });
+      console.log(filters);
+      const response = await DataService.GetRecipeRecommendation(filters);
 
       if (response.data) {
         setRecommendations(response.data.recommendations);
