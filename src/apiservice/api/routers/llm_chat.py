@@ -38,13 +38,14 @@ async def get_chat(chat_id: str, x_session_id: str = Header(None, alias="X-Sessi
 async def start_chat_with_llm(message: Dict, x_session_id: str = Header(None, alias="X-Session-ID")):
     print("content:", message["content"])
     print("recommendations:", message["recommendations"])
+    print("pantry:", message["pantry"])
     print("x_session_id:", x_session_id)
     """Start a new chat with an initial message"""
     chat_id = str(uuid.uuid4())
     current_time = int(time.time())
 
     # Create a new chat session
-    chat_session = create_chat_session(message["recommendations"])
+    chat_session = create_chat_session(message["recommendations"], message["pantry"])
     chat_sessions[chat_id] = chat_session
 
     # Add ID and role to the user message

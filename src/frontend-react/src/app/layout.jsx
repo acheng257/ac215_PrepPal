@@ -7,8 +7,8 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 
 export const metadata = {
-    title: 'Formaggio',
-    description: 'Discover the world of cheese through AI',
+    title: 'PrepPal',
+    description: 'Reducing Food Waste One Meal At a Time',
 }
 
 export default async function RootLayout({ children }) {
