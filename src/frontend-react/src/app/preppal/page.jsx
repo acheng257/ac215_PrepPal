@@ -96,7 +96,7 @@ const PrepPal = () => {
   };
 
   const handleSubmit = async () => {
-    const apiUrl = `${DataService.BASE_API_URL}/get_recs`;
+    const apiUrl = `${DataService.BASE_API_URL}/recipes/get_recs`;
 
     try {
       const response = await DataService.api.post(apiUrl, {
