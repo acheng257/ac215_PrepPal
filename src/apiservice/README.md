@@ -17,3 +17,6 @@ Build with FastAPI framework
 - To run development API service run `uvicorn_server` from the docker shell
 
 - Test the API service by going to `http://localhost:9000/`
+
+### Testing
+- Refer to this [file](testing.md) for instructions of how to manually run the unit tests for the API functionality.
