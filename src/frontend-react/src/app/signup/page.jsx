@@ -6,6 +6,9 @@ import Link from 'next/link'
 import Header from '@/components/layout/Header'
 import { useRouter } from 'next/navigation';
 
+// const cors = require("cors");
+// app.use(cors());
+
 const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -26,7 +29,7 @@ const SignUp = () => {
       formData.append('username', email);
       formData.append('password', password);
 
-      const response = await fetch(`${apiUrl}/signup`, {
+      const response = await fetch(`${apiUrl}/auth/signup`, {
         method: 'POST',
         body: formData,
       });
@@ -43,6 +46,7 @@ const SignUp = () => {
       console.error('Error:', error);
       alert('An error occurred. Please try again.');
     }
+
   };
 
   return (
