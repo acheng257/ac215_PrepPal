@@ -41,6 +41,7 @@ const DataService = {
     StartChatWithLLM: async function (model, message) {
         return await api.post(BASE_API_URL + "/" + model + "/chats/", message);
     },
+
     ContinueChatWithLLM: async function (model, chat_id, message) {
         return await api.post(BASE_API_URL + "/" + model + "/chats/" + chat_id, message);
     },

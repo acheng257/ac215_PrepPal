@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
-from api.routers import pantry, auth, recipes
+from api.routers import pantry, auth, llm_chat, recipes
 
 # Setup FastAPI app
 app = FastAPI(title="API Server", description="API Server", version="v1")
@@ -25,4 +25,4 @@ async def get_index():
 app.include_router(recipes.router, prefix="/recipes")
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(pantry.router, prefix="/pantry")
-# app.include_router(llm_rag_chat.router, prefix="/llm-rag")      #recipes
+app.include_router(llm_chat.router, prefix="/llm")

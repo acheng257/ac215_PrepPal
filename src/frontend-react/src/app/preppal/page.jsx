@@ -1,103 +1,179 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './styles.module.css';
 import Header from '@/components/layout/Header';
 import { useRouter } from 'next/navigation';
 import DataService from '@/services/DataService';
 
 const PrepPal = () => {
+  // TODO: this is just a placeholder for testing functionality, need to remove once we get actual recommendations
+  const recipes = [
+    {
+      name: 'Pasta Primavera',
+      cookingTime: '25 mins',
+      ingredients: ['pasta', 'vegetables', 'olive oil'],
+      calories: 320
+    },
+    {
+      name: 'Grilled Salmon',
+      cookingTime: '20 mins',
+      ingredients: ['salmon', 'lemon', 'herbs'],
+      calories: 420
+    },
+    {
+      name: 'Chicken Stir-Fry',
+      cookingTime: '15 mins',
+      ingredients: ['chicken', 'vegetables', 'soy sauce'],
+      calories: 500
+    },
+    {
+      name: 'Quinoa Bowl',
+      cookingTime: '30 mins',
+      ingredients: ['quinoa', 'avocado', 'chickpeas'],
+      calories: 400
+    }
+  ];
+
   const [filters, setFilters] = useState({
     cookingTime: 30,
     servings: 4,
     cuisine: 'all',
     ingredients: []
   });
-  const [recommendations, setRecommendations] = useState([]);
-  const router = useRouter();
+  // TODO: also reset recipes to [] in line below
+  const [recommendations, setRecommendations] = useState(recipes);
   const [chatMessage, setChatMessage] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
-  const [user, setUser] = useState(DataService.GetUser());
+  const [chatId, setChatId] = useState(null);
+  const [isTyping, setIsTyping] = useState(false);
+  const router = useRouter();
+  const chatHistoryRef = useRef(null); // Ref for chat history container
+  const [userId, setUserId] = useState(DataService.GetUser());
 
-  console.log("user is: ", user)
+  // Auto-scroll to the bottom of chat history
+  const scrollToBottom = () => {
+    if (chatHistoryRef.current) {
+      chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight;
+    }
+  };
+
+  useEffect(() => {
+    if (chatId) {
+      fetchChat(chatId);
+    }
+  }, [chatId]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatHistory]); // Scroll to bottom when chatHistory updates
+
+  async function fetchUserPantry(userId) {
+    try {
+      const response = await DataService.GetPantry(userId);
+      console.log("Pantry data:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Failed to fetch pantry data:", error.message || error.response?.data);
+    }
+  }
+
+  const fetchChat = async (id) => {
+    try {
+      setIsTyping(true);
+      const response = await DataService.GetChat('llm', id);
+      setChatHistory(
+        response.data.messages.map((msg) => ({
+          sender: msg.role === 'user' ? 'User' : 'Bot',
+          text: msg.content,
+        }))
+      );
+      setIsTyping(false);
+    } catch (error) {
+      console.error('Error fetching chat:', error);
+      setIsTyping(false);
+    }
+  };
+
+  const handleSubmit = async () => {
+    const apiUrl = `${DataService.BASE_API_URL}/get_recs`;
+
+    try {
+      const response = await DataService.api.post(apiUrl, {
+        filters,
+        more_recommendations: false,
+      });
+
+      if (response.data) {
+        setRecommendations(response.data.recommendations);
+      } else {
+        alert('Failed to fetch recommendations');
+      }
+    } catch (error) {
+      console.error('Error fetching recommendations:', error);
+      alert('An error occurred. Please try again.');
+    }
+  };
 
   const handleSendChat = async () => {
-    if (!chatMessage) return; // Don't send if there's no message
+    if (!chatMessage.trim()) return;
 
-    const apiUrl = 'http://localhost:9000/chat_gemini';
+    const xSessionId = localStorage.getItem('userSessionId');
+    if (!xSessionId) {
+      alert('User session not found. Please log in.');
+      return;
+    }
 
     setChatHistory((prev) => [
       ...prev,
-      { sender: 'User', text: chatMessage }
+      { sender: 'User', text: chatMessage },
     ]);
 
     try {
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: chatMessage }),
-      });
+      let response;
+      setIsTyping(true);
 
-      if (response.ok) {
-        const data = await response.json();
+      if (!chatId) {
+        // Start a new chat
+        console.log("starting chat");
+        const pantry_response = await fetchUserPantry(userId);
+        response = await DataService.StartChatWithLLM('llm', { content: chatMessage, recommendations: recommendations, pantry: pantry_response["pantry"] });
+        setChatId(response.data.chat_id);
+      } else {
+        // Continue the existing chat
+        console.log("continuing chat");
+        response = await DataService.ContinueChatWithLLM('llm', chatId, { content: chatMessage });
+        console.log("response:", response)
+      }
+
+      // Append bot's response to chat history
+      const assistantMessage = response.data.messages.filter((msg) => msg.role === 'assistant').pop();
+
+      if (assistantMessage) {
         setChatHistory((prev) => [
           ...prev,
-          { sender: 'Bot', text: data.response }
+          { sender: 'Bot', text: assistantMessage.content },
         ]);
-      } else {
-        const errorData = await response.json();
-        alert(errorData.detail || 'Failed to fetch response');
       }
+      setIsTyping(false);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error sending chat message:', error);
+      setIsTyping(false);
       alert('An error occurred. Please try again.');
     }
 
-    // Clear the chat message input after sending
-    setChatMessage('');
+    setChatMessage(''); // Clear input
   };
 
-
-
-  const handleSubmit = async () => {
-    const apiUrl = 'http://localhost:9000/recipes/get_recs';
-    console.log("FILTERS ", filters); // added
-    try {
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ filters, more_recommendations: false }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        alert("Response ok");
-        setRecommendations(data.recommendations);
-      } else {
-        const errorData = await response.json();
-        alert(errorData.detail || 'Failed to fetch recommendations');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('An error occurred. Please try again.');
-    }
-  };
 
   const handleRecipeClick = (recipe) => {
-
-    // Manually construct the URL with query parameters
     const queryParams = new URLSearchParams({
       name: recipe.name,
       cookingTime: recipe.cookingTime,
       calories: recipe.calories,
-      ingredients: JSON.stringify(recipe.ingredients), // Stringify array for URL compatibility
+      ingredients: JSON.stringify(recipe.ingredients),
     });
 
-    // Use router.push with the constructed URL
     router.push(`/recipe?${queryParams.toString()}`);
   };
 
@@ -151,7 +227,7 @@ const PrepPal = () => {
                 value={filters.ingredients}
                 onChange={(e) => setFilters({
                   ...filters,
-                  ingredients: e.target.value.split(',').map(ingredient => ingredient.trim())
+                  ingredients: e.target.value.split(',').map((ingredient) => ingredient.trim()),
                 })}
               />
               <span>Ingredients: {filters.ingredients.join(', ')}</span>
@@ -188,12 +264,13 @@ const PrepPal = () => {
         </div>
 
         <div className={styles.chatbotSection}>
-          <div className={styles.chatHistory}>
+          <div ref={chatHistoryRef} className={styles.chatHistory}>
             {chatHistory.map((message, index) => (
               <div key={index} className={styles.chatMessage}>
                 <strong>{message.sender}:</strong> {message.text}
               </div>
             ))}
+            {isTyping && <div className={styles.typingIndicator}>Typing...</div>}
           </div>
           <div className={styles.chatInput}>
             <input
@@ -201,6 +278,7 @@ const PrepPal = () => {
               placeholder="Ask about recipes or cooking tips..."
               value={chatMessage}
               onChange={(e) => setChatMessage(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSendChat()}
             />
             <button onClick={handleSendChat}>Send</button>
           </div>
