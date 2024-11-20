@@ -9,7 +9,7 @@ on:
 
 jobs:
   dockerfile-test:
-    runs-on: umacos-13
+    runs-on: macos-13
 
     steps:
       # Step 1: Check out the source code
