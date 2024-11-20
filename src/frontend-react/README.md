@@ -2,7 +2,7 @@
 ### Initial Setup
 1. Navigate to the React frontend directory:
 ```bash
-cd cheese-app-v2/src/frontend-react
+cd ac215_PrepPal/src/frontend-react
 ```
 
 2. Start the development container:
@@ -24,32 +24,19 @@ npm run dev
 
 2. View your app at: http://localhost:3000
 
-> Note: Make sure the API service container is running for full functionality
-### Review App
-- Go to Home page
-- Go to Newsletters, Podcasts - Review functionality
-- Go to Chat Assistant. Try LLM, LLM + CNN, RAG chats
-
-### Review App Code
-- Open folder `frontend-react/src`
+> Note: Make sure the API service container and the llm-rag container are running for full functionality
+### Pages
+- Home Page: About section and Log in/Sign up buttons (`src/app/page.jsx`)
+- Pantry: text input to update pantry (`src/app/pantry/page.jsx`)
+- Recipe Recommendation Page (`src/app/preppal/page.jsx`)
+    - Filters for generating recommendations
+    - Chat area for further customizations and questions about recommendations
+- Log in Page (`src/app/login/page.jsx`)
+- Sign up Page ((`src/app/signup/page.jsx`))
 
 ### Data Services
 - Data Service (`src/services/DataService.js`)
-- Review Data Service methods that connects frontend to all backend APIs
-
-### App Pages
-- Open folder `frontend-react/src/app`
-- Review the main app pages
-  - Home (`src/app/page.jsx`)
-  - Newsletters (`src/app/newsletters/page.jsx`)
-  - Podcasts (`src/app/podcasts/page.jsx`)
-  - Chat Assistant (`src/app/chat/page.jsx`)
-
-### App Components
-- Open folder `frontend-react/src/components`
-- Review components of the app
-  - Layout for common components such as Header, Footer
-  - Chat for all the chat components
+- Connects frontend to all backend APIs using `axios`
 
 
 ---
