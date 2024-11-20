@@ -5,6 +5,8 @@ import base64
 from pathlib import Path
 import traceback
 from vertexai.generative_models import GenerativeModel, ChatSession, Part
+from google.oauth2 import service_account
+import vertexai
 
 # Setup
 GCP_PROJECT = os.environ["GCP_PROJECT"]
@@ -44,6 +46,10 @@ chat_sessions: Dict[str, ChatSession] = {}
 
 def create_chat_session(recommendations, pantry) -> ChatSession:
     """Create a new chat session with the model"""
+    fine_tuning_key_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+    credentials = service_account.Credentials.from_service_account_file(fine_tuning_key_path)
+    vertexai.init(project=GCP_PROJECT, location=GCP_LOCATION, credentials=credentials)
+
     chat_session = generative_model.start_chat()
     if recommendations:
         initialize_session_with_context(chat_session, recommendations, pantry)
@@ -143,9 +149,9 @@ def generate_chat_response(chat_session: ChatSession, message: Dict) -> str:
         raise HTTPException(status_code=500, detail=f"Failed to generate response: {str(e)}")
 
 
-def rebuild_chat_session(chat_history: List[Dict]) -> ChatSession:
+def rebuild_chat_session(chat_history: List[Dict], recommendations: str, pantry: str) -> ChatSession:
     """Rebuild a chat session with complete context"""
-    new_session = create_chat_session()
+    new_session = create_chat_session(recommendations, pantry)
 
     for message in chat_history:
         if message["role"] == "user":

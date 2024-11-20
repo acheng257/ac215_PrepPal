@@ -101,17 +101,17 @@ const PrepPal = () => {
     try {
       let response;
       setIsTyping(true);
+      const pantry_response = await fetchUserPantry(userId);
 
       if (!chatId) {
         // Start a new chat
         console.log("starting chat");
-        const pantry_response = await fetchUserPantry(userId);
         response = await DataService.StartChatWithLLM('llm', { content: chatMessage, recommendations: recommendations, pantry: pantry_response["pantry"] });
         setChatId(response.data.chat_id);
       } else {
         // Continue the existing chat
         console.log("continuing chat");
-        response = await DataService.ContinueChatWithLLM('llm', chatId, { content: chatMessage });
+        response = await DataService.ContinueChatWithLLM('llm', chatId, { content: chatMessage, recommendations: recommendations, pantry: pantry_response["pantry"] });
         console.log("response:", response)
       }
 

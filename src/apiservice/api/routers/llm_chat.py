@@ -79,7 +79,7 @@ async def continue_chat_with_llm(chat_id: str, message: Dict, x_session_id: str 
     # Get or rebuild chat session
     chat_session = chat_sessions.get(chat_id)
     if not chat_session:
-        chat_session = rebuild_chat_session(chat["messages"])
+        chat_session = rebuild_chat_session(chat["messages"], message["recommendations"], message["pantry"])
         chat_sessions[chat_id] = chat_session
 
     # Update timestamp
