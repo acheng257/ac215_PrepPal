@@ -3,37 +3,23 @@ from google.cloud import storage
 import json
 import os
 
-# Initialize FastAPI router
 router = APIRouter()
-
-# Set GCS bucket details (use environment variables for security)
-GCS_BUCKET_NAME = os.getenv("GCS_BUCKET_NAME")
-GCS_PANTRY_FOLDER = os.getenv("GCS_PANTRY_FOLDER", "pantry")
-
-# Initialize GCS client
-storage_client = storage.Client()
 
 
 def get_bucket():
-    """
-    Fetches the GCS bucket instance.
-    """
-    return storage_client.bucket(GCS_BUCKET_NAME)
+    storage_client = storage.Client()
+    return storage_client.bucket(os.getenv("GCS_BUCKET_NAME"))
 
 
 @router.get("/{user_id}")
 async def get_user_pantry(user_id: str):
-    """
-    Fetches the pantry data for a specific user from the GCS bucket.
-    If the pantry does not exist, it creates a new pantry with default data.
-    """
+    GCS_PANTRY_FOLDER = os.getenv("GCS_PANTRY_FOLDER", "pantry")
     try:
         file_path = f"{GCS_PANTRY_FOLDER}/{user_id}.json"
         bucket = get_bucket()
         blob = bucket.blob(file_path)
 
         if not blob.exists():
-            # initialize a pantry
             default_pantry_json = json.dumps({})
             blob.upload_from_string(default_pantry_json, content_type="application/json")
             return {"user_id": user_id, "pantry": {}}
@@ -47,9 +33,7 @@ async def get_user_pantry(user_id: str):
 
 @router.put("/{user_id}")
 async def update_user_pantry(user_id: str, pantry_data: dict):
-    """
-    Updates or creates pantry data for a specific user in the GCS bucket.
-    """
+    GCS_PANTRY_FOLDER = os.getenv("GCS_PANTRY_FOLDER", "pantry")
     try:
         file_path = f"{GCS_PANTRY_FOLDER}/{user_id}.json"
         bucket = get_bucket()
@@ -66,9 +50,7 @@ async def update_user_pantry(user_id: str, pantry_data: dict):
 
 @router.delete("/{user_id}")
 async def delete_user_pantry(user_id: str):
-    """
-    Deletes pantry data for a specific user from the GCS bucket.
-    """
+    GCS_PANTRY_FOLDER = os.getenv("GCS_PANTRY_FOLDER", "pantry")
     try:
         file_path = f"{GCS_PANTRY_FOLDER}/{user_id}.json"
         bucket = get_bucket()
@@ -76,8 +58,6 @@ async def delete_user_pantry(user_id: str):
 
         if not blob.exists():
             raise HTTPException(status_code=404, detail="User pantry not found")
-
-        # Delete the blob
         blob.delete()
 
         return {"message": "Pantry deleted successfully", "user_id": user_id}
