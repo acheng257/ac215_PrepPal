@@ -81,8 +81,6 @@ def generate_recommendation_list(content_dict: Dict):
         )
 
         recipe_recommendations = response.text
-        print("Recipe recs:", recipe_recommendations)
-        print("Possible recipes:", possible_recipes)
         return {"ranking": recipe_recommendations, "possible_recipes": possible_recipes}
 
     except Exception as e:
