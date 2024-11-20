@@ -111,13 +111,10 @@
 }
 
 .recipeGrid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 16px;
-  justify-content: space-between;
-  max-height: 400px; /* Adjust this value as needed */
-  overflow-y: auto; /* Enable vertical scrolling */
-  padding: 8px;
+  overflow-y: auto;
 }
 
 .recipeCard {
@@ -131,6 +128,31 @@
 .recipeDetails {
   padding: 16px;
 }
+
+.recipeDetails h3 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.recipeDetails p {
+  font-size: 1em;
+  color: #555; /* Slightly lighter color for body text */
+  margin: 4px 0;
+}
+
+.recipeDetails h4 {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-top: 16px;
+}
+
+.recipeDetails ul {
+  margin-left: 20px;
+  list-style-type: disc;
+  color: #333; /* Make the list stand out */
+}
+
 
 .chatbotSection {
   background-color: white;

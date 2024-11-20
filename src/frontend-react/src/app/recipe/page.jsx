@@ -13,6 +13,7 @@ const Recipe = () => {
   const cookingTime = searchParams.get('cookingTime') || '45 minutes';
   const calories = searchParams.get('calories') || '350';
   const ingredients = JSON.parse(searchParams.get('ingredients') || '[]'); // Parse back to array
+  const instructions = JSON.parse(searchParams.get('instructions') || '[]');
   const [user, setUser] = useState(DataService.GetUser());
 
   return (
@@ -61,9 +62,18 @@ const Recipe = () => {
               <div className={styles.instructionsCard}>
                 <h3 className={styles.sectionTitle}>Instructions</h3>
                 <div className={styles.instructionsText}>
-                  1. Mix ingredients<br />
+                  {/* 1. Mix ingredients<br />
                   2. Bake at 350°F<br />
-                  3. Let cool
+                  3. Let cool */}
+                  <ol>
+                    {instructions.length > 0 ? (
+                      instructions.map((step, idx) => (
+                        <li key={idx}>{step}</li>
+                      ))
+                    ) : (
+                      <li>No instructions provided.</li>
+                    )}
+                  </ol>
                 </div>
               </div>
             </div>

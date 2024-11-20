@@ -7,58 +7,6 @@ import { useRouter } from 'next/navigation';
 import DataService from '@/services/DataService';
 
 const PrepPal = () => {
-  // TODO: this is just a placeholder for testing functionality, need to remove once we get actual recommendations
-  const recipes = [
-    {
-      name: 'Pasta Primavera',
-      cookingTime: '25 mins',
-      ingredients: ['pasta', 'vegetables', 'olive oil'],
-      calories: 320
-    },
-    {
-      name: 'Grilled Salmon',
-      cookingTime: '20 mins',
-      ingredients: ['salmon', 'lemon', 'herbs'],
-      calories: 420
-    },
-    {
-      name: 'Chicken Stir-Fry',
-      cookingTime: '15 mins',
-      ingredients: ['chicken', 'vegetables', 'soy sauce'],
-      calories: 500
-    },
-    {
-      name: 'Quinoa Bowl',
-      cookingTime: '30 mins',
-      ingredients: ['quinoa', 'avocado', 'chickpeas'],
-      calories: 400
-    },
-    {
-      name: 'Pasta Primavera 2',
-      cookingTime: '25 mins',
-      ingredients: ['pasta', 'vegetables', 'olive oil'],
-      calories: 320
-    },
-    {
-      name: 'Grilled Salmon 2',
-      cookingTime: '20 mins',
-      ingredients: ['salmon', 'lemon', 'herbs'],
-      calories: 420
-    },
-    {
-      name: 'Chicken Stir-Fry 2',
-      cookingTime: '15 mins',
-      ingredients: ['chicken', 'vegetables', 'soy sauce'],
-      calories: 500
-    },
-    {
-      name: 'Quinoa Bowl 2',
-      cookingTime: '30 mins',
-      ingredients: ['quinoa', 'avocado', 'chickpeas'],
-      calories: 400
-    }
-  ];
-
   const [filters, setFilters] = useState({
     cookingTime: 30,
     servings: 4,
@@ -189,10 +137,11 @@ const PrepPal = () => {
 
   const handleRecipeClick = (recipe) => {
     const queryParams = new URLSearchParams({
-      name: recipe.name,
-      cookingTime: recipe.cookingTime,
+      name: recipe.title,
+      cookingTime: recipe.time,
       calories: recipe.calories,
       ingredients: JSON.stringify(recipe.ingredients),
+      instructions: JSON.stringify(recipe.instructions),
     });
 
     router.push(`/recipe?${queryParams.toString()}`);
@@ -266,11 +215,11 @@ const PrepPal = () => {
                   style={{ cursor: 'pointer' }}
                 >
                   <div className={styles.recipeDetails}>
-                    <h3>{recipe.name}</h3>
-                    <p>Cooking time: {recipe.cookingTime}</p>
-                    <h4>Ingredients:</h4>
+                    <h3>{recipe.title}</h3>
+                    <p>Cooking time: {recipe.time}</p>
+                    <h4>Missing Ingredients:</h4>
                     <ul>
-                      {recipe.ingredients.map((ingredient, idx) => (
+                      {recipe.missing_ingredients.map((ingredient, idx) => (
                         <li key={idx}>• {ingredient}</li>
                       ))}
                     </ul>
