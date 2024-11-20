@@ -36,6 +36,9 @@ jobs:
       - name: Install dependencies for ${{ matrix.subfolder }}
         working-directory: ./${{ matrix.subfolder }}
         run: |
+          echo "Switching to subfolder: ${{ matrix.subfolder }}"
+          cd ./${{ matrix.subfolder }}
+          pwd
           ls -la
           pipenv install --dev --system
 
