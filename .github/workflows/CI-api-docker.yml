@@ -22,13 +22,21 @@ jobs:
         run: |
           docker build -t test-api-image:latest -f Dockerfile .
 
-      # Step 3: Run Container Structure Tests
-      - name: Run Container Structure Tests
-        uses: gcr.io/gcp-runtimes/container-structure-test:latest
-        with:
-          image: test-api-image:latest
-          config: src/apiservice/tests/docker_test.yml
+      # Step 3: Download and Install Container Structure Test
+      - name: Install Container Structure Test
+        run: |
+          curl -LO https://github.com/GoogleContainerTools/container-structure-test/releases/latest/download/container-structure-test-linux-amd64
+          chmod +x container-structure-test-linux-amd64
+          sudo mv container-structure-test-linux-amd64 /usr/local/bin/container-structure-test
 
-      # Step 4: Delete Docker image
+      # Step 4: Run Container Structure Tests
+      - name: Run Container Structure Tests
+        working-directory: src/apiservice
+        run: |
+          container-structure-test test \
+            --image test-api-image:latest \
+            --config tests/docker_test.yml
+
+      # Step 5: Delete Docker image
       - name: Cleanup Docker image
         run: docker image rm test-api-image:latest || echo "Image not found, skipping cleanup"
