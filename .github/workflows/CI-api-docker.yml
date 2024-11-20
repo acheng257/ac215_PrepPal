@@ -1,7 +1,7 @@
 name: "Test API Dockerfile structure"
 
 on:
-  pull_request:
+  push:
     branches:
       - main
       - milestone4
