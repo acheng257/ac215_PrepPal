@@ -6,9 +6,6 @@ import Link from 'next/link'
 import Header from '@/components/layout/Header'
 import { useRouter } from 'next/navigation';
 
-// const cors = require("cors");
-// app.use(cors());
-
 const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

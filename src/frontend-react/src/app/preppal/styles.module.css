@@ -1,21 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;700&family=Playfair+Display:wght@400;700&display=swap');
 
-/* .appContainer {
-  min-height: 100vh;
-  background-color: black;
-  background-image: url('assets/preppal_background.png');
-  background-size: contain;
-  background-repeat: repeat;
-  background-position: center;
-} */
-
 .appContainer {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh; /* Full viewport height */
-  padding: 20px; /* Optional: to add some space around the content */
-  background-color: black;
+  min-height: 100vh;
+  padding: 20px;
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+      url('/assets/cooking.png');
 }
 
 .header {

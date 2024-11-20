@@ -13,14 +13,13 @@ const PrepPal = () => {
     cuisine: 'all',
     ingredients: []
   });
-  // TODO: also reset recipes to [] in line below
   const [recommendations, setRecommendations] = useState([]);
   const [chatMessage, setChatMessage] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
   const [chatId, setChatId] = useState(null);
   const [isTyping, setIsTyping] = useState(false);
   const router = useRouter();
-  const chatHistoryRef = useRef(null); // Ref for chat history container
+  const chatHistoryRef = useRef(null);
   const [userId, setUserId] = useState(DataService.GetUser());
 
   // Auto-scroll to the bottom of chat history
@@ -68,7 +67,6 @@ const PrepPal = () => {
   };
 
   const handleSubmit = async () => {
-    //const apiUrl = `${DataService.BASE_API_URL}`;
     try {
       console.log(filters);
       const response = await DataService.GetRecipeRecommendation(filters);

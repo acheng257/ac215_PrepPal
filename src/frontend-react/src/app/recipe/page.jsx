@@ -62,9 +62,6 @@ const Recipe = () => {
               <div className={styles.instructionsCard}>
                 <h3 className={styles.sectionTitle}>Instructions</h3>
                 <div className={styles.instructionsText}>
-                  {/* 1. Mix ingredients<br />
-                  2. Bake at 350°F<br />
-                  3. Let cool */}
                   <ol>
                     {instructions.length > 0 ? (
                       instructions.map((step, idx) => (
