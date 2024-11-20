@@ -9,7 +9,7 @@ on:
 
 jobs:
   dockerfile-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04-large
 
     steps:
       # Step 1: Check out the source code
