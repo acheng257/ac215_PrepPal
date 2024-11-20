@@ -256,7 +256,3 @@ Here are some screenshots of our app:
 
 **Notebooks/Reports:** <br>
 These folders contains code that is not part of any container - for e.g: Application mockup, EDA, crucial insights, reports or visualizations.
-
-### Application Mock-up
-
-![Mockup](./assets/PrepPal.png)
