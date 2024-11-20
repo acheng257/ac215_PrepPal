@@ -9,6 +9,8 @@ url = "https://download.pytorch.org/whl/cpu"
 verify_ssl = true
 
 [dev-packages]
+pytest = "*"
+pytest-cov = "*"
 
 [packages]
 chromadb = "==0.5.7"
