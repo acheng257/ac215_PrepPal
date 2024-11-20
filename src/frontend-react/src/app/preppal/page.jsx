@@ -32,6 +32,30 @@ const PrepPal = () => {
       cookingTime: '30 mins',
       ingredients: ['quinoa', 'avocado', 'chickpeas'],
       calories: 400
+    },
+    {
+      name: 'Pasta Primavera 2',
+      cookingTime: '25 mins',
+      ingredients: ['pasta', 'vegetables', 'olive oil'],
+      calories: 320
+    },
+    {
+      name: 'Grilled Salmon 2',
+      cookingTime: '20 mins',
+      ingredients: ['salmon', 'lemon', 'herbs'],
+      calories: 420
+    },
+    {
+      name: 'Chicken Stir-Fry 2',
+      cookingTime: '15 mins',
+      ingredients: ['chicken', 'vegetables', 'soy sauce'],
+      calories: 500
+    },
+    {
+      name: 'Quinoa Bowl 2',
+      cookingTime: '30 mins',
+      ingredients: ['quinoa', 'avocado', 'chickpeas'],
+      calories: 400
     }
   ];
 
