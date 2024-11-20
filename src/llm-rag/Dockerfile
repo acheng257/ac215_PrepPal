@@ -26,7 +26,7 @@ RUN set -ex; \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     pip install --no-cache-dir --upgrade pip && \
-    pip install pipenv && \
+    pip install --no-cache-dir pipenv && \
     useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 Passw0rd)" && \
     mkdir -p /app && \
     chown app:app /app
@@ -34,16 +34,15 @@ RUN set -ex; \
 WORKDIR /app
 
 # Install python packages
-ADD --chown=app:app Pipfile Pipfile.lock /app/
-
-RUN pipenv sync
+COPY --chown=app:app Pipfile Pipfile.lock /app/
 
 # Upgrade torch to the latest version
-RUN pipenv run pip install --upgrade torch
+RUN pipenv sync && \
+    pipenv run pip install --upgrade torch
 
 # Add the rest of the source code. This is done last so we don't invalidate all
 # layers when we change a line of code.
-ADD --chown=app:app . /app
+COPY --chown=app:app . /app
 
 # Entry point
 ENTRYPOINT ["/bin/bash","./docker-entrypoint.sh"]

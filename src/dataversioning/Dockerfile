@@ -16,6 +16,7 @@ ENV PYENV_SHELL=/bin/bash
 # Tell Python to disable buffering so we don't lose any logs.
 ENV PYTHONUNBUFFERED=1
 
+# not sure if this fixes issue
 RUN set -ex; \
     for i in $(seq 1 8); do mkdir -p "/usr/share/man/man${i}"; done && \
     apt-get update && \
@@ -34,7 +35,7 @@ RUN set -ex; \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     pip install --no-cache-dir --upgrade pip && \
-    pip install pipenv && \
+    pip install --no-cache-dir pipenv && \
     useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 Passw0rd)" && \
     mkdir -p /app && \
     chown app:app /app
@@ -48,13 +49,13 @@ WORKDIR /app
 
 
 # Install python packages
-ADD --chown=app:app Pipfile Pipfile.lock /app/
+COPY --chown=app:app Pipfile Pipfile.lock /app/
 
 RUN pipenv sync
 
 # Add the rest of the source code. This is done last so we don't invalidate all
 # layers when we change a line of code.
-ADD --chown=app:app . /app
+COPY --chown=app:app . /app
 
 # Entry point
 #ENTRYPOINT ["pipenv","shell"]

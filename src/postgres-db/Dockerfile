@@ -1,4 +1,4 @@
-FROM postgres:latest
+FROM postgres:14.3
 
 ENV PGPORT=5432
 ENV POSTGRES_DB=preppal_db
