@@ -3,6 +3,10 @@
 #### Project Milestone 4 Organization
 
 ```
+├── .github
+│   ├──workflows
+│   │   ├── CI-push.yml
+│   └── └── pre-commit.yml
 ├── README.md
 ├── data # DO NOT UPLOAD DATA TO GITHUB, only .gitkeep to keep the directory or a really small sample
 ├── midterm_presentation
@@ -10,10 +14,16 @@
 ├── assets
 │   ├── PrepPal.png
 │   ├── VM.png
+│   ├── API.png
 │   ├── Design
 │   │   ├── SolutionArchitecture1.jpg
 │   │   ├── SolutionArchitecture2.jpg
-│   └── └── TechnicalArchitecture.jpgg
+│   │   └── TechnicalArchitecture.jpg
+│   ├── Frontend
+│   │   ├── home.png
+│   │   ├── login.png
+│   │   ├── pantry.png
+│   └── └── recs.png
 ├── notebooks
 │   └── data_cleaning.ipynb
 ├── references
@@ -31,7 +41,28 @@
 │   │   ├── data_distribution_2.png
 │   └── └── training_validation_metric_preppal_v1.png
 ├── src
+│   ├── apiservice
+│   │   ├── api
+│   │   │   ├── routers
+│   │   │   │   └── ...
+│   │   │   ├── utils
+│   │   │   │   └── ...
+│   │   │   ├── __init__.py
+│   │   │   ├── service_old.py
+│   │   │   └── service.py
+│   │   ├── tests
+│   │   │   └── ...
+│   │   ├── .gitignore
+│   │   ├── docker-entrypoint.sh
+│   │   ├── docker-shell.sh
+│   │   ├── Dockerfile
+│   │   ├── Pipfile
+│   │   ├── Pipfile.lock
+│   │   ├── README.md
+│   │   └── testing.md
 │   ├── dataversioning
+│   │   ├── .gitignore
+│   │   ├── check_connection.py
 │   │   ├── docker_entrypoint.sh
 │   │   ├── docker-shell.sh
 │   │   ├── Dockerfile
@@ -40,7 +71,34 @@
 │   │   ├── Pipfile.lock
 │   │   ├── check_connection.py
 │   │   └── README.md
+│   ├── frontend-react
+│   │   ├── public
+│   │   │   └── ...
+│   │   ├── src
+│   │   │   ├── app
+│   │   │   │   └── ...
+│   │   │   ├── components
+│   │   │   │   └── ...
+│   │   │   │   services
+│   │   │   └── └── ...
+│   │   ├── tests
+│   │   │   └── ...
+│   │   ├── .env.development
+│   │   ├── .env.production
+│   │   ├── .gitignore
+│   │   ├── docker-shell.sh
+│   │   ├── Dockerfile
+│   │   ├── Dockerfile.dev
+│   │   ├── jsconfig.json
+│   │   ├── next.config.js
+│   │   ├── package-lock.json
+│   │   ├── package.json
+│   │   ├── postcss.config.js
+│   │   ├── tailwind.config.js
+│   │   ├── README.md
+│   │   └── testing.md
 │   ├── llm-rag
+│   │   ├── .gitignore
 │   │   ├── cli.py
 │   │   ├── docker-compose.yml
 │   │   ├── docker-entrypoint.sh
@@ -59,14 +117,24 @@
 │   │   │   ├── docker-shell.sh
 │   │   │   ├── Dockerfile
 │   │   │   ├── Pipfile
-│   └── └── └── Pipfile.lock
+│   │   │   └── Pipfile.lock
 │   ├── ├── gemini_finetuner
 │   │   │   ├── cli.py
 │   │   │   ├── docker-entrypoint.sh
 │   │   │   ├── docker-shell.sh
 │   │   │   ├── Dockerfile
 │   │   │   ├── Pipfile
-└── └── └── └── Pipfile.lock
+│   │   └── └── Pipfile.lock
+│   ├── postgres-db
+│   │   ├── docker-compose.yml
+│   │   ├── Dockerfile
+│   │   ├── README.md
+│   │   ├── schema.sql
+│   └── └── setup.sh
+├── .gitignore
+├── .pre-commit-config.yaml
+├── LICENSE
+└── pytest.ini
 ```
 
 # AC215 - Milestone4 - PrepPal
@@ -105,7 +173,7 @@ Here is our Technical Architecture:
 
 We built backend api service using fast API to expose model functionality to the frontend. We also added apis that will help the frontend display some key information about the model and data.
 
-```Add screenshots here```
+<img src="assets/API.png"  width="800">
 
 **Frontend**
 

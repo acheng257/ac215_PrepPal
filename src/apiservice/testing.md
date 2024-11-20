@@ -1,6 +1,6 @@
 # API Testing Guide
 
-## 1) Testing Dockerfile with Container Structure Tests
+## 1. Testing Dockerfile with Container Structure Tests
 
 This test ensures that the Dockerfile is correctly configured, including environment variables, user permissions, installed tools, and the expected functionality of the container.
 
@@ -66,7 +66,7 @@ Here's the revised version:
 
 ---
 
-## 2) Testing API Endpoints
+## 2. Testing API Endpoints
 
 This test verifies that the API endpoints function correctly.
 
