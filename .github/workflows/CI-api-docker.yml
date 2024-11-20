@@ -24,7 +24,7 @@ jobs:
 
       # Step 3: Run Container Structure Tests
       - name: Run Container Structure Tests
-        uses: plexsystems/container-structure-test-action@v0.1.0
+        uses: gcr.io/gcp-runtimes/container-structure-test:latest
         with:
           image: test-api-image:latest
           config: src/apiservice/tests/docker_test.yml
