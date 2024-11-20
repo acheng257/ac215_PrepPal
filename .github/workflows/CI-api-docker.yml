@@ -10,6 +10,9 @@ on:
 jobs:
   dockerfile-test:
     runs-on: ubuntu-latest
+    resources:
+      memory: '4GB'
+      cpus: '2'
 
     steps:
       # Step 1: Check out the source code
@@ -31,6 +34,7 @@ jobs:
 
       # Step 4: Run Container Structure Tests
       - name: Run Container Structure Tests
+        timeout-minutes: 20
         working-directory: src/apiservice
         run: |
           container-structure-test test \
