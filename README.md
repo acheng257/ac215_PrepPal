@@ -114,10 +114,10 @@ recipe recommendations, and then interact with a chatbot for further customizati
 
 Here are some screenshots of our app:
 
-<img src="assets/Frontend/home.jpg"  width="800">
-<img src="assets/Frontend/login.jpg"  width="800">
-<img src="assets/Frontend/pantry.jpg"  width="800">
-<img src="assets/Frontend/recs.jpg"  width="800">
+<img src="assets/Frontend/home.png"  width="800">
+<img src="assets/Frontend/login.png"  width="800">
+<img src="assets/Frontend/pantry.png"  width="800">
+<img src="assets/Frontend/recs.png"  width="800">
 
 
 ### Instructions to run our application
