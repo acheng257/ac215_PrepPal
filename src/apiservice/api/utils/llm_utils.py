@@ -51,7 +51,7 @@ def create_chat_session(recommendations, pantry) -> ChatSession:
     vertexai.init(project=GCP_PROJECT, location=GCP_LOCATION, credentials=credentials)
 
     chat_session = generative_model.start_chat()
-    if recommendations:
+    if recommendations or pantry:
         initialize_session_with_context(chat_session, recommendations, pantry)
     return chat_session
 
