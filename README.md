@@ -109,11 +109,15 @@ We built backend api service using fast API to expose model functionality to the
 
 **Frontend**
 
-A user friendly React app was built to identify various species of mushrooms in the wild using computer vision models from the backend. Using the app a user can take a picture of a mushroom and upload it. The app will send the image to the backend api to get prediction results on weather the mushroom is poisonous or not.
+A user friendly React app was built to provide a virtual pantry management system and a recipe recommendation system for users. Users can upload ingredients via text input and query our service for
+recipe recommendations, and then interact with a chatbot for further customizations and questions.
 
 Here are some screenshots of our app:
 
-```Add screenshots here```
+<img src="assets/Frontend/home.jpg"  width="800">
+<img src="assets/Frontend/login.jpg"  width="800">
+<img src="assets/Frontend/pantry.jpg"  width="800">
+<img src="assets/Frontend/recs.jpg"  width="800">
 
 
 ### Instructions to run our application
@@ -178,7 +182,8 @@ Here are some screenshots of our app:
    - The RAG Data Pipeline includes two integrated containers: one for the data pipeline and another for ChromaDB. The data pipeline container manages tasks such as cleaning, chunking, embedding, and integrating data into the vector database, while the ChromaDB container hosts the vector database. RAG allows efficient retrieval of relevant information from the knowledge base, with the capability to dynamically process and add user-uploaded data without altering the pre-existing knowledge base. This ensures flexibility while maintaining the integrity of the original data.
 3. [LLM Fine-Tuning Containers](./src/llm-finetuning/README.md)
    - The LLM Fine-Tuning folder includes two containers: one for the generation, preparation, and upload of the fine-tuning dataset, the other for the actual fine-tuning of the Gemini model. The Gemini model is fine-tuned to rank provided recipes based on available ingredients in a pantry. The process begins with generating a fine-tuning dataset using a large recipe collection from the All-Recipes Dataset, then cleaning and preparing it for use. The generated dataset is then uploaded to a GCP bucket, so that it is available for the actual fine-tuning process. Once fine-tuned, the model is able to answer questions by ranking recipes and identifying missing ingredients, providing a structured output for easy further computations. The folder includes scripts for generating, preparing, and uploading data, as well as running the fine-tuning and testing the model interactively.
-4. [Frontend Container]
+4. [Frontend Container](./src/frontend-react/README.md)
+   - The front-end is currently hosted on localhost and is built using the React framework.
 5. [API Container](./src/apiservice/README.md)
 
 **Notebooks/Reports:** <br>
