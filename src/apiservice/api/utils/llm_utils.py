@@ -163,3 +163,17 @@ def rebuild_chat_session(chat_history: List[Dict], recommendations: str, pantry:
         #     )
 
     return new_session
+
+
+def update_chat_context(chat_session: ChatSession, new_recommendations: str, pantry: str):
+    """
+    Update the chat session with new recommendations and pantry context.
+
+    Args:
+        chat_session: The existing chat session to update.
+        new_recommendations: The new list of recipe recommendations.
+        pantry: The updated pantry items.
+    """
+    context_message = f"Update: Here are the new recipe recommendations the user currently has:\n{new_recommendations}. \
+        The user also currently has these items in their pantry: {pantry}"
+    chat_session.send_message([context_message])

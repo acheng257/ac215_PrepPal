@@ -7,7 +7,7 @@ import time
 import mimetypes
 from pathlib import Path
 
-from api.utils.llm_utils import chat_sessions, create_chat_session, generate_chat_response, rebuild_chat_session
+from api.utils.llm_utils import chat_sessions, create_chat_session, generate_chat_response, rebuild_chat_session, update_chat_context
 from api.utils.chat_utils import ChatHistoryManager
 
 # Define Router
@@ -70,6 +70,8 @@ async def start_chat_with_llm(message: Dict, x_session_id: str = Header(None, al
 @router.post("/chats/{chat_id}")
 async def continue_chat_with_llm(chat_id: str, message: Dict, x_session_id: str = Header(None, alias="X-Session-ID")):
     print("content:", message["content"])
+    print("recommendations:", message["recommendations"])
+    print("pantry:", message["pantry"])
     print("x_session_id:", x_session_id)
     """Add a message to an existing chat"""
     chat = chat_manager.get_chat(chat_id, x_session_id)
@@ -81,6 +83,9 @@ async def continue_chat_with_llm(chat_id: str, message: Dict, x_session_id: str 
     if not chat_session:
         chat_session = rebuild_chat_session(chat["messages"], message["recommendations"], message["pantry"])
         chat_sessions[chat_id] = chat_session
+
+    if message["recommendations"] or message["pantry"]:
+        update_chat_context(chat_session, message["recommendations"], message["pantry"])
 
     # Update timestamp
     current_time = int(time.time())
