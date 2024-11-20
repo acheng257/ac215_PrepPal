@@ -14,7 +14,7 @@ const PrepPal = () => {
     ingredients: []
   });
   // TODO: also reset recipes to [] in line below
-  const [recommendations, setRecommendations] = useState(recipes);
+  const [recommendations, setRecommendations] = useState([]);
   const [chatMessage, setChatMessage] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
   const [chatId, setChatId] = useState(null);
