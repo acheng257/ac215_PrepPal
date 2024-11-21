@@ -68,26 +68,20 @@ Here's the revised version:
 
 ## 2. Testing API Endpoints
 
-This test verifies that the API endpoints function correctly.
+These tests, implemented via PyTest, verify that the API endpoints function correctly.
 
 ### Steps to Test the Endpoints
 
-Make sure you are in the folder `apiservice`: `cd ac215_preppal/src/apiservice`
+Make sure you are in the folder `apiservice`: `cd src/apiservice`
 
 ### 1. **Launch Docker**
 
 Run the following command to start Docker:
-`bash
-    sh docker-shell.py
-    `
+`sh docker-shell.sh`
 
 ### 2. **Run Unit Tests**
 
 - Install pytest if not already installed:
-  ```bash
-  pip install pytest
-  ```
+  ```pip install pytest```
 - Execute the unit tests:
-  ```bash
-  pytest unit_test.py
-  ```
+  ```pytest tests/unit_test.py```

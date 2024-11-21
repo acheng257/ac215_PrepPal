@@ -150,13 +150,13 @@ In this project, we aim to develop an AI-powered meal-planning application that 
 
 ### Milestone4 ###
 
-In this milestone, we have the components for frontend, API service, also components from previous milestones for data management, including versioning, as well as the implemetation of RAG and fine-tuned LLM model.
+In this milestone, we have the components for frontend and API service, as well as the components from previous milestones for data management, including versioning and the implemetation of RAG and fine-tuned LLM model.
 
-After completions of building a robust ML Pipeline in our previous milestone we have built a backend api service and frontend app. This will be our user-facing application that ties together the various components built in previous milestones.
+After building a robust ML Pipeline in our previous milestone, we have built a backend api service and frontend app. This will be our user-facing application that ties together the various components built in previous milestones.
 
 **Application Design**
 
-Before we start implementing the app we built a detailed design document outlining the application’s architecture. We built a Solution Architecture and Technical Architecture to ensure all our components work together.
+Before we started implementing the app, we built a detailed design document outlining the application’s architecture. We built a Solution Architecture and Technical Architecture to ensure all our components work together.
 
 Here is our Solution Architecture:
 
@@ -171,7 +171,7 @@ Here is our Technical Architecture:
 
 **Backend API**
 
-We built backend api service using fast API to expose model functionality to the frontend. We also added apis that will help the frontend display some key information about the model and data.
+We built a backend api service using fastAPI to expose model functionality to the frontend.
 
 <img src="assets/API.png"  width="800">
 
@@ -251,8 +251,14 @@ Here are some screenshots of our app:
 3. [LLM Fine-Tuning Containers](./src/llm-finetuning/README.md)
    - The LLM Fine-Tuning folder includes two containers: one for the generation, preparation, and upload of the fine-tuning dataset, the other for the actual fine-tuning of the Gemini model. The Gemini model is fine-tuned to rank provided recipes based on available ingredients in a pantry. The process begins with generating a fine-tuning dataset using a large recipe collection from the All-Recipes Dataset, then cleaning and preparing it for use. The generated dataset is then uploaded to a GCP bucket, so that it is available for the actual fine-tuning process. Once fine-tuned, the model is able to answer questions by ranking recipes and identifying missing ingredients, providing a structured output for easy further computations. The folder includes scripts for generating, preparing, and uploading data, as well as running the fine-tuning and testing the model interactively.
 4. [Frontend Container](./src/frontend-react/README.md)
-   - The front-end is currently hosted on localhost and is built using the React framework.
+   - The front-end is currently hosted on [localhost:3000](http://localhost:3000) and is built using the React framework.
 5. [API Container](./src/apiservice/README.md)
+   - The backend API is implemented via fastAPI and hosted on [localhost:9000](http://localhost:9000).
 
 **Notebooks/Reports:** <br>
 These folders contains code that is not part of any container - for e.g: Application mockup, EDA, crucial insights, reports or visualizations.
+
+
+### Testing
+
+Refer to the following two files ([here](./src/frontend-react/testing.md) and [here](./src/apiservice/testing.md)) for instructions on how to run our tests locally.
