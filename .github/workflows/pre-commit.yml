@@ -30,9 +30,12 @@ jobs:
         with:
           node-version: 18
 
+      - name: Install Node.js dependencies for frontend
+        working-directory: src/frontend-react
+        run: npm ci
+
       - name: Install pre-commit (and other repos)
         run: |
-          npm ci
           python -m pip install --upgrade pip
           pip install pre-commit
 
