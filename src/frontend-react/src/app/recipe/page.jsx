@@ -76,7 +76,7 @@ const Recipe = () => {
       alert('An error occurred while updating the pantry');
     }
   };
-  
+
 
   return (
     <div className={styles.appContainer}>
@@ -145,4 +145,3 @@ const Recipe = () => {
 };
 
 export default Recipe;
-
