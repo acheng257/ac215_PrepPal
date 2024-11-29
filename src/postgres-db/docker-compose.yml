@@ -11,6 +11,12 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
       - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    networks:
+      - llm-rag-network  # Connect to llm-rag-network
 
 volumes:
   db_data:
+
+networks:
+  llm-rag-network:
+    external: true  # Specify that this is an external network

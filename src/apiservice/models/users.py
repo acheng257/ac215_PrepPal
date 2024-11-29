@@ -1,3 +1,5 @@
+# models/users.py
+
 from sqlalchemy import (
     Column,
     String,
@@ -18,10 +20,13 @@ class User(Base):
     user_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     first_name = Column(String(50), nullable=False)
     last_name = Column(String(50), nullable=False)
+    username = Column(String(50), nullable=False)
+    password = Column(String(200), nullable=False)
     phone_number = Column(String(20), unique=True, nullable=False)
     registration_date = Column(DateTime(timezone=True), server_default=func.now())
     last_updated = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
+    # Relationships
     preferences = relationship("UserPreferences", back_populates="user", uselist=False, cascade="all, delete-orphan")
     pantry_items = relationship("PantryItem", back_populates="user", cascade="all, delete-orphan")
 
@@ -39,6 +44,7 @@ class UserPreferences(Base):
     favorite_recipes = Column(ARRAY(UUID(as_uuid=True)), default=[])
     last_updated = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
+    # Relationships
     user = relationship("User", back_populates="preferences")
 
     def __repr__(self):

@@ -7,6 +7,7 @@ from datetime import datetime
 class UserBase(BaseModel):
     first_name: str = Field(..., max_length=50)
     last_name: str = Field(..., max_length=50)
+    username: str = Field(..., max_length=50)
     phone_number: str = Field(..., max_length=20)
 
 
@@ -18,7 +19,11 @@ class UserPreferencesBase(BaseModel):
 
 
 class UserCreate(UserBase):
+    password: str = Field(..., min_length=8, max_length=200)
     user_preferences: UserPreferencesBase
+
+    class Config:
+        orm_mode = True
 
 
 class UserUpdate(BaseModel):
