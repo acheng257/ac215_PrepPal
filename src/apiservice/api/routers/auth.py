@@ -25,25 +25,6 @@ async def login(username: str = Form(...), password: str = Form(...)):
     return {"user_id": user["user_id"]}
 
 
-# @router.post("/signup")
-# async def signup(username: str = Form(...), password: str = Form(...)):
-#     """
-#     Create a new user in the GCS-stored database.
-#     """
-# user_db = load_user_db()
-
-# if username in user_db:
-#     raise HTTPException(status_code=400, detail="User already exists")
-
-# # Generate a new user ID (incremental ID for simplicity)
-# user_id = str(len(user_db) + 1)
-
-# user_db[username] = {"password": password, "user_id": user_id}
-# save_user_db(user_db)
-
-# return {"message": "User created successfully", "user_id": user_id}
-
-
 @router.post("/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def signup(first_name: str = Form(...), last_name: str = Form(...), username: str = Form(...), phone_number: str = Form(...), password: str = Form(...), db: AsyncSession = Depends(get_db)):
     """
