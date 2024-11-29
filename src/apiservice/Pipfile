@@ -23,6 +23,10 @@ uvicorn = "*"
 sentence-transformers = "*"
 user-agent = "*"
 python-multipart = "*"
+sqlalchemy = "*"
+asyncpg = "*"
+psycopg2-binary = "*"
+alembic = "*"
 
 
 [requires]

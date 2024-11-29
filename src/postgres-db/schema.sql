@@ -22,14 +22,20 @@ CREATE TABLE user_preferences (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE  -- Foreign key to users table
 );
 
+-- CREATE TABLE pantry (
+--     user_id UUID PRIMARY KEY,
+--     item_name VARCHAR(50) NOT NULL,
+--     quantity INT,
+--     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+-- );
 CREATE TABLE pantry (
     user_id UUID PRIMARY KEY,
-    item_name VARCHAR(50) NOT NULL,
-    quantity INT,
+    items JSONB NOT NULL DEFAULT '{}'::JSONB,
+    last_updated TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
--- 4. recipes table (save to link to user preferences in the future)
+-- 4. recipes table (stores favorites, save to link to user preferences in the future)
 CREATE TABLE recipes (
     recipe_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     instructions TEXT,
