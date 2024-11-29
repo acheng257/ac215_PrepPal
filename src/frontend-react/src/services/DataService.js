@@ -24,7 +24,8 @@ const DataService = {
         if (typeof window !== "undefined") {
             const storedUser = localStorage.getItem('userId');
             if (storedUser) {
-                return JSON.parse(storedUser);
+                // Remove JSON.parse since userId is stored as a plain string
+                return storedUser;
             }
         }
         return null;

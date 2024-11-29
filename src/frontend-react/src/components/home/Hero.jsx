@@ -50,7 +50,7 @@ export default function Hero({ user, setUser }) {
                     // user logged in
                     <div className="flex flex-col items-center space-y-4">
                         <p className="text-lg text-white">
-                            Welcome back, {user.id}!
+                            Welcome back, {localStorage.getItem('userId')}!
                         </p>
                         <button
                             onClick={handleLogout}
