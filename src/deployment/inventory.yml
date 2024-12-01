@@ -1,0 +1,22 @@
+all:
+    vars:
+      ansible_user: sa_105658751343965833384
+      ansible_ssh_private_key_file: "../../secrets/ssh-key-deployment"
+      gcp_service_account_file: "../../secrets/deployment.json"
+      gcp_service_account_email: "deployment@preppal-438123.iam.gserviceaccount.com"
+      gcp_auth_kind: "serviceaccount"
+      gcp_scopes: "https://www.googleapis.com/auth/compute"
+      gcp_project: "preppal-438123"
+      gcp_region: "us-east1"
+      gcp_zone: "us-east1-c"
+      docker_network_name: "appnetwork"
+      persistent_disk_name: "preppal-disk"
+      persistent_disk_size: 100
+      machine_instance_name: "preppal-demo"
+      machine_type: "n2d-standard-4"
+      machine_disk_size: 100
+
+    children:
+        appserver:
+            hosts:
+                34.74.244.191:
