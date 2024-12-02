@@ -86,7 +86,8 @@ def generate_recommendation_list(content_dict: Dict):
         # # Load the fine-tuning credentials
         # fine_tuning_key_path = os.getenv("MODEL_ENDPOINT_GOOGLE_APPLICATION_CREDENTIALS")
         # credentials = service_account.Credentials.from_service_account_file(fine_tuning_key_path)
-        vertexai.init(project=GCP_PROJECT, location=GCP_REGION, credentials=GOOGLE_APPLICATION_CREDENTIALS)
+        credentials = GOOGLE_APPLICATION_CREDENTIALS
+        vertexai.init(project=GCP_PROJECT, location=GCP_REGION, credentials=credentials)
 
         # Initialize the GenerativeModel
         most_recent_endpoint = get_most_recent_endpoint(GCP_PROJECT, GCP_REGION)
