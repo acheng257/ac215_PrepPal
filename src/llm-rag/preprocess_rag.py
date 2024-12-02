@@ -459,7 +459,7 @@ def load(method="entire_recipe", user_id=None, recipe_id=None, download=True):
 
         # Process
         # UPDATE HERE
-        for index, jsonl_file in enumerate(jsonl_files[1:3]):
+        for index, jsonl_file in enumerate(jsonl_files[1:2]):
             print("Processing file:", jsonl_file)
 
             data_df = pd.read_json(jsonl_file, lines=True)

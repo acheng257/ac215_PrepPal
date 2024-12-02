@@ -29,6 +29,8 @@ RUN set -ex; \
     pip install --no-cache-dir pipenv && \
     useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 Passw0rd)" && \
     mkdir -p /app && \
+    mkdir -p /persistent && \
+    chown app:app /persistent && \
     chown app:app /app
 
 WORKDIR /app

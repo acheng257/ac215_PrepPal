@@ -10,6 +10,7 @@ export GCP_PROJECT="preppal-438123"
 export GOOGLE_APPLICATION_CREDENTIALS="/secrets/data-service-account.json"
 export FINETUNING_GOOGLE_APPLICATION_CREDENTIALS="/secrets/preppal-llm-service-account.json"
 export IMAGE_NAME="llm-rag"
+export DEV=1
 
 
 # Create the network if we don't have it yet
