@@ -30,7 +30,9 @@ const Recipe = () => {
         throw new Error('Failed to fetch pantry');
       }
       const pantryData = await response.json();
-      let pantry = pantryData.pantry || {};
+      let pantry = pantryData.items || {};
+
+      console.log("Pantry is", pantry);
 
       const parseIngredient = (ingredientStr) => {
         const parts = ingredientStr.trim().split(' ');
@@ -47,6 +49,7 @@ const Recipe = () => {
           const pantryQuantity = pantry[ingredientName];
 
           const updatedQuantity = pantryQuantity - recipeQuantity;
+          console.log("quantities are", pantryQuantity, recipeQuantity)
 
           if (updatedQuantity <= 0) {
             delete pantry[ingredientName];
@@ -58,12 +61,13 @@ const Recipe = () => {
         }
       });
 
+      console.log("updated pantry is", JSON.stringify(pantry))
       const updateResponse = await fetch(`${apiUrl}/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(pantry),
+        body: JSON.stringify({ items: pantry }),
       });
 
       if (!updateResponse.ok) {
