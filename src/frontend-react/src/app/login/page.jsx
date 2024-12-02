@@ -174,6 +174,8 @@ const Login = () => {
 
         // Save userId to local storage
         localStorage.setItem("userId", data.user_id);
+        localStorage.setItem("username", data.username);
+        localStorage.setItem("name", data.first_name);
 
         // Navigate to the main pantry page
         router.push("/preppal");

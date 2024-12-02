@@ -10,7 +10,8 @@ export default function Hero({ user, setUser }) {
     // const [user, setUser] = useState(DataService.GetUser());
 
     const handleLogout = () => {
-        localStorage.removeItem('userId');
+        // localStorage.removeItem('userId');
+        localStorage.clear();
         setUser(null);
         router.push('/');
     };
@@ -50,7 +51,7 @@ export default function Hero({ user, setUser }) {
                     // user logged in
                     <div className="flex flex-col items-center space-y-4">
                         <p className="text-lg text-white">
-                            Welcome back, {localStorage.getItem('userId')}!
+                            Welcome back, {localStorage.getItem('name')}!
                         </p>
                         <button
                             onClick={handleLogout}

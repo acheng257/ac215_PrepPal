@@ -1,0 +1,19 @@
+{
+  "chat_id": "22634e6a-6a50-4d37-a2df-df1601c12f90",
+  "title": "hi!...",
+  "dts": 1733115756,
+  "messages": [
+    {
+      "content": "hi!",
+      "recommendations": [],
+      "pantry": {},
+      "message_id": "666b5bc0-abb0-4e70-8b97-862185fbccb3",
+      "role": "user"
+    },
+    {
+      "message_id": "e664f994-b0cd-45eb-ab04-3da95604c7af",
+      "role": "assistant",
+      "content": "Hello!  How can I assist you today?  Are you looking for a recipe recommendation? Perhaps you have a specific cuisine in mind, dietary restrictions, or a particular ingredient you'd like to use?  The more information you provide, the better I can tailor my suggestions to your needs.\n"
+    }
+  ]
+}

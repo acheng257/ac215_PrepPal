@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS recipes CASCADE;
 DROP TABLE IF EXISTS pantry CASCADE;
+DROP TABLE IF EXISTS user_history CASCADE;
 DROP TABLE IF EXISTS user_preferences CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 -- Enable required extensions
@@ -28,12 +29,14 @@ CREATE TABLE user_preferences (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE  -- Foreign key to users table
 );
 
--- CREATE TABLE pantry (
---     user_id UUID PRIMARY KEY,
---     item_name VARCHAR(50) NOT NULL,
---     quantity INT,
---     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
--- );
+CREATE TABLE user_history (
+    id SERIAL PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    action VARCHAR(255) NOT NULL,       -- Example: "LOGIN", "VIEWED PAGE", etc.
+    details JSONB,                     -- Stores additional details in JSON format
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE pantry (
     user_id UUID PRIMARY KEY,
     items JSONB NOT NULL DEFAULT '{}'::JSONB,
@@ -48,7 +51,7 @@ CREATE TABLE recipes (
     ingredients TEXT,
     cooking_time INT,
     calories INT,
-    protein INT,
+    protein INT
 );
 
 -- Indexes
