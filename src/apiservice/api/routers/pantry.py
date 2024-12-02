@@ -1,66 +1,79 @@
-from fastapi import APIRouter, HTTPException
-from google.cloud import storage
-import json
-import os
+from fastapi import APIRouter, HTTPException, Depends, status
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+from sqlalchemy.exc import SQLAlchemyError
+from uuid import UUID
+from models.database import get_db
+from models.pantry import PantryItem
+from schemas.pantry import PantryUpdate, PantryResponse, PantryCreate
 
 router = APIRouter()
 
 
-def get_bucket():
-    storage_client = storage.Client()
-    return storage_client.bucket(os.getenv("GCS_BUCKET_NAME"))
-
-
-@router.get("/{user_id}")
-async def get_user_pantry(user_id: str):
-    GCS_PANTRY_FOLDER = os.getenv("GCS_PANTRY_FOLDER", "pantry")
+@router.get("/{user_id}", response_model=PantryResponse)
+async def get_user_pantry(user_id: UUID, db: AsyncSession = Depends(get_db)):
     try:
-        file_path = f"{GCS_PANTRY_FOLDER}/{user_id}.json"
-        bucket = get_bucket()
-        blob = bucket.blob(file_path)
+        result = await db.execute(select(PantryItem).where(PantryItem.user_id == user_id))
+        pantry_item = result.scalars().first()
 
-        if not blob.exists():
-            default_pantry_json = json.dumps({})
-            blob.upload_from_string(default_pantry_json, content_type="application/json")
-            return {"user_id": user_id, "pantry": {}}
+        if pantry_item is None:
+            new_pantry_item = PantryItem(user_id=user_id, items={})
+            db.add(new_pantry_item)
+            await db.commit()
+            await db.refresh(new_pantry_item)
+            pantry_item = new_pantry_item
 
-        pantry_data = blob.download_as_text()
-        return {"user_id": user_id, "pantry": json.loads(pantry_data)}
+        # Ensure items is a dictionary, use an empty dict if it's None
+        items = pantry_item.items if pantry_item.items is not None else {}
 
-    except Exception as e:
+        return PantryResponse(user_id=pantry_item.user_id, items=items, last_updated=pantry_item.last_updated)
+
+    except SQLAlchemyError as e:
+        await db.rollback()
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 
-@router.put("/{user_id}")
-async def update_user_pantry(user_id: str, pantry_data: dict):
-    GCS_PANTRY_FOLDER = os.getenv("GCS_PANTRY_FOLDER", "pantry")
+@router.put("/{user_id}", response_model=PantryResponse)
+async def update_user_pantry(user_id: UUID, pantry_update: PantryUpdate, db: AsyncSession = Depends(get_db)):
     try:
-        file_path = f"{GCS_PANTRY_FOLDER}/{user_id}.json"
-        bucket = get_bucket()
-        blob = bucket.blob(file_path)
+        result = await db.execute(select(PantryItem).where(PantryItem.user_id == user_id))
+        pantry_item = result.scalars().first()
 
-        # Upload pantry data as JSON
-        blob.upload_from_string(data=json.dumps(pantry_data), content_type="application/json")
+        if pantry_item is None:
+            pantry_create = PantryCreate(items=pantry_update.items or {})
+            new_pantry_item = PantryItem(user_id=user_id, **pantry_create.dict())
+            db.add(new_pantry_item)
+            await db.commit()
+            await db.refresh(new_pantry_item)
+            pantry_item = new_pantry_item
+        else:
+            if pantry_update.items is not None:
+                pantry_item.items = pantry_update.items
+            db.add(pantry_item)
+            await db.commit()
+            await db.refresh(pantry_item)
 
-        return {"message": "Pantry updated successfully", "user_id": user_id}
+        return PantryResponse(user_id=pantry_item.user_id, items=pantry_item.items, last_updated=pantry_item.last_updated)
 
-    except Exception as e:
+    except SQLAlchemyError as e:
+        await db.rollback()
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 
-@router.delete("/{user_id}")
-async def delete_user_pantry(user_id: str):
-    GCS_PANTRY_FOLDER = os.getenv("GCS_PANTRY_FOLDER", "pantry")
+@router.delete("/{user_id}", status_code=status.HTTP_200_OK)
+async def delete_user_pantry(user_id: UUID, db: AsyncSession = Depends(get_db)):
     try:
-        file_path = f"{GCS_PANTRY_FOLDER}/{user_id}.json"
-        bucket = get_bucket()
-        blob = bucket.blob(file_path)
+        result = await db.execute(select(PantryItem).where(PantryItem.user_id == user_id))
+        pantry_item = result.scalars().first()
 
-        if not blob.exists():
+        if pantry_item is None:
             raise HTTPException(status_code=404, detail="User pantry not found")
-        blob.delete()
 
-        return {"message": "Pantry deleted successfully", "user_id": user_id}
+        await db.delete(pantry_item)
+        await db.commit()
 
-    except Exception as e:
+        return {"message": "Pantry deleted successfully", "user_id": str(user_id)}
+
+    except SQLAlchemyError as e:
+        await db.rollback()
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")

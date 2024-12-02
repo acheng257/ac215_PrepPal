@@ -13,7 +13,7 @@ const PrepPal = () => {
     cuisine: 'all',
     ingredients: []
   });
-  const [ingredientInput, setIngredientInput] = useState(''); // New state for input
+  const [ingredientInput, setIngredientInput] = useState('');
   const [recommendations, setRecommendations] = useState([]);
   const [chatMessage, setChatMessage] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
@@ -30,6 +30,61 @@ const PrepPal = () => {
     }
   };
 
+  // Load saved state from localStorage on component mount
+  useEffect(() => {
+    const savedRecommendations = localStorage.getItem('prepPal_recommendations');
+    const savedFilters = localStorage.getItem('prepPal_filters');
+    const savedChatHistory = localStorage.getItem('prepPal_chatHistory');
+    const savedChatId = localStorage.getItem('prepPal_chatId');
+
+    if (savedRecommendations) {
+      try {
+        setRecommendations(JSON.parse(savedRecommendations));
+      } catch (error) {
+        console.error('Failed to parse saved recommendations:', error);
+      }
+    }
+
+    if (savedFilters) {
+      try {
+        setFilters(JSON.parse(savedFilters));
+      } catch (error) {
+        console.error('Failed to parse saved filters:', error);
+      }
+    }
+
+    if (savedChatHistory) {
+      try {
+        setChatHistory(JSON.parse(savedChatHistory));
+      } catch (error) {
+        console.error('Failed to parse saved chat history:', error);
+      }
+    }
+
+    if (savedChatId) {
+      setChatId(savedChatId);
+    }
+  }, []);
+
+  // Save recommendations and filters to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('prepPal_recommendations', JSON.stringify(recommendations));
+  }, [recommendations]);
+
+  useEffect(() => {
+    localStorage.setItem('prepPal_filters', JSON.stringify(filters));
+  }, [filters]);
+
+  useEffect(() => {
+    localStorage.setItem('prepPal_chatHistory', JSON.stringify(chatHistory));
+  }, [chatHistory]);
+
+  useEffect(() => {
+    if (chatId) {
+      localStorage.setItem('prepPal_chatId', chatId);
+    }
+  }, [chatId]);
+
   useEffect(() => {
     if (chatId) {
       fetchChat(chatId);
@@ -38,7 +93,7 @@ const PrepPal = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [chatHistory]); // Scroll to bottom when chatHistory updates
+  }, [chatHistory]);
 
   async function fetchUserPantry(userId) {
     try {
@@ -72,19 +127,18 @@ const PrepPal = () => {
       const parsedIngredients = ingredientInput
         .split(',')
         .map((ingredient) => ingredient.trim())
-        .filter((ingredient) => ingredient.length > 0); // Remove empty strings
+        .filter((ingredient) => ingredient.length > 0);
 
-      setFilters((prevFilters) => ({
-        ...prevFilters,
-        ingredients: parsedIngredients,
-      }));
-
-      console.log({ ...filters, ingredients: parsedIngredients });
-
-      const response = await DataService.GetRecipeRecommendation({
+      const updatedFilters = {
         ...filters,
         ingredients: parsedIngredients,
-      });
+      };
+
+      setFilters(updatedFilters);
+
+      console.log(updatedFilters);
+
+      const response = await DataService.GetRecipeRecommendation(updatedFilters);
 
       if (response.data) {
         setRecommendations(response.data.recommendations);
@@ -92,7 +146,7 @@ const PrepPal = () => {
         alert('Failed to fetch recommendations');
       }
 
-      setIngredientInput(''); // Clear input after submission
+      setIngredientInput('');
     } catch (error) {
       console.error('Error fetching recommendations:', error);
       alert('An error occurred. Please try again.');
@@ -108,10 +162,11 @@ const PrepPal = () => {
       return;
     }
 
-    setChatHistory((prev) => [
-      ...prev,
+    const newChatHistory = [
+      ...chatHistory,
       { sender: 'User', text: chatMessage },
-    ]);
+    ];
+    setChatHistory(newChatHistory);
 
     try {
       let response;
@@ -121,13 +176,21 @@ const PrepPal = () => {
       if (!chatId) {
         // Start a new chat
         console.log("starting chat");
-        response = await DataService.StartChatWithLLM('llm', { content: chatMessage, recommendations: recommendations, pantry: pantry_response["pantry"] });
+        response = await DataService.StartChatWithLLM('llm', {
+          content: chatMessage,
+          recommendations: recommendations,
+          pantry: pantry_response["pantry"]
+        });
         setChatId(response.data.chat_id);
       } else {
         // Continue the existing chat
         console.log("continuing chat");
-        response = await DataService.ContinueChatWithLLM('llm', chatId, { content: chatMessage, recommendations: recommendations, pantry: pantry_response["pantry"] });
-        console.log("response:", response)
+        response = await DataService.ContinueChatWithLLM('llm', chatId, {
+          content: chatMessage,
+          recommendations: recommendations,
+          pantry: pantry_response["pantry"]
+        });
+        console.log("response:", response);
       }
 
       // Append bot's response to chat history
@@ -146,9 +209,8 @@ const PrepPal = () => {
       alert('An error occurred. Please try again.');
     }
 
-    setChatMessage(''); // Clear input
+    setChatMessage('');
   };
-
 
   const handleRecipeClick = (recipe) => {
     const queryParams = new URLSearchParams({
@@ -202,6 +264,7 @@ const PrepPal = () => {
                 <option value="italian">Italian</option>
                 <option value="asian">Asian</option>
                 <option value="mexican">Mexican</option>
+                {/* Add more cuisines as needed */}
               </select>
             </div>
             <div className={styles.filterGroup}>
@@ -209,8 +272,8 @@ const PrepPal = () => {
               <input
                 type="text"
                 placeholder="Enter ingredients separated by commas"
-                value={ingredientInput} // Updated to use ingredientInput
-                onChange={(e) => setIngredientInput(e.target.value)} // Updated to set ingredientInput
+                value={ingredientInput}
+                onChange={(e) => setIngredientInput(e.target.value)}
               />
               <span>Ingredients: {filters.ingredients.join(', ')}</span>
             </div>
@@ -228,7 +291,7 @@ const PrepPal = () => {
                 >
                   <div className={styles.recipeDetails}>
                     <h3>{recipe.title}</h3>
-                    <p>Cooking time: {recipe.time}</p>
+                    <p>Cooking time: {recipe.time} minutes</p>
                     <h4>Missing Ingredients:</h4>
                     <ul>
                       {recipe.missing_ingredients.map((ingredient, idx) => (

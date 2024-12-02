@@ -24,7 +24,6 @@ const Pantry = () => {
     setUserId(storedUserId); // Set userId in state
   }, [router]);
 
-  // Fetch pantry data when userId is available
   useEffect(() => {
     if (!userId) return;
 
@@ -37,12 +36,17 @@ const Pantry = () => {
           return;
         }
         const data = await response.json();
-        setIngredients(
-          Object.entries(data.pantry).map(([name, quantity]) => ({
-            name,
-            quantity
-          }))
-        );
+        if (data && data.items) {
+          setIngredients(
+            Object.entries(data.items).map(([name, quantity]) => ({
+              name,
+              quantity
+            }))
+          );
+        } else {
+          console.error('Unexpected response structure:', data);
+          setIngredients([]);
+        }
       } catch (error) {
         console.error("Error fetching pantry:", error);
       }
@@ -63,7 +67,7 @@ const Pantry = () => {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(updatedPantry)
+        body: JSON.stringify({ items: updatedPantry })
       });
 
       if (!response.ok) {
