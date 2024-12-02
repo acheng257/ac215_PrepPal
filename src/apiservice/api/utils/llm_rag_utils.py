@@ -74,10 +74,11 @@ def generate_recommendation_list(content_dict: Dict):
 
         # Retrieve chunks based on embedding value
         results = collection.query(query_embeddings=[query_embedding], n_results=5)
-        possible_recipes = f"""
-        Possible Recipes:\n
-        {"\n".join(results["documents"][0])}
-        """
+        # possible_recipes = f"""
+        # Possible Recipes:\n
+        # {"\n".join(results["documents"][0])}
+        # """
+        possible_recipes = "Possible Recipes:\n" + "\n".join(results["documents"][0])
 
         INPUT_PROMPT = f"""
         {ingredients_query}\n
@@ -86,7 +87,7 @@ def generate_recommendation_list(content_dict: Dict):
         \n\nBased on the items in my pantry, how would you rank these recipes? I want to use as many ingredients from my pantry as possible.
         """
 
-        # # Load the fine-tuning credentials 
+        # # Load the fine-tuning credentials
         fine_tuning_key_path = os.getenv("MODEL_ENDPOINT_GOOGLE_APPLICATION_CREDENTIALS")
         credentials = service_account.Credentials.from_service_account_file(fine_tuning_key_path)
         vertexai.init(project=GCP_PROJECT, location=GCP_REGION, credentials=credentials)
