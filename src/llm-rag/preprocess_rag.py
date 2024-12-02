@@ -463,6 +463,10 @@ def load(method="entire_recipe", user_id=None, recipe_id=None, download=True):
             print("Processing file:", jsonl_file)
 
             data_df = pd.read_json(jsonl_file, lines=True)
+
+            # Drop duplicates
+            data_df = data_df.drop_duplicates(subset="chunk", keep="first")
+
             print("Shape:", data_df.shape)
             print(data_df.head())
 
