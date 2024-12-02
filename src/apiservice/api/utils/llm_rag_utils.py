@@ -7,17 +7,19 @@ import chromadb
 import vertexai
 from sentence_transformers import SentenceTransformer
 from vertexai.generative_models import GenerativeModel
-from google.oauth2 import service_account
+from google.cloud import aiplatform
 
 
 # Setup Global Variables
 GCP_PROJECT = os.environ["GCP_PROJECT"]
-GCP_LOCATION = "us-central1"
-EMBEDDING_MODEL = "text-embedding-004"
-EMBEDDING_DIMENSION = 256
+GCP_REGION = os.environ["GCP_REGION"]
+GOOGLE_APPLICATION_CREDENTIALS = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
 CHROMADB_HOST = os.environ["CHROMADB_HOST"]
 CHROMADB_PORT = os.environ["CHROMADB_PORT"]
-MODEL_ENDPOINT = "projects/582280928569/locations/us-central1/endpoints/3898306381651902464"  # Finetuned model
+
+EMBEDDING_MODEL = "text-embedding-004"
+EMBEDDING_DIMENSION = 256
+
 
 # Configuration settings for the content generation
 generation_config = {
@@ -36,6 +38,22 @@ collection = client.get_collection(name=collection_name)
 
 
 # -------------------- Functions ------------------------
+def get_most_recent_endpoint(project, location):
+
+    aiplatform.init(project=project, location=location)
+    endpoints = aiplatform.Endpoint.list()
+
+    # If no endpoints exist, return None
+    if not endpoints:
+        print("No endpoints found.")
+        return None
+
+    # Sort endpoints by create_time (newest first)
+    most_recent_endpoint = max(endpoints, key=lambda ep: ep.create_time)
+
+    return most_recent_endpoint
+
+
 def generate_query_embedding(query):
     return embedding_model.encode(query)
 
@@ -65,13 +83,14 @@ def generate_recommendation_list(content_dict: Dict):
         \n\nBased on the items in my pantry, how would you rank these recipes? I want to use as many ingredients from my pantry as possible.
         """
 
-        # Load the fine-tuning credentials
-        fine_tuning_key_path = os.getenv("MODEL_ENDPOINT_GOOGLE_APPLICATION_CREDENTIALS")
-        credentials = service_account.Credentials.from_service_account_file(fine_tuning_key_path)
-        vertexai.init(project=GCP_PROJECT, location=GCP_LOCATION, credentials=credentials)
+        # # Load the fine-tuning credentials
+        # fine_tuning_key_path = os.getenv("MODEL_ENDPOINT_GOOGLE_APPLICATION_CREDENTIALS")
+        # credentials = service_account.Credentials.from_service_account_file(fine_tuning_key_path)
+        vertexai.init(project=GCP_PROJECT, location=GCP_REGION, credentials=GOOGLE_APPLICATION_CREDENTIALS)
 
         # Initialize the GenerativeModel
-        generative_model = GenerativeModel(MODEL_ENDPOINT)
+        most_recent_endpoint = get_most_recent_endpoint(GCP_PROJECT, GCP_REGION)
+        generative_model = GenerativeModel(most_recent_endpoint)
 
         # Generate Recipe Recommendation List
         response = generative_model.generate_content(

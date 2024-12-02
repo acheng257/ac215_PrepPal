@@ -10,7 +10,7 @@ import vertexai
 
 # Setup
 GCP_PROJECT = os.environ["GCP_PROJECT"]
-GCP_LOCATION = "us-central1"
+GCP_REGION = os.environ["GCP_REGION"]
 EMBEDDING_MODEL = "text-embedding-004"
 EMBEDDING_DIMENSION = 256
 GENERATIVE_MODEL = "gemini-1.5-flash-002"
@@ -48,7 +48,7 @@ def create_chat_session(recommendations, pantry) -> ChatSession:
     """Create a new chat session with the model"""
     fine_tuning_key_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
     credentials = service_account.Credentials.from_service_account_file(fine_tuning_key_path)
-    vertexai.init(project=GCP_PROJECT, location=GCP_LOCATION, credentials=credentials)
+    vertexai.init(project=GCP_PROJECT, location=GCP_REGION, credentials=credentials)
 
     chat_session = generative_model.start_chat()
     if recommendations or pantry:
