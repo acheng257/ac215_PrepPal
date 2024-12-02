@@ -136,51 +136,33 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link"; // Ensure Link is imported
 import styles from "./styles.module.css";
 
-const Auth = () => {
-  // 1. Update state variables: 'email' to 'username'
+const Login = () => {
+  // State variables for login
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState(""); // For password confirmation
-  const [isLogin, setIsLogin] = useState(true); // Toggle between login and signup
   const router = useRouter();
 
-  // 2. Update form validation to check 'username' instead of 'email'
+  // Form validation: ensure both fields are filled
   const isFormValid = () => {
-    if (isLogin) {
-      return username.trim() && password.trim();
-    } else {
-      return username.trim() && password.trim() && confirmPassword.trim();
-    }
+    return username.trim() !== "" && password.trim() !== "";
   };
 
+  // Handle form submission for login
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // 3. Password confirmation check for signup
-    if (!isLogin && password !== confirmPassword) {
-      alert("Passwords do not match. Please try again.");
-      return;
-    }
+    const endpoint = "/auth/login";
 
-    // 4. Determine the endpoint based on the form mode (login/signup)
-    const endpoint = isLogin ? "/auth/login" : "/auth/signup";
-
-    // 5. Prepare form data with 'username' and 'password'
+    // Prepare form data
     const formData = new FormData();
-    formData.append("username", username); // Use 'username' instead of 'email'
+    formData.append("username", username);
     formData.append("password", password);
 
-    // For signup, include additional fields
-    if (!isLogin) {
-      formData.append("first_name", event.target.first_name.value);
-      formData.append("last_name", event.target.last_name.value);
-      formData.append("phone_number", event.target.phone_number.value);
-    }
-
     try {
-      // 6. Make a POST request to the appropriate endpoint
+      // Make a POST request to the login endpoint
       const response = await fetch(`http://localhost:9000${endpoint}`, {
         method: "POST",
         body: formData,
@@ -188,23 +170,13 @@ const Auth = () => {
 
       if (response.ok) {
         const data = await response.json();
-        if (isLogin) {
-          console.log("Login successful:", data);
+        console.log("Login successful:", data);
 
-          // Save userId to local storage
-          localStorage.setItem("userId", data.user_id);
+        // Save userId to local storage
+        localStorage.setItem("userId", data.user_id);
 
-          // Navigate to pantry
-          router.push(`/preppal`);
-        } else {
-          console.log("Signup successful:", data);
-
-          // Save userId to local storage for immediate access
-          localStorage.setItem("userId", data.user_id);
-
-          // Navigate to pantry directly after signup
-          router.push(`/preppal`);
-        }
+        // Navigate to the main pantry page
+        router.push("/preppal");
       } else {
         const errorData = await response.json();
         alert(errorData.detail || "Something went wrong.");
@@ -218,14 +190,14 @@ const Auth = () => {
   return (
     <div className={styles.appContainer}>
       <div className={styles.container}>
-        <h2 className={styles.title}>{isLogin ? "Log In" : "Sign Up"}</h2>
+        <h2 className={styles.title}>Log In</h2>
         <form className={styles.form} onSubmit={handleSubmit}>
-          {/* 7. Update input fields to use 'username' */}
+          {/* Username Input Field */}
           <div>
             <input
-              type="text" // Changed from 'email' to 'text'
-              name="username" // Added 'name' attribute for form data
-              placeholder="Username" // Changed from 'Email' to 'Username'
+              type="text"
+              name="username"
+              placeholder="Username"
               className={styles.inputField}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -233,10 +205,11 @@ const Auth = () => {
             />
           </div>
 
+          {/* Password Input Field */}
           <div>
             <input
               type="password"
-              name="password" // Added 'name' attribute for form data
+              name="password"
               placeholder="Password"
               className={styles.inputField}
               value={password}
@@ -245,74 +218,28 @@ const Auth = () => {
             />
           </div>
 
-          {!isLogin && (
-            <>
-              {/* 8. Add additional fields for signup */}
-              <div>
-                <input
-                  type="text"
-                  name="first_name" // Added 'name' attribute for form data
-                  placeholder="First Name"
-                  className={styles.inputField}
-                  required
-                />
-              </div>
-              <div>
-                <input
-                  type="text"
-                  name="last_name" // Added 'name' attribute for form data
-                  placeholder="Last Name"
-                  className={styles.inputField}
-                  required
-                />
-              </div>
-              <div>
-                <input
-                  type="text"
-                  name="phone_number" // Added 'name' attribute for form data
-                  placeholder="Phone Number"
-                  className={styles.inputField}
-                  value={confirmPassword} // This seems incorrect; should be separate
-                  onChange={(e) => setConfirmPassword(e.target.value)} // This is for confirmPassword
-                  required
-                />
-              </div>
-              <div>
-                <input
-                  type="password"
-                  name="confirm_password" // Added 'name' attribute for form data
-                  placeholder="Confirm Password"
-                  className={styles.inputField}
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                />
-              </div>
-            </>
-          )}
-
+          {/* Submit Button */}
           <button
             type="submit"
             className={`${styles.submitButton} ${
               isFormValid() ? styles.activeButton : styles.inactiveButton
             }`}
-            disabled={!isFormValid()} // Disable button if fields are not filled
+            disabled={!isFormValid()} // Disable button if form is invalid
           >
-            {isLogin ? "Log In" : "Sign Up"}
+            Log In
           </button>
         </form>
+
+        {/* Redirect Link to Signup Page */}
         <p className={styles.footerText}>
-          {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-          <span
-            className={styles.toggleLink}
-            onClick={() => setIsLogin(!isLogin)}
-          >
-            {isLogin ? "Sign Up" : "Log In"}
-          </span>
+          Don't have an account?{" "}
+          <Link href="/signup" className={styles.toggleLink}>
+            Sign Up
+          </Link>
         </p>
       </div>
     </div>
   );
 };
 
-export default Auth;
+export default Login;

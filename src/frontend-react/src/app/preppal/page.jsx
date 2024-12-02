@@ -13,6 +13,7 @@ const PrepPal = () => {
     cuisine: 'all',
     ingredients: []
   });
+  const [ingredientInput, setIngredientInput] = useState(''); // New state for input
   const [recommendations, setRecommendations] = useState([]);
   const [chatMessage, setChatMessage] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
@@ -68,14 +69,30 @@ const PrepPal = () => {
 
   const handleSubmit = async () => {
     try {
-      console.log(filters);
-      const response = await DataService.GetRecipeRecommendation(filters);
+      const parsedIngredients = ingredientInput
+        .split(',')
+        .map((ingredient) => ingredient.trim())
+        .filter((ingredient) => ingredient.length > 0); // Remove empty strings
+
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        ingredients: parsedIngredients,
+      }));
+
+      console.log({ ...filters, ingredients: parsedIngredients });
+
+      const response = await DataService.GetRecipeRecommendation({
+        ...filters,
+        ingredients: parsedIngredients,
+      });
 
       if (response.data) {
         setRecommendations(response.data.recommendations);
       } else {
         alert('Failed to fetch recommendations');
       }
+
+      setIngredientInput(''); // Clear input after submission
     } catch (error) {
       console.error('Error fetching recommendations:', error);
       alert('An error occurred. Please try again.');
@@ -192,11 +209,8 @@ const PrepPal = () => {
               <input
                 type="text"
                 placeholder="Enter ingredients separated by commas"
-                value={filters.ingredients}
-                onChange={(e) => setFilters({
-                  ...filters,
-                  ingredients: e.target.value.split(',').map((ingredient) => ingredient.trim()),
-                })}
+                value={ingredientInput} // Updated to use ingredientInput
+                onChange={(e) => setIngredientInput(e.target.value)} // Updated to set ingredientInput
               />
               <span>Ingredients: {filters.ingredients.join(', ')}</span>
             </div>
