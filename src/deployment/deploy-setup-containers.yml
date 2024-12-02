@@ -10,11 +10,13 @@
         path: "/srv/secrets"
         state: "directory"
         mode: 0755
+
     - name: Copy service account key file
       copy:
         src: ../secrets/gcp-service.json
         dest: "/srv/secrets/gcp-service.json"
         mode: 0644
+
     - name: Authenticate gcloud using service account
       shell: "gcloud auth activate-service-account --key-file /srv/secrets/gcp-service.json"
 
@@ -30,16 +32,44 @@
         src: .docker-tag
         dest: .docker-tag
         mode: 0644
+
     - name: "Get docker tag"
       shell: "cat .docker-tag"
       register: tag
+
     - name: Print tag
       debug:
         var: tag
+
+    - name: Create Postgres directory
+      file:
+        path: "/mnt/disk-1/postgres-db:"
+        state: "directory"
+        mode: 0777
+
+    # Create Postgres container
+    - name: Create Postgres container
+      docker_container:
+        name: "postgres-db"
+        image: "gcr.io/{{ gcp_project }}/preppal-app-postgres-db:{{ tag.stdout}}"
+        state: started
+        recreate: yes
+        published_ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: "postgres"
+          POSTGRES_PASSWORD: "postgres"
+          POSTGRES_DB: "preppal_db"
+        networks:
+          - name: "{{docker_network_name}}"
+        volumes:
+          - /mnt/disk-1/postgres-db:/var/lib/postgresql/data
+          - /srv/secrets:/docker-entrypoint-initdb.d
+
     - name: Create frontend container
       docker_container:
         name: "frontend"
-        image: "gcr.io/{{ gcp_project }}/cheese-app-frontend-react:{{ tag.stdout}}"
+        image: "gcr.io/{{ gcp_project }}/preppal-app-frontend-react:{{ tag.stdout}}"
         state: started
         recreate: yes
         pull: yes
@@ -55,6 +85,7 @@
         path: "/mnt/disk-1/persistent"
         state: "directory"
         mode: 0777
+
     - name: Create chromadb directory
       file:
         path: "/mnt/disk-1/chromadb"
@@ -78,12 +109,12 @@
           - /mnt/disk-1/chromadb:/chroma/chroma
 
     - name: Load Vector DB
-      shell: docker run --rm -it -e GCP_PROJECT="{{ gcp_project }}" -e CHROMADB_HOST="vector-db" -e CHROMADB_PORT="8000" -e GOOGLE_APPLICATION_CREDENTIALS="/secrets/gcp-service.json" -v /srv/secrets:/secrets --network "{{docker_network_name}}" "gcr.io/{{ gcp_project }}/cheese-app-vector-db-cli:{{ tag.stdout}}" cli.py --download --load --chunk_type recursive-split
+      shell: docker run --rm -it -e GCP_PROJECT="{{ gcp_project }}" -e CHROMADB_HOST="vector-db" -e CHROMADB_PORT="8000" -e GOOGLE_APPLICATION_CREDENTIALS="/secrets/gcp-service.json" -v /srv/secrets:/secrets --network "{{docker_network_name}}" "gcr.io/{{ gcp_project }}/preppal-app-llm-rag-cli:{{ tag.stdout}}" cli.py --load --chunk_type entire_recipe --download
 
     - name: Create api-service container
       docker_container:
         name: "api-service"
-        image: "gcr.io/{{ gcp_project }}/cheese-app-api-service:{{ tag.stdout}}"
+        image: "gcr.io/{{ gcp_project }}/preppal-app-api-service:{{ tag.stdout}}"
         state: started
         recreate: yes
         published_ports:
@@ -91,7 +122,7 @@
         env:
           GOOGLE_APPLICATION_CREDENTIALS: "/secrets/gcp-service.json"
           GCP_PROJECT: "{{ gcp_project }}"
-          GCS_BUCKET_NAME: "cheese-app-models"
+          GCS_BUCKET_NAME: "preppal-data"
           CHROMADB_HOST: "vector-db"
           CHROMADB_PORT: "8000"
         networks:

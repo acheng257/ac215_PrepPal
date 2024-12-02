@@ -28,6 +28,7 @@ docker run --rm --name $IMAGE_NAME -ti \
 -v "$BASE_DIR/../apiservice":/apiservice \
 -v "$BASE_DIR/../frontend-react":/frontend-react \
 -v "$BASE_DIR/../llm-rag":/llm-rag \
+-v "$BASE_DIR/../postgres-db":/postgres-db \
 -e GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS \
 -e USE_GKE_GCLOUD_AUTH_PLUGIN=True \
 -e GCP_PROJECT=$GCP_PROJECT \
