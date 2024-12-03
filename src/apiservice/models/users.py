@@ -29,6 +29,7 @@ class User(Base):
     # Relationships
     preferences = relationship("UserPreferences", back_populates="user", uselist=False, cascade="all, delete-orphan")
     pantry_items = relationship("PantryItem", back_populates="user", cascade="all, delete-orphan")
+    recipes = relationship("Recipes", back_populates="user")
 
     def __repr__(self):
         return f"<User(user_id={self.user_id}, first_name='{self.first_name}', last_name='{self.last_name}')>"

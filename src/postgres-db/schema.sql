@@ -46,14 +46,27 @@ CREATE TABLE pantry (
 );
 
 -- 4. recipes table (stores favorites, save to link to user preferences in the future)
+-- CREATE TABLE recipes (
+--     recipe_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+--     instructions TEXT,
+--     ingredients TEXT,
+--     cooking_time INT,
+--     calories INT,
+--     protein INT
+-- );
 CREATE TABLE recipes (
     recipe_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    instructions TEXT,
-    ingredients TEXT,
-    cooking_time INT,
-    calories INT,
-    protein INT
+    title VARCHAR(100) UNIQUE NOT NULL,
+    instructions TEXT NOT NULL,
+    ingredients TEXT NOT NULL,
+    cooking_time INT NOT NULL,  -- in minutes
+    calories INT NOT NULL,
+    protein INT NOT NULL,       -- in grams
+    user_id UUID REFERENCES users(user_id) ON DELETE SET NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
 
 -- Indexes
 CREATE INDEX idx_users_phone_number ON users(user_id);

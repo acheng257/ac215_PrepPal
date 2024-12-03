@@ -10,7 +10,7 @@ const navItems = [
     { name: 'Home', path: '/', sectionId: '', icon: <Home fontSize="small" /> },
     { name: 'My Pantry', path: '/pantry', sectionId: '', icon: <BreakfastDining fontSize="small" /> },
     { name: 'Recipes', path: '/preppal', sectionId: '', icon: <LocalDining fontSize="small" /> },
-    { name: 'Username', path: '/', sectionId: '', icon: <AccountCircle fontSize="small" /> }
+    { name: 'Username', path: '/userpage', sectionId: '', icon: <AccountCircle fontSize="small" /> }
 ];
 
 export default function Header() {

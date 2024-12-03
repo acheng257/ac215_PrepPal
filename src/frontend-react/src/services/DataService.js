@@ -58,6 +58,9 @@ const DataService = {
     UpdateUserHistory: async function (user_id, data) {
         console.log("data is ", data)
         return await api.post(BASE_API_URL + "/user/" + user_id + "/history", data);
+    },
+    UploadRecipe: async function(data) {
+        return await api.post(BASE_API_URL + "/recipes/upload-recipe", data);
     }
 }
 

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
 from api.utils.llm_rag_utils import generate_recommendation_list
 from models.database import get_db
@@ -7,11 +7,73 @@ from sqlalchemy.future import select
 from uuid import UUID as PythonUUID
 import uuid
 import logging
+from models.recipes import Recipes
 
 router = APIRouter()
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+
+
+def parse_recipe(text: str) -> dict:
+    """
+    Parses the recipe text and extracts details.
+    Expected format:
+
+    Title: Recipe Title
+    Ingredients:
+    • Ingredient 1
+    • Ingredient 2
+    Instructions:
+    Step 1.
+    Step 2.
+    Cooking Time: 45 minutes
+    Calories: 600
+    Protein: 25
+    """
+    lines = [line.strip() for line in text.split("\n") if line.strip()]
+    recipe = {"title": "", "ingredients": [], "instructions": "", "cooking_time": 0, "calories": 0, "protein": 0}
+
+    current_section = None
+
+    for line in lines:
+        if line.startswith("Title:"):
+            recipe["title"] = line.replace("Title:", "").strip()
+        elif line.startswith("Ingredients:"):
+            current_section = "ingredients"
+        elif line.startswith("Instructions:"):
+            current_section = "instructions"
+        elif line.startswith("Cooking Time:"):
+            time_str = line.replace("Cooking Time:", "").replace("minutes", "").strip()
+            try:
+                recipe["cooking_time"] = int(time_str)
+            except ValueError:
+                recipe["cooking_time"] = 0
+        elif line.startswith("Calories:"):
+            calories_str = line.replace("Calories:", "").strip()
+            try:
+                recipe["calories"] = int(calories_str)
+            except ValueError:
+                recipe["calories"] = 0
+        elif line.startswith("Protein:"):
+            protein_str = line.replace("Protein:", "").strip()
+            try:
+                recipe["protein"] = int(protein_str)
+            except ValueError:
+                recipe["protein"] = 0
+        else:
+            if current_section == "ingredients":
+                # Remove bullet points like '•' or '-' and trim
+                ingredient = line.lstrip("•- ").strip()
+                if ingredient:
+                    recipe["ingredients"].append(ingredient)
+            elif current_section == "instructions":
+                recipe["instructions"] += line + " "
+
+    # Trim the instructions
+    recipe["instructions"] = recipe["instructions"].strip()
+
+    return recipe
 
 
 @router.post("/get_recs")
@@ -126,3 +188,56 @@ async def get_recs(body: dict, db: AsyncSession = Depends(get_db)):
     except Exception as e:
         logger.error(f"An unexpected error occurred in get_recs: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@router.post("/upload-recipe")
+async def upload_recipe(recipeFile: UploadFile = File(...), db: AsyncSession = Depends(get_db)):
+    if not recipeFile.filename.endswith(".txt"):
+        raise HTTPException(status_code=400, detail="Only .txt files are allowed")
+
+    content = await recipeFile.read()
+    recipe_data = parse_recipe_file(content.decode())
+
+    try:
+        new_recipe = Recipes(
+            recipe_id=uuid.uuid4(),
+            title=recipe_data["title"],
+            instructions=recipe_data["instructions"],
+            ingredients=recipe_data["ingredients"],
+            cooking_time=recipe_data["cooking_time"],
+            calories=recipe_data["calories"],
+            protein=recipe_data["protein"],
+        )
+        db.add(new_recipe)
+        await db.commit()
+        await db.refresh(new_recipe)
+        return {"success": True, "message": "Recipe uploaded successfully", "recipe_id": str(new_recipe.recipe_id)}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+
+def parse_recipe_file(content: str) -> dict:
+    lines = content.split("\n")
+    recipe_data = {"title": lines[0].strip(), "ingredients": "", "instructions": "", "cooking_time": 0, "calories": 0, "protein": 0}
+
+    section = ""
+    for line in lines[1:]:
+        line = line.strip()
+        if line.lower() == "ingredients:":
+            section = "ingredients"
+        elif line.lower() == "instructions:":
+            section = "instructions"
+        elif line.lower().startswith("cooking time:"):
+            recipe_data["cooking_time"] = int(line.split(":")[1].strip())
+        elif line.lower().startswith("calories:"):
+            recipe_data["calories"] = int(line.split(":")[1].strip())
+        elif line.lower().startswith("protein:"):
+            recipe_data["protein"] = int(line.split(":")[1].strip())
+        elif section:
+            recipe_data[section] += line + "\n"
+
+    recipe_data["ingredients"] = recipe_data["ingredients"].strip()
+    recipe_data["instructions"] = recipe_data["instructions"].strip()
+
+    return recipe_data
