@@ -13,7 +13,7 @@ else
 fi
 
 # Remove the volume to ensure a clean setup
-docker volume rm postgres-db_db_data || true
+# docker volume rm postgres-db_db_data || true
 
 # Build and run the container
 docker compose up --build -d

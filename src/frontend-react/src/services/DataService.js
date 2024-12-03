@@ -51,6 +51,13 @@ const DataService = {
     },
     GetRecipeRecommendation: async function (body) {
         return await api.post(BASE_API_URL + "/recipes/get_recs", body);
+    },
+    GetUserHistoryRecs: async function (user_id) {
+        return await api.get(BASE_API_URL + "/user/" + user_id + "/history/recommendations");
+    },
+    UpdateUserHistory: async function (user_id, data) {
+        console.log("data is ", data)
+        return await api.post(BASE_API_URL + "/user/" + user_id + "/history", data);
     }
 }
 

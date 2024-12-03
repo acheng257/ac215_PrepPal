@@ -32,8 +32,9 @@ CREATE TABLE user_preferences (
 CREATE TABLE user_history (
     id SERIAL PRIMARY KEY,
     user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
-    action VARCHAR(255) NOT NULL,       -- Example: "LOGIN", "VIEWED PAGE", etc.
     details JSONB,                     -- Stores additional details in JSON format
+    recommendation_id UUID,
+    recommendation_data JSONB,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

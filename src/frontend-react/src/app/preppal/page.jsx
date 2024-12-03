@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './styles.module.css';
 import Header from '@/components/layout/Header';
@@ -23,78 +22,104 @@ const PrepPal = () => {
   const chatHistoryRef = useRef(null);
   const [userId, setUserId] = useState(DataService.GetUser());
 
-  // Auto-scroll to the bottom of chat history
   const scrollToBottom = () => {
     if (chatHistoryRef.current) {
       chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight;
     }
   };
 
-  // Load saved state from localStorage on component mount
+  // Initial data fetch on component mount
   useEffect(() => {
-    const savedRecommendations = localStorage.getItem('prepPal_recommendations');
-    const savedFilters = localStorage.getItem('prepPal_filters');
-    const savedChatHistory = localStorage.getItem('prepPal_chatHistory');
-    const savedChatId = localStorage.getItem('prepPal_chatId');
+    const fetchInitialData = async () => {
+      await fetchUserHistoryRecs(); // Fetch user history only once here
+      const savedFilters = localStorage.getItem('prepPal_filters');
+      const savedChatHistory = localStorage.getItem('prepPal_chatHistory');
+      const savedChatId = localStorage.getItem('prepPal_chatId');
 
-    if (savedRecommendations) {
-      try {
-        setRecommendations(JSON.parse(savedRecommendations));
-      } catch (error) {
-        console.error('Failed to parse saved recommendations:', error);
+      if (savedFilters) {
+        try {
+          setFilters(JSON.parse(savedFilters));
+        } catch (error) {
+          console.error('Failed to parse saved filters:', error);
+        }
       }
-    }
-
-    if (savedFilters) {
-      try {
-        setFilters(JSON.parse(savedFilters));
-      } catch (error) {
-        console.error('Failed to parse saved filters:', error);
+      if (savedChatHistory) {
+        try {
+          setChatHistory(JSON.parse(savedChatHistory));
+        } catch (error) {
+          console.error('Failed to parse saved chat history:', error);
+        }
       }
-    }
-
-    if (savedChatHistory) {
-      try {
-        setChatHistory(JSON.parse(savedChatHistory));
-      } catch (error) {
-        console.error('Failed to parse saved chat history:', error);
+      if (savedChatId) {
+        setChatId(savedChatId);
       }
-    }
-
-    if (savedChatId) {
-      setChatId(savedChatId);
-    }
+    };
+    fetchInitialData();
   }, []);
 
-  // Save recommendations and filters to localStorage whenever they change
+  // Persist recommendations to localStorage
   useEffect(() => {
     localStorage.setItem('prepPal_recommendations', JSON.stringify(recommendations));
   }, [recommendations]);
 
+  // Persist filters to localStorage
   useEffect(() => {
     localStorage.setItem('prepPal_filters', JSON.stringify(filters));
   }, [filters]);
 
+  // Persist chat history to localStorage
   useEffect(() => {
     localStorage.setItem('prepPal_chatHistory', JSON.stringify(chatHistory));
   }, [chatHistory]);
 
+  // Persist chatId to localStorage
   useEffect(() => {
     if (chatId) {
       localStorage.setItem('prepPal_chatId', chatId);
     }
   }, [chatId]);
 
+  // Fetch chat when chatId changes
   useEffect(() => {
     if (chatId) {
       fetchChat(chatId);
     }
   }, [chatId]);
 
+  // Auto-scroll to the bottom of chat history
   useEffect(() => {
     scrollToBottom();
   }, [chatHistory]);
 
+  // Fetch user history recommendations (called only once on mount)
+  const fetchUserHistoryRecs = async () => {
+    try {
+      const response = await DataService.GetUserHistoryRecs(userId);
+      console.log("rec history is ", response.data);
+      if (response.data && response.data[0]?.recommendation_data?.recommendations) {
+        setRecommendations(response.data[0].recommendation_data.recommendations);
+      }
+    } catch (error) {
+      console.error('Error fetching user history recommendations:', error);
+    }
+  };
+
+  // Function to update user history with new recommendations
+  const updateUserHistory = async (newRecommendations) => {
+    try {
+      console.log('updating user history for', userId);
+      await DataService.UpdateUserHistory(userId, {
+        user_id: userId,
+        details: { recommendations: newRecommendations },
+        recommendation_id: null, // or provide a UUID if available
+        recommendation_data: newRecommendations, // or provide relevant data if available
+      });
+    } catch (error) {
+      console.error('Error updating user history:', error);
+    }
+  };
+
+  // Fetch user pantry data
   async function fetchUserPantry(userId) {
     try {
       const response = await DataService.GetPantry(userId);
@@ -105,6 +130,7 @@ const PrepPal = () => {
     }
   }
 
+  // Fetch chat history
   const fetchChat = async (id) => {
     try {
       setIsTyping(true);
@@ -122,30 +148,32 @@ const PrepPal = () => {
     }
   };
 
+  // Handle recommendation submission
   const handleSubmit = async () => {
     try {
+      // Remove this line to prevent fetching history on submit
+      // await fetchUserHistoryRecs();
+
+      // Proceed to generate new recommendations directly
       const parsedIngredients = ingredientInput
         .split(',')
         .map((ingredient) => ingredient.trim())
         .filter((ingredient) => ingredient.length > 0);
-
       const updatedFilters = {
         ...filters,
         ingredients: parsedIngredients,
+        userId: userId, // Ensure userId is included if needed by the API
       };
-
       setFilters(updatedFilters);
 
-      console.log(updatedFilters);
-
       const response = await DataService.GetRecipeRecommendation(updatedFilters);
-
       if (response.data) {
         setRecommendations(response.data.recommendations);
+        // Optionally update user history with new recommendations
+        // await updateUserHistory(response.data.recommendations);
       } else {
         alert('Failed to fetch recommendations');
       }
-
       setIngredientInput('');
     } catch (error) {
       console.error('Error fetching recommendations:', error);
@@ -153,49 +181,41 @@ const PrepPal = () => {
     }
   };
 
+  // Handle sending chat messages
   const handleSendChat = async () => {
     if (!chatMessage.trim()) return;
-
     const xSessionId = localStorage.getItem('userSessionId');
     if (!xSessionId) {
       alert('User session not found. Please log in.');
       return;
     }
-
     const newChatHistory = [
       ...chatHistory,
       { sender: 'User', text: chatMessage },
     ];
     setChatHistory(newChatHistory);
-
     try {
       let response;
       setIsTyping(true);
       const pantry_response = await fetchUserPantry(userId);
-
       if (!chatId) {
-        // Start a new chat
         console.log("starting chat");
         response = await DataService.StartChatWithLLM('llm', {
           content: chatMessage,
           recommendations: recommendations,
-          pantry: pantry_response["pantry"]
+          pantry: pantry_response["items"]
         });
         setChatId(response.data.chat_id);
       } else {
-        // Continue the existing chat
         console.log("continuing chat");
         response = await DataService.ContinueChatWithLLM('llm', chatId, {
           content: chatMessage,
           recommendations: recommendations,
-          pantry: pantry_response["pantry"]
+          pantry: pantry_response["items"]
         });
         console.log("response:", response);
       }
-
-      // Append bot's response to chat history
       const assistantMessage = response.data.messages.filter((msg) => msg.role === 'assistant').pop();
-
       if (assistantMessage) {
         setChatHistory((prev) => [
           ...prev,
@@ -208,10 +228,10 @@ const PrepPal = () => {
       setIsTyping(false);
       alert('An error occurred. Please try again.');
     }
-
     setChatMessage('');
   };
 
+  // Handle clicking on a recipe
   const handleRecipeClick = (recipe) => {
     const queryParams = new URLSearchParams({
       name: recipe.title,
@@ -220,14 +240,12 @@ const PrepPal = () => {
       ingredients: JSON.stringify(recipe.ingredients),
       instructions: JSON.stringify(recipe.instructions),
     });
-
     router.push(`/recipe?${queryParams.toString()}`);
   };
 
   return (
     <div className={styles.appContainer}>
       <Header />
-
       <main className={styles.mainContent}>
         <div className={styles.gridContainer}>
           <div className={styles.filtersSection}>
@@ -279,7 +297,6 @@ const PrepPal = () => {
             </div>
             <button onClick={handleSubmit}>Submit</button>
           </div>
-
           <div className={styles.recipeGrid}>
             {recommendations.length > 0 ? (
               recommendations.map((recipe, index) => (
@@ -303,11 +320,12 @@ const PrepPal = () => {
                 </div>
               ))
             ) : (
-              <p className={styles.whiteText}>No recommendations found. Try adjusting the filters and clicking Submit.</p>
+              <p className={styles.whiteText}>
+                No recommendations found. Try adjusting the filters and clicking Submit.
+              </p>
             )}
           </div>
         </div>
-
         <div className={styles.chatbotSection}>
           <div ref={chatHistoryRef} className={styles.chatHistory}>
             {chatHistory.map((message, index) => (
