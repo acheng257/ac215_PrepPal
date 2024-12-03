@@ -61,6 +61,16 @@ const DataService = {
     },
     UploadRecipe: async function(data) {
         return await api.post(BASE_API_URL + "/recipes/upload-recipe", data);
+    },
+    GetUserPreferences: async function(userId) {
+        return await api.get(`${BASE_API_URL}/recipes/user-preferences/${userId}`);
+    },
+
+    ToggleFavoriteRecipe: async function(userId, recipeName) {
+        return await api.post(`${BASE_API_URL}/recipes/toggle-favorite`, {
+            user_id: userId,
+            recipe_title: recipeName
+        });
     }
 }
 

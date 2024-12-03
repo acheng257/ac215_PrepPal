@@ -3,11 +3,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from api.utils.llm_rag_utils import generate_recommendation_list
 from models.database import get_db
 from models.user_history import UserHistory
+from models.users import UserPreferences
 from sqlalchemy.future import select
 from uuid import UUID as PythonUUID
 import uuid
 import logging
 from models.recipes import Recipes
+from sqlalchemy import func
 
 router = APIRouter()
 
@@ -199,6 +201,21 @@ async def upload_recipe(recipeFile: UploadFile = File(...), db: AsyncSession = D
     recipe_data = parse_recipe_file(content.decode())
 
     try:
+        # Check if recipe with same title exists
+        existing_recipe = await db.execute(select(Recipes).where(Recipes.title == recipe_data["title"]))
+        existing_recipe = existing_recipe.scalar_one_or_none()
+
+        if existing_recipe:
+            # Update existing recipe
+            existing_recipe.instructions = recipe_data["instructions"]
+            existing_recipe.ingredients = recipe_data["ingredients"]
+            existing_recipe.cooking_time = recipe_data["cooking_time"]
+            existing_recipe.calories = recipe_data["calories"]
+            existing_recipe.protein = recipe_data["protein"]
+            await db.commit()
+            return {"success": True, "message": "Recipe updated successfully", "recipe_id": str(existing_recipe.recipe_id)}
+
+        # Create new recipe if it doesn't exist
         new_recipe = Recipes(
             recipe_id=uuid.uuid4(),
             title=recipe_data["title"],
@@ -213,7 +230,8 @@ async def upload_recipe(recipeFile: UploadFile = File(...), db: AsyncSession = D
         await db.refresh(new_recipe)
         return {"success": True, "message": "Recipe uploaded successfully", "recipe_id": str(new_recipe.recipe_id)}
     except Exception as e:
-        db.rollback()
+        await db.rollback()
+        logger.error(f"Error uploading recipe: {str(e)}")
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 
@@ -239,5 +257,71 @@ def parse_recipe_file(content: str) -> dict:
 
     recipe_data["ingredients"] = recipe_data["ingredients"].strip()
     recipe_data["instructions"] = recipe_data["instructions"].strip()
-
     return recipe_data
+
+
+@router.post("/toggle-favorite")
+async def toggle_favorite(body: dict, db: AsyncSession = Depends(get_db)):
+    try:
+        user_id = uuid.UUID(str(body.get("user_id")))
+        recipe_title = body.get("recipe_title")
+
+        if not user_id or not recipe_title:
+            raise HTTPException(status_code=422, detail="user_id and recipe_title are required")
+
+        # First get the recipe by title
+        recipe = await db.execute(select(Recipes).where(func.lower(Recipes.title) == func.lower(recipe_title)))
+        recipe = recipe.scalar_one_or_none()
+
+        # If recipe doesn't exist, create it
+        if not recipe:
+            recipe = Recipes(recipe_id=uuid.uuid4(), title=recipe_title, instructions="Instructions to be added", ingredients="Ingredients to be added", cooking_time=0, calories=0, protein=0)
+            db.add(recipe)
+            await db.commit()
+            await db.refresh(recipe)
+
+        user_prefs = await db.execute(select(UserPreferences).where(UserPreferences.user_id == user_id))
+        user_prefs = user_prefs.scalar_one_or_none()
+
+        if not user_prefs:
+            user_prefs = UserPreferences(user_id=user_id, favorite_recipes=[], recipe_history=[], allergies=[], favorite_cuisines=[])
+            db.add(user_prefs)
+
+        if user_prefs.favorite_recipes is None:
+            user_prefs.favorite_recipes = []
+
+        current_favorites = list(user_prefs.favorite_recipes)
+
+        if recipe.recipe_id in current_favorites:
+            current_favorites.remove(recipe.recipe_id)
+            message = f"Recipe '{recipe_title}' removed from favorites"
+        else:
+            current_favorites.append(recipe.recipe_id)
+            message = f"Recipe '{recipe_title}' added to favorites"
+
+        # Update the favorite_recipes with the modified list
+        user_prefs.favorite_recipes = current_favorites
+
+        await db.commit()
+        return {"success": True, "message": message}
+    except ValueError:
+        raise HTTPException(status_code=422, detail="Invalid UUID format")
+    except Exception as e:
+        await db.rollback()
+        logger.error(f"Error toggling favorite recipe: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@router.get("/user-preferences/{user_id}")
+async def get_user_preferences(user_id: PythonUUID, db: AsyncSession = Depends(get_db)):
+    try:
+        user_prefs = await db.execute(select(UserPreferences).where(UserPreferences.user_id == user_id))
+        user_prefs = user_prefs.scalar_one_or_none()
+
+        if not user_prefs:
+            return {"favorite_recipes": []}
+
+        return {"favorite_recipes": user_prefs.favorite_recipes}
+    except Exception as e:
+        logger.error(f"Error fetching user preferences: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")

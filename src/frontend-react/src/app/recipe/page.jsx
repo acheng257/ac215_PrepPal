@@ -1,6 +1,6 @@
 'use client';
 
-import { React, useState } from 'react';
+import { React, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import styles from './styles.module.css';
 import DataService from '@/services/DataService';
@@ -16,6 +16,59 @@ const Recipe = () => {
   const ingredients = JSON.parse(searchParams.get('ingredients') || '[]');
   const instructions = JSON.parse(searchParams.get('instructions') || '[]');
   const [user, setUser] = useState(DataService.GetUser());
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  const recipeId = searchParams.get('id');
+  console.log('All search parameters:');
+  for (const [key, value] of searchParams.entries()) {
+    console.log(`${key}: ${value}`);
+  }
+
+  useEffect(() => {
+    if (name !== 'Recipe Name') {  // Only check if we have a real recipe name
+      checkFavoriteStatus();
+    }
+  }, [name]);
+
+  const checkFavoriteStatus = async () => {
+    try {
+      const userId = user;
+      if (!userId || name === 'Recipe Name') return;
+
+      const response = await DataService.GetUserPreferences(userId);
+      const favoriteRecipes = response.data.favorite_recipes || [];
+      // need to modify your backend to return recipe titles instead of IDs
+      setIsFavorite(favoriteRecipes.includes(name));
+    } catch (error) {
+      console.error('Error checking favorite status:', error);
+    }
+  };
+
+  const handleToggleFavorite = async () => {
+    try {
+      const userId = user;
+      if (!userId) {
+        alert('User not logged in');
+        return;
+      }
+      if (name === 'Recipe Name') {
+        alert('Invalid recipe');
+        return;
+      }
+
+      const response = await DataService.ToggleFavoriteRecipe(userId, name);
+
+      if (response.data.success) {
+        setIsFavorite(!isFavorite);
+        alert(isFavorite ? 'Recipe removed from favorites' : 'Recipe added to favorites');
+      } else {
+        throw new Error('Failed to update favorite status');
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      alert('An error occurred while updating favorites');
+    }
+  };
 
   const handleUseRecipe = async () => {
     try {
@@ -115,7 +168,7 @@ const Recipe = () => {
                       </>
                     )}
                   </ul>
-                  <button onClick={handleUseRecipe}>Use this recipe</button>
+                  {/* <button onClick={handleUseRecipe}>Use this recipe</button> */}
                 </div>
               </div>
             </div>
@@ -144,6 +197,12 @@ const Recipe = () => {
           </div>
         </div>
       </main>
+      <div className={styles.recipeActions}>
+        <button onClick={handleUseRecipe}>Use this recipe</button>
+        <button onClick={handleToggleFavorite}>
+          {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
+        </button>
+      </div>
     </div>
   );
 };
