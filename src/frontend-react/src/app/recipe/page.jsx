@@ -4,8 +4,10 @@ import { React, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import styles from './styles.module.css';
 import DataService from '@/services/DataService';
+import { BASE_API_URL } from "../../services/Common";
 
-const apiUrl = "http://localhost:9000/pantry";
+// const apiUrl = "http://localhost:9000/pantry";
+const apiUrl = `${BASE_API_URL}/pantry`;
 
 const Recipe = () => {
   const searchParams = useSearchParams();

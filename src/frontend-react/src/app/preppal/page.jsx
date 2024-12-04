@@ -184,7 +184,7 @@ const PrepPal = () => {
   // Handle sending chat messages
   const handleSendChat = async () => {
     if (!chatMessage.trim()) return;
-    const xSessionId = localStorage.getItem('userSessionId');
+    const xSessionId = localStorage.getItem('userId');
     if (!xSessionId) {
       alert('User session not found. Please log in.');
       return;

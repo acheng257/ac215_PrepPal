@@ -6,6 +6,7 @@ from models.users import User
 from schemas.users import UserResponse
 from models.database import get_db
 from api.utils.auth_utils import hash_password, verify_password, validate_phone_number
+import traceback
 
 router = APIRouter()
 
@@ -53,6 +54,7 @@ async def signup(first_name: str = Form(...), last_name: str = Form(...), userna
         await db.commit()
         await db.refresh(new_user)
     except IntegrityError as e:
+        traceback.print_exc()
         await db.rollback()
         # Check if the phone number or username already exists
         if "unique constraint" in str(e.orig).lower():

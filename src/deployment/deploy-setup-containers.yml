@@ -17,6 +17,18 @@
         dest: "/srv/secrets/gcp-service.json"
         mode: 0644
 
+    - name: Create config directory
+      file:
+        path: "/srv/config"
+        state: "directory"
+        mode: 0755
+
+    - name: Copy schema file
+      copy:
+        src: ../postgres-db/schema.sql
+        dest: "/srv/config/schema.sql"
+        mode: 0644
+
     - name: Authenticate gcloud using service account
       shell: "gcloud auth activate-service-account --key-file /srv/secrets/gcp-service.json"
 
@@ -43,7 +55,7 @@
 
     - name: Create Postgres directory
       file:
-        path: "/mnt/disk-1/postgres-db:"
+        path: "/mnt/disk-1/postgres-db"
         state: "directory"
         mode: 0777
 
@@ -51,7 +63,7 @@
     - name: Create Postgres container
       docker_container:
         name: "postgres-db"
-        image: "gcr.io/{{ gcp_project }}/preppal-app-postgres-db:{{ tag.stdout}}"
+        image: "postgres:17"
         state: started
         recreate: yes
         published_ports:
@@ -64,7 +76,7 @@
           - name: "{{docker_network_name}}"
         volumes:
           - /mnt/disk-1/postgres-db:/var/lib/postgresql/data
-          - /srv/secrets:/docker-entrypoint-initdb.d
+          - /srv/config:/docker-entrypoint-initdb.d
 
     - name: Create frontend container
       docker_container:
@@ -94,7 +106,7 @@
 
     - name: Create vector-db container
       docker_container:
-        name: "vector-db"
+        name: "llm-rag-chromadb"
         image: "chromadb/chroma:0.5.6"
         state: started
         recreate: yes
@@ -109,7 +121,7 @@
           - /mnt/disk-1/chromadb:/chroma/chroma
 
     - name: Load Vector DB
-      shell: docker run --rm -it -e GCP_PROJECT="{{ gcp_project }}" -e CHROMADB_HOST="vector-db" -e CHROMADB_PORT="8000" -e GOOGLE_APPLICATION_CREDENTIALS="/secrets/gcp-service.json" -v /srv/secrets:/secrets --network "{{docker_network_name}}" "gcr.io/{{ gcp_project }}/preppal-app-llm-rag-cli:{{ tag.stdout}}" cli.py --load --chunk_type entire_recipe --download
+      shell: docker run --rm -it -e GCP_PROJECT="{{ gcp_project }}" -e CHROMADB_HOST="llm-rag-chromadb" -e CHROMADB_PORT="8000" -e GOOGLE_APPLICATION_CREDENTIALS="/secrets/gcp-service.json" -v /srv/secrets:/secrets --network "{{docker_network_name}}" "gcr.io/{{ gcp_project }}/preppal-app-llm-rag-cli:{{ tag.stdout}}" cli.py --load --chunk_type entire_recipe --download
 
     - name: Create api-service container
       docker_container:
@@ -123,8 +135,10 @@
           GOOGLE_APPLICATION_CREDENTIALS: "/secrets/gcp-service.json"
           GCP_PROJECT: "{{ gcp_project }}"
           GCS_BUCKET_NAME: "preppal-data"
-          CHROMADB_HOST: "vector-db"
+          GCP_REGION: "{{ gcp_region }}"
+          CHROMADB_HOST: "llm-rag-chromadb"
           CHROMADB_PORT: "8000"
+          DATABASE_URL: "postgresql+asyncpg://postgres:postgres@postgres-db:5432/preppal_db"
         networks:
           - name: "{{docker_network_name}}"
         volumes:

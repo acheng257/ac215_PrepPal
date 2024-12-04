@@ -4,7 +4,7 @@
   gather_facts: false
 
   vars:
-    cluster_name: "cheese-app-cluster"
+    cluster_name: "preppal-app-cluster"
 
   tasks:
   - name: "Connect to cluster (update kubeconfig)"
@@ -43,7 +43,7 @@
                 run: frontend
             spec:
               containers:
-              - image: "gcr.io/{{ gcp_project }}/cheese-app-frontend-react:{{ tag.stdout}}"
+              - image: "gcr.io/{{ gcp_project }}/preppal-app-frontend-react:{{ tag.stdout}}"
                 imagePullPolicy: IfNotPresent
                 name: frontend
                 ports:
@@ -76,7 +76,7 @@
                   secret:
                     secretName: gcp-service-key
               containers:
-              - image: gcr.io/{{ gcp_project }}/cheese-app-api-service:{{ tag.stdout}}
+              - image: gcr.io/{{ gcp_project }}/preppal-app-api-service:{{ tag.stdout}}
                 imagePullPolicy: IfNotPresent
                 name: api
               restartPolicy: Always

@@ -138,6 +138,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link"; // Ensure Link is imported
 import styles from "./styles.module.css";
+import { BASE_API_URL } from "../../services/Common";
 
 const Login = () => {
   // State variables for login
@@ -163,7 +164,7 @@ const Login = () => {
 
     try {
       // Make a POST request to the login endpoint
-      const response = await fetch(`http://localhost:9000${endpoint}`, {
+      const response = await fetch(`${BASE_API_URL}${endpoint}`, {
         method: "POST",
         body: formData,
       });

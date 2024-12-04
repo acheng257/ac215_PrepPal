@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import styles from './Signup.module.css';
 import { Link } from 'react-router-dom';
+import { BASE_API_URL } from "../../services/Common";
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
@@ -11,7 +12,8 @@ const SignUp = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const apiUrl = 'http://localhost:9000';
+    // const apiUrl = 'http://localhost:9000';
+    const apiUrl = BASE_API_URL
 
     if (password !== confirmPassword) {
       alert("Passwords don't match!");

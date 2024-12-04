@@ -4,13 +4,15 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./styles.module.css";
 import DataService from "@/services/DataService";
+import { BASE_API_URL } from "../../services/Common";
 
 const Pantry = () => {
   const [ingredients, setIngredients] = useState([]);
   const [newIngredients, setNewIngredients] = useState("");
   // const [userId, setUserId] = useState(null); // Use state for userId
   const [userId, setUserId] = useState(DataService.GetUser());
-  const apiUrl = "http://localhost:9000/pantry";
+  // const apiUrl = "http://localhost:9000/pantry";
+  const apiUrl = `${BASE_API_URL}/pantry`;
   const router = useRouter();
 
   // Fetch userId from localStorage when the component mounts

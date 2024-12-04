@@ -5,6 +5,7 @@ import styles from './styles.module.css';
 import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import { useRouter } from 'next/navigation';
+import { BASE_API_URL } from "../../services/Common";
 
 const SignUp = () => {
   // State variables for all form fields
@@ -18,7 +19,8 @@ const SignUp = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const apiUrl = 'http://localhost:9000';
+    // const apiUrl = 'http://localhost:9000';
+    const apiUrl = BASE_API_URL;
 
     // Frontend validation for password confirmation
     if (password !== confirmPassword) {
