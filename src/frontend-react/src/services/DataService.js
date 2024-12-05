@@ -73,6 +73,12 @@ const DataService = {
             user_id: userId,
             recipe_title: recipeName
         });
+    },
+    GetRecipeIdByName: async function(recipeName) {
+        console.log("in data services");
+        return await api.get(`/recipes/get_id`, {
+            params: { recipe_title: recipeName }
+        });
     }
 }
 

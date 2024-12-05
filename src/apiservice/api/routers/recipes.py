@@ -338,3 +338,16 @@ async def get_user_preferences(user_id: PythonUUID, db: AsyncSession = Depends(g
     except Exception as e:
         logger.error(f"Error fetching user preferences: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@router.get("/get_id")
+async def get_recipe_name(recipe_title: str, db: AsyncSession = Depends(get_db)):
+    print("recipe title is", recipe_title)
+    query = select(Recipes.recipe_id).where(Recipes.title == recipe_title)
+    result = await db.execute(query)
+    recipe_id = result.scalar_one_or_none()
+
+    if recipe_id is None:
+        raise HTTPException(status_code=404, detail="Recipe not found")
+
+    return {"id": str(recipe_id)}  # Convert UUID to string if necessary

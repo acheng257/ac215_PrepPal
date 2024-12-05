@@ -32,15 +32,29 @@ const Recipe = () => {
     }
   }, [name]);
 
+  useEffect(() => {
+    if (user && recipeId) {
+      checkFavoriteStatus();
+    }
+  }, [user, recipeId]);
+
   const checkFavoriteStatus = async () => {
     try {
       const userId = user;
-      if (!userId || name === 'Recipe Name') return;
+      if (!userId || !name) return;
+
+      // First, get the recipe ID
+      console.log("recipe name is", name);
+      const recipeIdResult = await DataService.GetRecipeIdByName(name);
+      console.log("result of recipe id query:", recipeIdResult);
+      const recipeId = recipeIdResult.data.id;
+
+      if (!recipeId) return;
 
       const response = await DataService.GetUserPreferences(userId);
       const favoriteRecipes = response.data.favorite_recipes || [];
-      // need to modify your backend to return recipe titles instead of IDs
-      setIsFavorite(favoriteRecipes.includes(name));
+      console.log("favoriteRecipes is", favoriteRecipes);
+      setIsFavorite(favoriteRecipes.includes(recipeId));
     } catch (error) {
       console.error('Error checking favorite status:', error);
     }
