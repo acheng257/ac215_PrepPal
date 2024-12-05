@@ -3,13 +3,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from api.utils.llm_rag_utils import generate_recommendation_list
 from models.database import get_db
 from models.user_history import UserHistory
-from models.users import UserPreferences
+from models.users import User, UserPreferences
 from sqlalchemy.future import select
 from uuid import UUID as PythonUUID
 import uuid
 import logging
 from models.recipes import Recipes
 from sqlalchemy import func
+from sqlalchemy.orm import joinedload
 
 router = APIRouter()
 
@@ -86,10 +87,23 @@ async def get_recs(body: dict, db: AsyncSession = Depends(get_db)):
         serving_size = body["servings"]
         cuisine = body["cuisine"]
         ingredients_query = ", ".join(body["ingredients"])
+        user_id = body["userId"]
         logger.debug(f"Received request - Cooking Time: {cooking_time}, Serving Size: {serving_size}, Cuisine: {cuisine}, Ingredients: {ingredients_query}")
 
+        # Query database for pantry items for user
+        query = select(User).options(joinedload(User.pantry_items)).where(User.user_id == user_id)
+        result = await db.execute(query)
+        user = result.unique().scalar_one_or_none()
+
+        pantry_string = ""
+        if user and user.pantry_items:
+            # Assuming the first (and only) pantry item contains the JSON of items
+            pantry_json = user.pantry_items[0].items
+            pantry_items = list(pantry_json.keys())
+            pantry_string = ", ".join(pantry_items)
+
         # Generate recommendations
-        content_dict = {"ingredients": ingredients_query, "pantry": "sugar, pepper, broccoli, penne pasta, tomatoes, potatoes, flour"}
+        content_dict = {"ingredients": ingredients_query, "pantry": pantry_string}
         recommendations = generate_recommendation_list(content_dict)
 
         rankings = recommendations["ranking"]
@@ -157,7 +171,6 @@ async def get_recs(body: dict, db: AsyncSession = Depends(get_db)):
 
         # Parse user_id
         user_id = PythonUUID(body["userId"])
-        print("user_id is", user_id)
 
         # Check if UserHistory exists
         existing_history_result = await db.execute(select(UserHistory).where(UserHistory.user_id == user_id))

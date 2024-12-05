@@ -80,6 +80,7 @@ def generate_recommendation_list(content_dict: Dict):
         # """
         possible_recipes = "Possible Recipes:\n" + "\n".join(results["documents"][0])
 
+        print("Items in pantry: ", pantry)
         INPUT_PROMPT = f"""
         {ingredients_query}\n
         Here are the ingredients I have available in my pantry: {pantry}\n
