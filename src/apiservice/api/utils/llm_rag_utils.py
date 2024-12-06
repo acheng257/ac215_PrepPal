@@ -8,7 +8,6 @@ import vertexai
 from sentence_transformers import SentenceTransformer
 from vertexai.generative_models import GenerativeModel
 from google.cloud import aiplatform
-from google.oauth2 import service_account
 
 
 # Setup Global Variables
@@ -21,7 +20,7 @@ CHROMADB_PORT = os.environ["CHROMADB_PORT"]
 EMBEDDING_MODEL = "text-embedding-004"
 EMBEDDING_DIMENSION = 256
 
-MODEL_ENDPOINT = "projects/582280928569/locations/us-central1/endpoints/3898306381651902464"  # Finetuned model
+MODEL_ENDPOINT = "projects/639023682337/locations/us-east1/endpoints/1030677801830711296"  # Finetuned model
 
 
 # Configuration settings for the content generation
@@ -65,6 +64,7 @@ def generate_recommendation_list(content_dict: Dict):
     pantry = content_dict["pantry"]
     ingredients = content_dict["ingredients"]
     ingredients_query = f"I want to use {ingredients} to cook a recipe."
+    print("GENERATING RECOMMENDATIONS...")
 
     try:
         # Create embeddings for the message content
@@ -88,17 +88,10 @@ def generate_recommendation_list(content_dict: Dict):
         \n\nBased on the items in my pantry, how would you rank these recipes? I want to use as many ingredients from my pantry as possible.
         """
 
-        # # Load the fine-tuning credentials
-        fine_tuning_key_path = os.getenv("MODEL_ENDPOINT_GOOGLE_APPLICATION_CREDENTIALS")
-        credentials = service_account.Credentials.from_service_account_file(fine_tuning_key_path)
-        vertexai.init(project=GCP_PROJECT, location=GCP_REGION, credentials=credentials)
-        generative_model = GenerativeModel(MODEL_ENDPOINT)
-
         # Initialize the GenerativeModel (uncomment below)
-        # credentials = GOOGLE_APPLICATION_CREDENTIALS
-        # vertexai.init(project=GCP_PROJECT, location=GCP_REGION, credentials=credentials)
+        vertexai.init(project=GCP_PROJECT, location=GCP_REGION)
         # most_recent_endpoint = get_most_recent_endpoint(GCP_PROJECT, GCP_REGION)
-        # generative_model = GenerativeModel(most_recent_endpoint)
+        generative_model = GenerativeModel(MODEL_ENDPOINT)
 
         # Generate Recipe Recommendation List
         response = generative_model.generate_content(
