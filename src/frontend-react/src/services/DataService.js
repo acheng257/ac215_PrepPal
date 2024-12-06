@@ -68,18 +68,27 @@ const DataService = {
         return await api.get(`/recipes/user-preferences/${userId}`);
     },
 
-    ToggleFavoriteRecipe: async function(userId, recipeName) {
+    ToggleFavoriteRecipe: async function(userId, recipeName, cookingTime, calories, ingredients, instructions, protein) {
         return await api.post(`/recipes/toggle-favorite`, {
             user_id: userId,
-            recipe_title: recipeName
+            recipe_title: recipeName,
+            cooking_time: cookingTime,
+            calories,
+            ingredients,
+            instructions,
+            protein
         });
     },
     GetRecipeIdByName: async function(recipeName) {
-        console.log("in data services");
         return await api.get(`/recipes/get_id`, {
             params: { recipe_title: recipeName }
         });
-    }
+    },
+    GetRecipeInfoById: async function(recipeId) {
+        return await api.get(`/recipes/get_info`, {
+            params: { recipe_id: recipeId }
+        });
+    },
 }
 
 export default DataService;

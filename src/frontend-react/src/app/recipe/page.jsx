@@ -72,7 +72,15 @@ const Recipe = () => {
         return;
       }
 
-      const response = await DataService.ToggleFavoriteRecipe(userId, name);
+      const ingredientsStr = ingredients.join('\n');
+      const instructionsStr = instructions.join('\n');
+
+      const cookingTimeMatch = cookingTime.match(/(\d+)/);
+      const cookingTimeInt = cookingTimeMatch ? parseInt(cookingTimeMatch[1], 10) : null;
+
+      const caloriesNum = parseFloat(calories);
+
+      const response = await DataService.ToggleFavoriteRecipe(userId, name, cookingTimeInt, caloriesNum, ingredientsStr, instructionsStr, 0);
 
       if (response.data.success) {
         setIsFavorite(!isFavorite);
@@ -85,6 +93,68 @@ const Recipe = () => {
       alert('An error occurred while updating favorites');
     }
   };
+  // const handleToggleFavorite = async () => {
+  //   try {
+  //     const userId = user; // user is a plain string (user_id)
+
+  //     // Validate that userId is a non-empty string
+  //     if (!userId) {
+  //       alert('User not logged in');
+  //       return;
+  //     }
+  //     if (name === 'Recipe Name') {
+  //       alert('Invalid recipe');
+  //       return;
+  //     }
+
+  //     // Parse cookingTime to extract integer minutes
+  //     const cookingTimeMatch = cookingTime.match(/(\d+)/);
+  //     const cookingTimeInt = cookingTimeMatch ? parseInt(cookingTimeMatch[1], 10) : null;
+
+  //     // Parse calories to integer
+  //     const caloriesInt = Math.round(parseFloat(calories));
+
+  //     if (cookingTimeInt === null) {
+  //       alert('Invalid cooking time');
+  //       return;
+  //     }
+
+  //     // Serialize ingredients and instructions to strings
+  //     const ingredientsStr = ingredients.join('\n');
+  //     const instructionsStr = instructions.join('\n');
+
+  //     // Log all data to verify
+  //     console.log('Toggling favorite with data:', {
+  //       user_id: userId,
+  //       title: name,
+  //       cooking_time: cookingTimeInt,
+  //       calories: caloriesInt,
+  //       ingredients: ingredientsStr,
+  //       instructions: instructionsStr,
+  //     });
+
+  //     const response = await DataService.ToggleFavoriteRecipe({
+  //       user_id: userId,         // Ensure user_id is correctly included as a string
+  //       title: name,
+  //       cooking_time: cookingTimeInt,
+  //       calories: caloriesInt,
+  //       ingredients: ingredientsStr,
+  //       instructions: instructionsStr,
+  //     });
+
+  //     if (response.data.success) {
+  //       setIsFavorite(!isFavorite);
+  //       alert(isFavorite ? 'Recipe removed from favorites' : 'Recipe added to favorites');
+  //     } else {
+  //       throw new Error('Failed to update favorite status');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error toggling favorite:', error);
+  //     alert('An error occurred while updating favorites');
+  //   }
+  // };
+
+
 
   const handleUseRecipe = async () => {
     try {

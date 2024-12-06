@@ -278,6 +278,13 @@ async def toggle_favorite(body: dict, db: AsyncSession = Depends(get_db)):
     try:
         user_id = uuid.UUID(str(body.get("user_id")))
         recipe_title = body.get("recipe_title")
+        cooking_time = body.get("cooking_time")
+        calories = body.get("calories")
+        ingredients = body.get("ingredients")
+        instructions = body.get("instructions")
+        protein = 0  # placeholder for now
+
+        print("body contents of recipe:", body)
 
         if not user_id or not recipe_title:
             raise HTTPException(status_code=422, detail="user_id and recipe_title are required")
@@ -288,7 +295,7 @@ async def toggle_favorite(body: dict, db: AsyncSession = Depends(get_db)):
 
         # If recipe doesn't exist, create it
         if not recipe:
-            recipe = Recipes(recipe_id=uuid.uuid4(), title=recipe_title, instructions="Instructions to be added", ingredients="Ingredients to be added", cooking_time=0, calories=0, protein=0)
+            recipe = Recipes(recipe_id=uuid.uuid4(), title=recipe_title, instructions=instructions, ingredients=ingredients, cooking_time=cooking_time, calories=calories, protein=protein)
             db.add(recipe)
             await db.commit()
             await db.refresh(recipe)
@@ -342,7 +349,6 @@ async def get_user_preferences(user_id: PythonUUID, db: AsyncSession = Depends(g
 
 @router.get("/get_id")
 async def get_recipe_name(recipe_title: str, db: AsyncSession = Depends(get_db)):
-    print("recipe title is", recipe_title)
     query = select(Recipes.recipe_id).where(Recipes.title == recipe_title)
     result = await db.execute(query)
     recipe_id = result.scalar_one_or_none()
@@ -350,4 +356,16 @@ async def get_recipe_name(recipe_title: str, db: AsyncSession = Depends(get_db))
     if recipe_id is None:
         raise HTTPException(status_code=404, detail="Recipe not found")
 
-    return {"id": str(recipe_id)}  # Convert UUID to string if necessary
+    return {"id": str(recipe_id)}
+
+
+@router.get("/get_info")
+async def get_recipe_info(recipe_id: str, db: AsyncSession = Depends(get_db)):
+    query = select(Recipes).where(Recipes.recipe_id == recipe_id)
+    result = await db.execute(query)
+    recipe_result = result.scalar_one_or_none()
+
+    if recipe_id is None:
+        raise HTTPException(status_code=404, detail="Recipe not found")
+
+    return {"recipe": recipe_result}

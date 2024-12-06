@@ -45,11 +45,9 @@ const SignUp = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log("response ok");
         localStorage.setItem("userId", data.user_id);
         localStorage.setItem("username", data.username);
         localStorage.setItem("name", data.first_name);
-        alert(data.message);
         router.push('/preppal'); // Redirect to the main page upon successful signup
       } else {
         const errorData = await response.json();

@@ -133,18 +133,35 @@ const Pantry = () => {
     }
 
     const parsed = newIngredients
-      .split(",")
-      .map((item) => {
-        const [name, quantity] = item.trim().split(/\s+/); // Split on whitespace
-        if (!name || isNaN(quantity)) {
-          alert(
-            `Invalid input: "${item.trim()}". Use format: "apple 3, pear 2".`
-          );
-          return null;
-        }
-        return { name, quantity: parseInt(quantity) || 0 };
-      })
-      .filter((item) => item !== null);
+    .split(",") // Split the string by commas to get individual ingredients
+    .map((item) => {
+      const trimmed = item.trim(); // Remove leading/trailing whitespace
+      const lastSpaceIndex = trimmed.lastIndexOf(" "); // Find the last space in the string
+
+      // If there's no space, the format is invalid (e.g., "salt")
+      if (lastSpaceIndex === -1) {
+        alert(`Invalid input: "${trimmed}". Use format: "apple 3, pear 2".`);
+        return null;
+      }
+
+      // Extract the name and quantity based on the last space
+      const name = trimmed.substring(0, lastSpaceIndex).trim();
+      const quantityStr = trimmed.substring(lastSpaceIndex + 1).trim();
+
+      // Parse the quantity to an integer
+      const quantity = parseInt(quantityStr, 10);
+
+      // Validate the parsed values
+      if (!name || isNaN(quantity)) {
+        alert(
+          `Invalid input: "${trimmed}". Use format: "apple 3, pear 2".`
+        );
+        return null;
+      }
+
+      return { name, quantity };
+    })
+    .filter((item) => item !== null);
 
     if (parsed.length === 0) return;
 
