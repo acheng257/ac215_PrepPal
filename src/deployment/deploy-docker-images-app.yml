@@ -40,7 +40,6 @@
       build:
         path: /llm-rag
         platform: linux/amd64/v2
-        options: "--progress=plain"
       name: gcr.io/{{ gcp_project }}/preppal-app-llm-rag-cli:{{ tag.stdout}}
       source: build
   - name: Push llm-rag-cli image to GCR
