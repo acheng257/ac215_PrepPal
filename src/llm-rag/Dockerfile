@@ -38,7 +38,7 @@ WORKDIR /app
 # Install python packages
 COPY --chown=app:app Pipfile Pipfile.lock /app/
 
-# Upgrade torch to the latest version
+# # Upgrade torch to the latest version
 RUN pipenv sync && \
     pipenv run pip install --no-cache-dir --upgrade torch
 
