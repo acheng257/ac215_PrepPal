@@ -35,19 +35,19 @@
       repository: gcr.io/{{ gcp_project }}/preppal-app-api-service:{{ tag.stdout}}
       push: yes
       source: local
-  # - name: Build llm-rag-cli container image
-  #   community.general.docker_image:
-  #     build:
-  #       path: /llm-rag
-  #       platform: linux/amd64/v2
-  #     name: gcr.io/{{ gcp_project }}/preppal-app-llm-rag-cli:{{ tag.stdout}}
-  #     source: build
-  # - name: Push llm-rag-cli image to GCR
-  #   community.general.docker_image:
-  #     name: gcr.io/{{ gcp_project }}/preppal-app-llm-rag-cli:{{ tag.stdout}}
-  #     repository: gcr.io/{{ gcp_project }}/preppal-app-llm-rag-cli:{{ tag.stdout}}
-  #     push: yes
-  #     source: local
+  - name: Build llm-rag-cli container image
+    community.general.docker_image:
+      build:
+        path: /llm-rag
+        platform: linux/amd64/v2
+      name: gcr.io/{{ gcp_project }}/preppal-app-llm-rag-cli:{{ tag.stdout}}
+      source: build
+  - name: Push llm-rag-cli image to GCR
+    community.general.docker_image:
+      name: gcr.io/{{ gcp_project }}/preppal-app-llm-rag-cli:{{ tag.stdout}}
+      repository: gcr.io/{{ gcp_project }}/preppal-app-llm-rag-cli:{{ tag.stdout}}
+      push: yes
+      source: local
   # - name: Build postgres-db container image
   #   community.general.docker_image:
   #     build:
