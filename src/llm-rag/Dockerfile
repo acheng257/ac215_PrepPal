@@ -40,7 +40,7 @@ COPY --chown=app:app Pipfile Pipfile.lock /app/
 
 # Upgrade torch to the latest version
 RUN pipenv sync && \
-    pipenv run pip install --upgrade torch
+    pipenv run pip install --no-cache-dir --upgrade torch
 
 # Add the rest of the source code. This is done last so we don't invalidate all
 # layers when we change a line of code.
