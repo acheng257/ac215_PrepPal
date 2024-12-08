@@ -83,9 +83,10 @@ def parse_recipe(text: str) -> dict:
 async def get_recs(body: dict, db: AsyncSession = Depends(get_db)):
     try:
         # Extract and log request data
-        cooking_time = body["cookingTime"]
-        serving_size = body["servings"]
-        cuisine = body["cuisine"]
+        # cooking_time = body["cookingTime"]
+        # serving_size = body["servings"]
+        # cuisine = body["cuisine"]
+        cooking_time, serving_size, cuisine = None, None, None
         ingredients_query = ", ".join(body["ingredients"])
         user_id = body["userId"]
         logger.debug(f"Received request - Cooking Time: {cooking_time}, Serving Size: {serving_size}, Cuisine: {cuisine}, Ingredients: {ingredients_query}")

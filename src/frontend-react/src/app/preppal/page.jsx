@@ -7,9 +7,9 @@ import DataService from '@/services/DataService';
 
 const PrepPal = () => {
   const [filters, setFilters] = useState({
-    cookingTime: 30,
-    servings: 4,
-    cuisine: 'all',
+    // cookingTime: 30,
+    // servings: 4,
+    // cuisine: 'all',
     ingredients: []
   });
   const [ingredientInput, setIngredientInput] = useState('');
@@ -249,8 +249,10 @@ const PrepPal = () => {
       <main className={styles.mainContent}>
         <div className={styles.gridContainer}>
           <div className={styles.filtersSection}>
-            <h2>Filters</h2>
-            <div className={styles.filterGroup}>
+            <h2>Ingredients To Be Used:</h2>
+            <hr></hr>
+            <br></br>
+            {/* <div className={styles.filterGroup}>
               <label>Cooking Time</label>
               <input
                 type="range"
@@ -282,20 +284,28 @@ const PrepPal = () => {
                 <option value="italian">Italian</option>
                 <option value="asian">Asian</option>
                 <option value="mexican">Mexican</option>
-                {/* Add more cuisines as needed */}
               </select>
-            </div>
+            </div> */}
             <div className={styles.filterGroup}>
-              <label>Ingredients</label>
-              <input
+              <textarea
+                rows="3"
                 type="text"
                 placeholder="Enter ingredients separated by commas"
                 value={ingredientInput}
                 onChange={(e) => setIngredientInput(e.target.value)}
               />
-              <span>Ingredients: {filters.ingredients.join(', ')}</span>
+              <button onClick={handleSubmit}>Submit</button>
             </div>
-            <button onClick={handleSubmit}>Submit</button>
+            <br></br>
+            <hr></hr>
+            <div className={styles.filterGroup}>
+              <h4>Searching for Recipes with:</h4>
+              <ul>
+                {filters.ingredients.map((ingredient, idx) => (
+                  <li key={idx}>• {ingredient}</li>
+                ))}
+              </ul>
+            </div>
           </div>
           <div className={styles.recipeGrid}>
             {recommendations.length > 0 ? (

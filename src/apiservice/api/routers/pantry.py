@@ -40,10 +40,6 @@ async def update_user_pantry(user_id: UUID, pantry_update: PantryUpdate, db: Asy
         result = await db.execute(select(PantryItem).where(PantryItem.user_id == user_id))
         pantry_item = result.scalars().first()
 
-        print("MY PANTRY:", pantry_update.items)
-        print("MY INGREDIENTS:", pantry_update.ingredients)
-        print("\n\n\n\n\n")
-
         if pantry_item is None:
             pantry_create = PantryCreate(items=pantry_update.items or {})
             new_pantry_item = PantryItem(user_id=user_id, **pantry_create.dict())
