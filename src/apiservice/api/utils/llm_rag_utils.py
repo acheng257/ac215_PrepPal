@@ -37,7 +37,7 @@ embedding_model = SentenceTransformer("sentence-transformers/multi-qa-MiniLM-L6-
 client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT)
 method = "entire_recipe"
 collection_name = f"{method}_collection"
-collection = client.get_collection(name=collection_name)
+# collection = client.get_collection(name=collection_name)
 
 
 # -------------------- Functions ------------------------
@@ -68,6 +68,7 @@ def generate_recommendation_list(content_dict: Dict):
     print("GENERATING RECOMMENDATIONS...")
 
     try:
+        collection = client.get_collection(name=collection_name)
         # Create embeddings for the message content
         query_embedding = generate_query_embedding(ingredients_query)
         if isinstance(query_embedding, np.ndarray):

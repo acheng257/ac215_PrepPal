@@ -1,5 +1,6 @@
 import { BASE_API_URL, uuid } from "./Common";
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid'
 
 console.log("BASE_API_URL:", BASE_API_URL)
 
@@ -9,9 +10,13 @@ const api = axios.create({
 });
 // Add request interceptor to include session ID in headers
 api.interceptors.request.use((config) => {
-    const sessionId = localStorage.getItem('userSessionId');
+    var sessionId = localStorage.getItem('userSessionId');
     if (sessionId) {
         config.headers['X-Session-ID'] = sessionId;
+    }
+    else {
+        sessionId = uuidv4()
+        localStorage.setItem('userSessionId', sessionId)
     }
     return config;
 }, (error) => {
