@@ -45,15 +45,6 @@ CREATE TABLE pantry (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
--- 4. recipes table (stores favorites, save to link to user preferences in the future)
--- CREATE TABLE recipes (
---     recipe_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
---     instructions TEXT,
---     ingredients TEXT,
---     cooking_time INT,
---     calories INT,
---     protein INT
--- );
 CREATE TABLE recipes (
     recipe_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     title VARCHAR(100) UNIQUE NOT NULL,
