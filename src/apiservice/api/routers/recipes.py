@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
-from api.utils.llm_rag_utils import generate_recommendation_list
+from api.utils.llm_rag_utils import generate_recommendation_list, get_recipe_measurements
 from models.database import get_db
 from models.user_history import UserHistory
 from models.users import User, UserPreferences
@@ -121,6 +121,8 @@ async def get_recs(body: dict, db: AsyncSession = Depends(get_db)):
                 _, instructions = recipe.split("\nInstructions: ")
                 instructions = instructions.split("\n")[:-1]
 
+                ingredients = get_recipe_measurements(title, servings, time, ingredients, calories, instructions)
+
                 recipe_dict = {
                     "title": title.strip(),
                     "time": time.strip(),
@@ -138,15 +140,22 @@ async def get_recs(body: dict, db: AsyncSession = Depends(get_db)):
 
         # Parse rankings
         try:
-            rankings = rankings.split("Rank 1: ")[-1]
-            rank1, rankings = rankings.split("Rank 2: ")
-            rank2, rankings = rankings.split("Rank 3: ")
-            rank3, rankings = rankings.split("Rank 4: ")
-            rank4, rank5 = rankings.split("Rank 5: ")
+            all_rankings = []
+            number_of_recipes = len(recipes_dicts)
 
-            all_rankings = [rank1, rank2, rank3, rank4, rank5]
+            rankings = rankings.split("Rank 1: ")[-1]
+            for recipe_idx in range(1, number_of_recipes):
+                try:
+                    rank, rankings = rankings.split(f"Rank {recipe_idx + 1}: ")
+                    all_rankings.append(rank)
+                except Exception as e:
+                    logger.error(f"Error uploading recipe: {str(e)}")
+                    continue
+            all_rankings.append(rankings)
+
             all_rankings = [ranking.split("\n") for ranking in all_rankings]
             all_rankings[-1] = all_rankings[-1][:-2]
+
         except ValueError as ve:
             logger.error(f"Error parsing rankings: {ve}")
             raise HTTPException(status_code=500, detail="Error processing rankings")
@@ -159,6 +168,7 @@ async def get_recs(body: dict, db: AsyncSession = Depends(get_db)):
                 for recipe_dict in recipes_dicts:
                     if recipe_dict["title"] == current_ranking_title:
                         recipe_dict["missing_ingredients"] = missing_ingredients.split("Here are the ingredients you still need: ")[-1].strip().split(", ")
+                        recipe_dict["missing_ingredients"][-1] = recipe_dict["missing_ingredients"][-1][:-1]
                         ordered_recipe_dicts.append(recipe_dict)
                         break
             except ValueError as ve:
@@ -198,6 +208,7 @@ async def get_recs(body: dict, db: AsyncSession = Depends(get_db)):
             logger.error(f"Error committing transaction: {commit_error}", exc_info=True)
             raise HTTPException(status_code=500, detail="Internal server error")
 
+        print("ORDERED RECIPE DICT", ordered_recipe_dicts)
         return {"recommendations": ordered_recipe_dicts, "recommendation_id": str(recommendation_id)}
 
     except Exception as e:

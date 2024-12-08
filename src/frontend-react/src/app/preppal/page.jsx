@@ -312,7 +312,7 @@ const PrepPal = () => {
                     <h4>Missing Ingredients:</h4>
                     <ul>
                       {recipe.missing_ingredients.map((ingredient, idx) => (
-                        <li key={idx}>• {ingredient}</li>
+                        <li key={idx}>{ingredient}</li>
                       ))}
                     </ul>
                     <p>Calories: {recipe.calories}</p>
