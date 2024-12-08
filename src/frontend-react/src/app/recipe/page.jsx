@@ -173,32 +173,34 @@ const Recipe = () => {
 
       console.log("Pantry is", pantry);
 
-      const parseIngredient = (ingredientStr) => {
-        const parts = ingredientStr.trim().split(' ');
-        const quantity = parseFloat(parts[0]);
-        const ingredientName = parts.slice(1).join(' ').toLowerCase();
-        return { quantity, ingredientName };
-      };
+      // const parseIngredient = (ingredientStr) => {
+      //   const parts = ingredientStr.trim().split(' ');
+      //   const quantity = parseFloat(parts[0]);
+      //   const ingredientName = parts.slice(1).join(' ').toLowerCase();
+      //   return { quantity, ingredientName };
+      // };
 
-      // Remove ingredients used in the recipe from the pantry
-      ingredients.forEach(ingredientStr => {
-        const { quantity: recipeQuantity, ingredientName } = parseIngredient(ingredientStr);
+      // // Remove ingredients used in the recipe from the pantry
+      // ingredients.forEach(ingredientStr => {
+      //   const { quantity: recipeQuantity, ingredientName } = parseIngredient(ingredientStr);
 
-        if (pantry.hasOwnProperty(ingredientName)) {
-          const pantryQuantity = pantry[ingredientName];
+      //   if (pantry.hasOwnProperty(ingredientName)) {
+      //     const pantryQuantity = pantry[ingredientName];
 
-          const updatedQuantity = pantryQuantity - recipeQuantity;
-          console.log("quantities are", pantryQuantity, recipeQuantity)
+      //     const updatedQuantity = pantryQuantity - recipeQuantity;
+      //     console.log("quantities are", pantryQuantity, recipeQuantity)
 
-          if (updatedQuantity <= 0) {
-            delete pantry[ingredientName];
-          } else {
-            pantry[ingredientName] = updatedQuantity;
-          }
-        } else {
-          console.warn(`Ingredient "${ingredientName}" not found in pantry.`);
-        }
-      });
+      //     if (updatedQuantity <= 0) {
+      //       delete pantry[ingredientName];
+      //     } else {
+      //       pantry[ingredientName] = updatedQuantity;
+      //     }
+      //   } else {
+      //     console.warn(`Ingredient "${ingredientName}" not found in pantry.`);
+      //   }
+      // });
+
+      console.log("INGREDIENTS", JSON.stringify(ingredients))
 
       console.log("updated pantry is", JSON.stringify(pantry))
       const updateResponse = await fetch(`${apiUrl}/${userId}`, {
@@ -206,7 +208,7 @@ const Recipe = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ items: pantry }),
+        body: JSON.stringify({ items: pantry, ingredients: ingredients }),
       });
 
       if (!updateResponse.ok) {

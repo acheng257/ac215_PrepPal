@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional, Dict
+from typing import Optional, Dict, List
 from uuid import UUID
 from datetime import datetime
 
@@ -14,6 +14,7 @@ class PantryCreate(PantryBase):
 
 class PantryUpdate(BaseModel):
     items: Optional[Dict[str, int]] = None
+    ingredients: Optional[List[str]] = None
 
 
 class PantryResponse(PantryBase):

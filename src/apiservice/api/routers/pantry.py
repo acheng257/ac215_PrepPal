@@ -6,6 +6,7 @@ from uuid import UUID
 from models.database import get_db
 from models.pantry import PantryItem
 from schemas.pantry import PantryUpdate, PantryResponse, PantryCreate
+from ..utils.llm_rag_utils import update_pantry_with_llm
 
 router = APIRouter()
 
@@ -39,6 +40,10 @@ async def update_user_pantry(user_id: UUID, pantry_update: PantryUpdate, db: Asy
         result = await db.execute(select(PantryItem).where(PantryItem.user_id == user_id))
         pantry_item = result.scalars().first()
 
+        print("MY PANTRY:", pantry_update.items)
+        print("MY INGREDIENTS:", pantry_update.ingredients)
+        print("\n\n\n\n\n")
+
         if pantry_item is None:
             pantry_create = PantryCreate(items=pantry_update.items or {})
             new_pantry_item = PantryItem(user_id=user_id, **pantry_create.dict())
@@ -48,7 +53,8 @@ async def update_user_pantry(user_id: UUID, pantry_update: PantryUpdate, db: Asy
             pantry_item = new_pantry_item
         else:
             if pantry_update.items is not None:
-                pantry_item.items = pantry_update.items
+                updated_pantry = update_pantry_with_llm(pantry=pantry_update.items, used_ingredients=pantry_update.ingredients)
+                pantry_item.items = updated_pantry
             db.add(pantry_item)
             await db.commit()
             await db.refresh(pantry_item)

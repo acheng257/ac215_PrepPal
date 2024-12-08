@@ -108,7 +108,7 @@ def generate_recommendation_list(content_dict: Dict):
 
 def get_recipe_measurements(title: str, servings: str, time: str, ingredients: str, calories: str, instructions: str):
 
-    SYSTEM_INSTRUCTION = """
+    SYSTEM_INSTRUCTIONS = """
         You are a recipe assistant. Your task is to add appropriate measurements (e.g., teaspoons, cups, ounces, etc.) to the provided list of ingredients in a recipe.
         The measurements should be contextually appropriate based on typical recipes. Do not add or remove any ingredients, and do not modify any other part of the recipe,
         such as the title, cooking time, or instructions. Do not change the number that indicates the quantity of the ingredient. Just add the measurement.
@@ -139,8 +139,78 @@ def get_recipe_measurements(title: str, servings: str, time: str, ingredients: s
     """
 
     vertexai.init(project=GCP_PROJECT, location=GCP_REGION)
-    gen_model = GenerativeModel(GENERATIVE_MODEL, system_instruction=[SYSTEM_INSTRUCTION])
+    gen_model = GenerativeModel(GENERATIVE_MODEL, system_instruction=[SYSTEM_INSTRUCTIONS])
     responses = gen_model.generate_content([prompt], generation_config=generation_config)
     generated_text = responses.text
 
     return generated_text
+
+
+def update_pantry_with_llm(pantry: dict, used_ingredients: list):
+
+    pantry_str = [f"{key}: {value}" for key, value in pantry.items()]
+    pantry_str = ", ".join(pantry_str)
+    # used_ingredients_str = ", ".join(used_ingredients)
+
+    SYSTEM_INSTRUCTIONS = """
+        You are given two inputs:
+
+        Pantry: A string representing ingredient names and their quantities, formatted as: "salt: 1, bell pepper: 15, potato: 3".
+        Used Ingredients: A string describing the ingredients used in a recipe, formatted as: "1 tbsp butter, 1 tsp salt, 3 medium bell peppers".
+
+        Task:
+        Parse the pantry string into a dictionary where keys are ingredient names and values are their quantities.
+        Parse the used ingredients to determine which ingredients were used.
+        Match used ingredients to pantry items and update the quantities in the pantry. Use your best judgment to match closely related items (e.g., "bell pepper" matches "bell peppers").
+        Do not update staple pantry ingredients, such as:
+        - Water
+        - Spices (e.g., salt, pepper, oregano, cinnamon, red pepper flakes)
+        - Oils (e.g., olive oil, vegetable oil)
+        - Condiments (e.g., soy sauce, vinegar)
+        Only update perishables like fruits, vegetables, dairy, bread, and meat. Reduce the quantity for matched items by 1 for each occurrence.
+        Ensure quantities do not become negative.
+        Output the updated pantry in the same string format as the input (e.g., "salt: 1, bell pepper: 12, potato: 3").
+        Example:
+        Input:
+        Pantry: "salt: 1, bell pepper: 15, potato: 3"
+
+        Used Ingredients: "1 tbsp butter, 1 tsp salt, 3 medium bell peppers"
+
+        Output:
+        "salt: 1, bell pepper: 12, potato: 3"
+
+        DO NOT OUTPUT PYTHON CODE.
+
+    """
+
+    prompt = f"""
+        Here is my pantry: {pantry}
+        Here are the ingredients I used: {used_ingredients}
+
+        Please give me the updated pantry.
+    """
+
+    vertexai.init(project=GCP_PROJECT, location=GCP_REGION)
+    gen_model = GenerativeModel(GENERATIVE_MODEL, system_instruction=[SYSTEM_INSTRUCTIONS])
+    responses = gen_model.generate_content([prompt], generation_config=generation_config)
+    generated_text = responses.text
+
+    try:
+        items = generated_text.split(", ")
+        updated_pantry_dict = {}
+        for item in items:
+            ingr, quantity = item.split(": ")
+            updated_pantry_dict[ingr] = int(quantity)
+    except Exception as e:
+        print("ERROR", e)
+        print("Not updating pantry...")
+        updated_pantry_dict = pantry
+
+    print("\n\n\n")
+    print("Checking Pantry Update...")
+    print("Pantry", pantry)
+    print("Used Ingredients", used_ingredients)
+    print("teehee", updated_pantry_dict)
+    print("\n\n\n")
+
+    return updated_pantry_dict
