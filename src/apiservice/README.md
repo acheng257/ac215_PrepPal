@@ -34,6 +34,8 @@ Build with FastAPI framework
 | `/pantry/{user_id}`                      | DELETE     | Deletes the pantry data for a user.                                                   | None                 | None                                                             | Confirmation of deletion:                 |
 | `/recipes/get_recs`                      | POST       | Generates recipe recommendations based on ingredients and pantry data.                | None                 | JSON: `ingredients` (list)                                       | List of recommended recipes               |
 
+<img src="../../assets/API.png"  width="800">
+
 ### Testing
 
 - Refer to this [file](testing.md) for instructions of how to manually run the unit tests for the API functionality.
