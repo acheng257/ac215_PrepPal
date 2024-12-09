@@ -256,7 +256,9 @@ We've put together a detailed design document outlining the application’s arch
 These folders contains code that is not part of any container - for e.g: Application mockup, EDA, crucial insights, reports or visualizations.
 
 ### Testing
-Refer to the following two files ([here](./src/frontend-react/testing.md) and [here](./src/apiservice/testing.md)) for instructions on how to run our tests locally.
+Our application includes comprehensive tests for both the API and the frontend, covering unit and integration testing. Detailed instructions for running these tests locally can be found in the following files: [Frontend Testing](./src/frontend-react/testing.md) and [API Testing](./src/apiservice/testing.md).
+
+Our test suite achieves 80% coverage, ensuring that the core functionality of the application is thoroughly validated. However, modules such as fine-tuning the LLM or running test embeddings are not included in automated testing, as these processes are not typically suited to standard testing methods. For these, we provide detailed performance metrics in the `reports` folder and conduct manual testing to ensure reliability. These tests are automatically executed through GitHub Actions, maintaining continuous integration and consistent validation of the codebase.
 
 ## Using the Application
 After deploying the PrepPal application locally or in a production environment, you can begin interacting with its features to streamline meal planning and pantry management. This section provides a step-by-step guide on how to use the application, complete with examples and visuals to help you get started.
