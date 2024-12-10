@@ -312,4 +312,14 @@ From signing up and managing your pantry to receiving personalized recipe recomm
 
 ## CI/CD
 
-## Known Issues and Limitations / Future Work
+## Known Issues and Limitations / Future Work and Enhancements
+### Pantry Updates
+Currently, the pantry updates take in a string containing the item name and a number representing the quantity. Measurements for the quantity are not supported, so we would want to incorporate some sort of automatic conversion so that quantities of each ingredient are associated with measurement units.
+
+Furthermore, we are using an LLM to perform updates to the pantry when a user uses a recipe. However, this is not deterministic and sometimes does not work if the ingredient name doesn't match closely to the name of the item in the pantry; for instance, the LLM does not always identify "russet potatoes" and "potato" as a match.
+
+### Recipe Measurements
+Currently, we enhance the recipe data in our LLM RAG database by using a fine-tuned LLM to generate units for the ingredients list, as the original recipe did not contain units. This process has to be re-done each time the application is rebooted, but in the future we would pass the recipes through the LLM once and then embed the results of the enhanced recipes and save those to the database so that this process only has to be completed once.
+
+### User Preferences
+Our application allows users to upload their own recipes as a text file and adds it to a data table in PostgreSQL. We would need to load these recipes into the LLM RAG database and pass each user's uploaded recipes as context to our recommendation system so that the recommendations become more personalized. However, this would involve re-training of the model with the additional recipes.
