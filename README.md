@@ -189,7 +189,7 @@ We've put together a detailed design document outlining the application’s arch
    - Create a VM Instance from [GCP](https://console.cloud.google.com/compute/instances)
      - Region: us-east4-a (can choose any region that supports the type of machine chosen)
      - Machine Configuration:
-       - GPU type: NVIDIA T4
+       - GPU type: NVIDIA L4
        - Machine Type: g2-standard-4
        - Memory: 200 GB (at least)
      - You can choose a lower tier GPU that runs with 4-8 vCPUs. We had to upgrade to NVIDIA L4 due to unavailability of other GPUs.

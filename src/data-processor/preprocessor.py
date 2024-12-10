@@ -9,8 +9,8 @@ from helper import get_ingr_freq_dict, generate_answer_question_pairs
 from sklearn.model_selection import train_test_split
 from google.cloud import storage
 
-GCS_BUCKET_NAME = os.environ["GCS_BUCKET_NAME"]
-PROJECT_NAME = os.environ["GCP_PROJECT"]
+GCS_BUCKET_NAME = "preppal-data"
+PROJECT_NAME = "preppal-438123"
 
 RAW_URI = "ml-workflow/raw/"
 CLEAN_URI = "ml-workflow/clean/"

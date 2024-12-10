@@ -17,7 +17,7 @@ ready_folder = os.path.join(dataset_folder, "ready_for_training")
 
 
 def main(args=None):
-    GCS_BUCKET_NAME = os.getenv("GCS_BUCKET_NAME")
+    GCS_BUCKET_NAME = "preppal-data"
     print("GCS_BUCKET_NAME:", GCS_BUCKET_NAME)
 
     # Make dirs

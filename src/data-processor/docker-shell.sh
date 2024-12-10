@@ -6,9 +6,9 @@ set -e
 # Define some environment variables
 export IMAGE_NAME="preppal-data-processor"
 export BASE_DIR=$(pwd)
-export PERSISTENT_DIR=$(pwd)/../../../../persistent-folder/
-export SECRETS_DIR=$(pwd)/../../../../secrets/
-export GOOGLE_APPLICATION_CREDENTIALS="/secrets/data-service-account.json"
+export PERSISTENT_DIR=$(pwd)/../../../persistent-folder/
+export SECRETS_DIR=$(pwd)/../../../secrets/
+export GOOGLE_APPLICATION_CREDENTIALS="/secrets/deployment.json"
 export GCP_PROJECT="preppal-438123"
 export GCS_BUCKET_NAME="preppal-data"
 
