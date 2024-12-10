@@ -57,7 +57,7 @@ Contains details of users' pantry items.
 
 ### 5. `recipes` Table
 
-Stores recipe information and links to user who favorited the user.
+Stores recipe information and links to user who favorited the recipe.
 
 | Column | Data Type | Constraints | Description |
 |--------|-----------|-------------|-------------|
