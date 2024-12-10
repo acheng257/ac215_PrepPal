@@ -3,13 +3,8 @@ import os
 import time
 import random
 import string
-from datetime import datetime
-
 import vertexai
 from vertexai.preview.tuning import sft
-
-# from vertexai.generative_models import GenerativeModel
-from google.cloud import aiplatform
 
 
 GCP_PROJECT = os.environ["GCP_PROJECT"]
@@ -78,30 +73,30 @@ print("Training Job Complete")
 
 # ---------------------------- Upload Model -----------------------------------------
 
-aiplatform.init(project=GCP_PROJECT, location=GCP_LOCATION)
+# aiplatform.init(project=GCP_PROJECT, location=GCP_LOCATION)
 
-# List all models in the Model Registry
-models = aiplatform.Model.list()
+# # List all models in the Model Registry
+# models = aiplatform.Model.list()
 
-# If there are any models, find the most recently created one
-if models:
-    # Sort models by creation time (newest first)
-    _ = datetime.time()  # Flake8 error. datetime is needed
-    models_sorted = sorted(models, key=lambda model: model.create_time, reverse=True)
-    latest_model = models_sorted[0]
+# # If there are any models, find the most recently created one
+# if models:
+#     # Sort models by creation time (newest first)
+#     _ = datetime.datetime.now()  # Flake8 error. datetime is needed
+#     models_sorted = sorted(models, key=lambda model: model.create_time, reverse=True)
+#     latest_model = models_sorted[0]
 
-    # Print the details of the most recently added model
-    print("Most recently added model:")
-    print("Display Name:", latest_model.display_name)
-    print("Resource Name:", latest_model.resource_name)
-    print("Create Time:", latest_model.create_time)
+#     # Print the details of the most recently added model
+#     print("Most recently added model:")
+#     print("Display Name:", latest_model.display_name)
+#     print("Resource Name:", latest_model.resource_name)
+#     print("Create Time:", latest_model.create_time)
 
-    # endpoint = latest_model.deploy(
-    #     deployed_model_display_name=f"deployed-{args.model_name}",
-    #     machine_type="n1-standard-4"
-    # )
-    # endpoint_ = endpoint.resource_name
+#     # endpoint = latest_model.deploy(
+#     #     deployed_model_display_name=f"deployed-{args.model_name}",
+#     #     machine_type="n1-standard-4"
+#     # )
+#     # endpoint_ = endpoint.resource_name
 
 
-else:
-    print("No models found in the Model Registry.")
+# else:
+#     print("No models found in the Model Registry.")

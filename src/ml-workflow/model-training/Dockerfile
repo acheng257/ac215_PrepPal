@@ -1,5 +1,5 @@
 # Use the official Ubuntu image as the base
-FROM ubuntu:24.04
+FROM ubuntu:20.04
 
 # Set the environment variable for non-interactive installations
 ENV DEBIAN_FRONTEND=noninteractive
@@ -23,8 +23,8 @@ RUN apt-get update && \
 
 # Python
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends python3.12 python3-pip && \
-    pip install --no-cache-dir --break-system-packages pipenv
+    apt-get install -y --no-install-recommends python3.9 python3-pip && \
+    pip install --no-cache-dir pipenv
 
 RUN useradd -ms /bin/bash app -d /home/app && \
     mkdir -p /app && \

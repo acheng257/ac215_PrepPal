@@ -2,6 +2,7 @@ import os
 from google.cloud import storage
 
 GCS_PACKAGE_URI = os.environ["GCS_PACKAGE_URI"]
+GCS_BUCKET_NAME = os.environ["GCS_BUCKET_NAME"]
 
 
 def upload_to_gcs(blob_name):
@@ -10,13 +11,13 @@ def upload_to_gcs(blob_name):
     client = storage.Client()
 
     # Get the bucket
-    bucket = client.bucket(f"preppal-data/{GCS_PACKAGE_URI}")
+    bucket = client.bucket(GCS_BUCKET_NAME)
 
     # Create a new blob and upload the file
-    blob = bucket.blob(blob_name)
+    blob = bucket.blob(f"{GCS_PACKAGE_URI}/{blob_name}")
     blob.upload_from_filename(blob_name)
 
-    print(f"Uploaded '{blob_name}' to gs://preppal-data/{GCS_PACKAGE_URI}")
+    print(f"Uploaded '{blob_name}' to gs://{GCS_BUCKET_NAME}/{GCS_PACKAGE_URI}")
 
 
 if __name__ == "__main__":

@@ -8,7 +8,7 @@ export IMAGE_NAME="preppal-model-training"
 export BASE_DIR=$(pwd)
 export PERSISTENT_DIR=$(pwd)/../../../../persistent-folder/
 export SECRETS_DIR=$(pwd)/../../../../secrets/
-export GOOGLE_APPLICATION_CREDENTIALS="/secrets/data-service-account.json"
+export GOOGLE_APPLICATION_CREDENTIALS="/secrets/llm-finetuning-service-account.json"
 export GCP_PROJECT="preppal-438123"
 export GCS_BUCKET_NAME="preppal-data"
 export GCP_REGION="us-east1"
@@ -18,7 +18,7 @@ export GCS_PACKAGE_URI="ml-workflow/preppal_trainer_code"
 #docker build -t $IMAGE_NAME -f Dockerfile .
 # M1/2 chip macs use this line
 #docker build -t $IMAGE_NAME --platform=linux/arm64/v8 -f Dockerfile .
-docker build -t $IMAGE_NAME --platform=linux/arm64/v8 -f Dockerfile .
+docker build -t $IMAGE_NAME --platform=linux/amd64/v2 -f Dockerfile .
 
 # Run Container
 docker run --rm --name $IMAGE_NAME -ti \
