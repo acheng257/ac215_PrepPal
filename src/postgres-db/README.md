@@ -21,7 +21,7 @@ Stores core user identity and registration information.
 
 ### 2. `user_preferences` Table
 
-Contains user-specific training preferences and attributes.
+Contains user-specific cooking preferences and attributes.
 
 | Column | Data Type | Constraints | Description |
 |--------|-----------|-------------|-------------|
@@ -34,7 +34,7 @@ Contains user-specific training preferences and attributes.
 
 ### 3. `user_history` Table
 
-Contains personalized training plans for each user.
+Contains most recent history of user session.
 
 | Column | Data Type | Constraints | Description |
 |--------|-----------|-------------|-------------|
@@ -47,7 +47,7 @@ Contains personalized training plans for each user.
 
 ### 4. `pantry` Table
 
-Contains details for each training session within a plan.
+Contains details of users' pantry items.
 
 | Column | Data Type | Constraints | Description |
 |--------|-----------|-------------|-------------|
@@ -57,7 +57,7 @@ Contains details for each training session within a plan.
 
 ### 5. `recipes` Table
 
-Stores detailed performance metrics for completed sessions.
+Stores recipe information and links to user who favorited the user.
 
 | Column | Data Type | Constraints | Description |
 |--------|-----------|-------------|-------------|
