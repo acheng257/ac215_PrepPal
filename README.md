@@ -11,7 +11,7 @@
 3. [Application Design](#application-design)
 4. [Instructions to run our application](#instructions-to-run-our-application)
    - [GCP Setup](#gcp-setup)
-   - [Containerized Components](#containerized-components) (follow the links in this section for detailed instrcutions of how to run each component)
+   - [Containerized Components](#containerized-components) (follow the links in this section for detailed instructions of how to run each component)
    - [Testing](#testing)
 5. [Using the Application](#using-the-application)
 6. [CI/CD](#cicd)
@@ -78,6 +78,15 @@
 │   │   ├── Pipfile.lock
 │   │   ├── README.md
 │   │   └── testing.md
+│   ├── data-processor
+│   │   ├── cli.py
+│   │   ├── docker_entrypoint.sh
+│   │   ├── docker-shell.sh
+│   │   ├── Dockerfile
+│   │   ├── helper.py
+│   │   ├── Pipfile
+│   │   ├── Pipfile.lock
+│   │   └── preprocessor.py
 │   ├── dataversioning
 │   │   ├── .gitignore
 │   │   ├── check_connection.py
@@ -128,6 +137,13 @@
 │   │   ├── preprocess_recipes.py
 │   |   ├── model_rag.py
 │   │   └── README.md
+│   ├── ml-workflow
+│   │   ├── data-processor
+│   │   │   └── ...
+│   │   ├── model-training
+│   │   │   └── ...
+│   │   ├── workflow
+│   │   └── └── ...
 │   ├── llm-finetuning
 │   │   ├── dataset_creator
 │   │   │   ├── create_fine_tuning_data.py
@@ -143,6 +159,33 @@
 │   │   │   ├── Dockerfile
 │   │   │   ├── Pipfile
 │   │   └── └── Pipfile.lock
+│   ├── deployment
+│   │   ├── nginx-conf
+│   │   │   └── ...
+│   │   ├── .docker-tag
+│   │   ├── .docker-tag-ml
+│   │   ├── .cli.py
+│   │   ├── deploy-create-instance.yml
+│   │   ├── deploy-docker-images-app.yml
+│   │   ├── deploy-docker-images-ml.yml
+│   │   ├── deploy-k8s-cluster.yml
+│   │   ├── deploy-k8s-update.sh
+│   │   ├── deploy-provision-instance.yml
+│   │   ├── deploy-setup-containers.yml
+│   │   ├── deploy-setup-webserver.yml
+│   │   ├── docker-entrypoint.sh
+│   │   ├── docker-shell.sh
+│   │   ├── Dockerfile
+│   │   ├── inventory-prod.yml
+│   │   ├── inventory.yml
+│   │   ├── model.py
+│   │   ├── pipeline.yaml
+│   │   ├── Pipfile
+│   │   ├── Pipfile.lock
+│   │   ├── README.md
+│   │   ├── run-data-processor.sh
+│   |   ├── run-ml-pipeline.sh
+│   │   └── update-k8s-cluster.yml
 │   ├── postgres-db
 │   │   ├── docker-compose.yml
 │   │   ├── Dockerfile

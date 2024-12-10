@@ -2,7 +2,7 @@ from kfp import dsl
 
 
 # Define a Container Component
-@dsl.component(base_image="python:3.12", packages_to_install=["google-cloud-aiplatform"])
+@dsl.component(base_image="python:3.9", packages_to_install=["google-cloud-aiplatform"])
 def model_training(
     project: str = "",  # GCP Project
     location: str = "",  # GCP Region
@@ -48,7 +48,7 @@ def model_training(
 
 
 # Define a Container Component
-@dsl.component(base_image="python:3.12", packages_to_install=["google-cloud-aiplatform"])
+@dsl.component(base_image="python:3.9", packages_to_install=["google-cloud-aiplatform"])
 def model_deploy(
     bucket_name: str = "",
 ):

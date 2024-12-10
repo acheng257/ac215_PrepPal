@@ -77,7 +77,7 @@ deploymentSpec:
           \        traffic_split={\"0\": 100},\n        machine_type=\"n1-standard-4\"\
           ,\n        accelerator_count=0,\n        min_replica_count=1,\n        max_replica_count=1,\n\
           \        sync=True,\n    )\n    print(\"endpoint:\", endpoint)\n\n"
-        image: python:3.12
+        image: python:3.9
     exec-model-training:
       container:
         args:
@@ -122,7 +122,7 @@ deploymentSpec:
           \        args=CMDARGS,\n        replica_count=1,\n        machine_type=TRAIN_COMPUTE,\n\
           \        # accelerator_type=TRAIN_GPU,\n        # accelerator_count=TRAIN_NGPU,\n\
           \        base_output_dir=MODEL_DIR,\n        sync=True,\n    )\n\n"
-        image: python:3.12
+        image: python:3.9
 pipelineInfo:
   name: ml-pipeline
 root:
