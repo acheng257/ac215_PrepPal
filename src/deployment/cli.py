@@ -23,8 +23,14 @@ GCS_SERVICE_ACCOUNT = os.environ["GCS_SERVICE_ACCOUNT"]
 GCS_PACKAGE_URI = os.environ["GCS_PACKAGE_URI"]
 GCP_REGION = os.environ["GCP_REGION"]
 
+# Read the docker tag file
+with open(".docker-tag-ml") as f:
+    tag = f.read()
+
+tag = tag.strip()
+
 # DATA_COLLECTOR_IMAGE = "gcr.io/ac215-project/cheese-app-data-collector"
-DATA_PROCESSOR_IMAGE = "jonasrae/preppal-data-processor"
+DATA_PROCESSOR_IMAGE = f"gcr.io/{GCP_PROJECT}/preppal-data-processor:{tag}"
 
 
 def generate_uuid(length: int = 8) -> str:
