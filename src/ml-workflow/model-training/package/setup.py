@@ -2,7 +2,7 @@ from setuptools import find_packages
 from setuptools import setup
 
 
-REQUIRED_PACKAGES = ["pythonjsonlogger"]
+REQUIRED_PACKAGES = ["python-json-logger"]
 
 setup(
     name="preppal-trainer",
