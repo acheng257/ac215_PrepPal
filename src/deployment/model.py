@@ -2,7 +2,7 @@ from kfp import dsl
 
 
 # Define a Container Component
-@dsl.component(base_image="python:3.9", packages_to_install=["google-cloud-aiplatform"])
+@dsl.component(base_image="python:3.9", packages_to_install=["google-cloud-aiplatform", "google-generativeai"])
 def model_training(
     project: str = "",  # GCP Project
     location: str = "",  # GCP Region
@@ -10,41 +10,45 @@ def model_training(
 ):
     print("Model Training Job")
 
+    import vertexai
+    import time
     import google.cloud.aiplatform as aip
+    from vertexai.preview.tuning import sft
 
     # Initialize Vertex AI SDK for Python
     aip.init(project=project, location=location, staging_bucket=staging_bucket)
 
-    container_uri = "us-docker.pkg.dev/vertex-ai/training/tf-cpu.2-12.py310:latest"
-    python_package_gcs_uri = f"{staging_bucket}/trainer.tar.gz"
+    vertexai.init(project=project, location=location)
 
-    job = aip.CustomPythonPackageTrainingJob(
-        display_name="preppal-training",
-        python_package_gcs_uri=python_package_gcs_uri,
-        python_module_name="trainer.task",
-        container_uri=container_uri,
-        project=project,
+    GENERATIVE_SOURCE_MODEL = "gemini-1.5-flash-002"
+    GCP_BUCKET_NAME = "preppal-data"
+    TRAIN_DATASET = f"gs://{GCP_BUCKET_NAME}/ml-workflow/ready_for_training/train.jsonl"
+    VALIDATION_DATASET = f"gs://{GCP_BUCKET_NAME}/ml-workflow/ready_for_training/test.jsonl"
+
+    sft_tuning_job = sft.train(
+        source_model=GENERATIVE_SOURCE_MODEL,
+        train_dataset=TRAIN_DATASET,
+        validation_dataset=VALIDATION_DATASET,
+        epochs=3,
+        adapter_size=4,
+        learning_rate_multiplier=1.0,
     )
 
-    CMDARGS = []
+    time.sleep(60)
+    sft_tuning_job.refresh()
 
-    MODEL_DIR = staging_bucket
-    TRAIN_COMPUTE = "n1-standard-4"
+    print("Check status of tuning job:")
+    print(sft_tuning_job)
+    while not sft_tuning_job.has_ended:
+        time.sleep(60)
+        sft_tuning_job.refresh()
+        print("Job in progress...")
 
-    print(python_package_gcs_uri)
+    print(f"Tuned model name: {sft_tuning_job.tuned_model_name}")
+    print(f"Tuned model endpoint name: {sft_tuning_job.tuned_model_endpoint_name}")
+    print(f"Experiment: {sft_tuning_job.experiment}")
 
-    # Run the training job on Vertex AI
-    # sync=True, # If you want to wait for the job to finish
-    job.run(
-        model_display_name=None,
-        args=CMDARGS,
-        replica_count=1,
-        machine_type=TRAIN_COMPUTE,
-        # accelerator_type=TRAIN_GPU,
-        # accelerator_count=TRAIN_NGPU,
-        base_output_dir=MODEL_DIR,
-        sync=True,
-    )
+    print("Training Job Complete")
 
 
 # Define a Container Component
