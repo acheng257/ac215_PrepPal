@@ -1,14 +1,80 @@
+# name: CI on Push to Branch
+
+# on:
+#   push:
+#     branches:
+#       - main  # Triggers when code is pushed to the main branch
+#       - milestone4
+#       - milestone5
+
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       # Step 1: Checkout the repository code
+#       - name: Checkout code
+#         uses: actions/checkout@v4
+
+#       # Step 2: Set up Python environment (specifically Python 3.12)
+#       - name: Set up Python 3.12
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: '3.12'
+
+#       # Step 3: Install pipenv and project dependencies
+#       - name: Install pipenv and dependencies
+#         run: |
+#           python -m pip install --upgrade pip
+#           pip install pipenv
+#           cd src/apiservice
+#           pipenv install --dev --system
+#           chmod +x docker-shell.sh
+#           ./docker-shell.sh
+
+#       # Step 4: Set PYTHONPATH to include the root directory (or src if relevant)
+#       - name: Set PYTHONPATH
+#         run: echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
+
+#       # Step 5: Set CUDA_VISIBLE_DEVICES to disable GPU (Optional if GPU not needed)
+#       - name: Disable GPU (CUDA)
+#         run: echo "CUDA_VISIBLE_DEVICES=''" >> $GITHUB_ENV
+
+#         # Step 4: Run the Docker container using your script
+#       # - name: Build and run Docker container
+#       #   run: |
+#       #     chmod +x docker-shell.sh
+#       #     ./docker-shell.sh
+
+#       # - name: Install SentenceTransformers with CPU support
+#       #   run: |
+#       #     pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+#       #     pip install sentence-transformers
+
+#       # Step 6: Run pytest with coverage and generate HTML report
+#       - name: Run tests with coverage
+#         run: |
+#           pytest --cov=. --cov-report=html
+
+#       # Step 7: Upload coverage report as an artifact
+#       - name: Upload coverage report
+#         uses: actions/upload-artifact@v3
+#         with:
+#           name: coverage-report
+#           path: htmlcov  # The folder where pytest-cov stores HTML reports
+
 name: CI on Push to Branch
 
 on:
   push:
     branches:
-      - main  # Triggers when code is pushed to the main branch
+      - main
       - milestone4
       - milestone5
 
 jobs:
   test:
+    if: contains(github.event.head_commit.message, '/ci-push')
     runs-on: ubuntu-latest
 
     steps:
@@ -16,7 +82,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Set up Python environment (specifically Python 3.12)
+      # Step 2: Set up Python environment (Python 3.12)
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
         with:
@@ -28,35 +94,32 @@ jobs:
           python -m pip install --upgrade pip
           pip install pipenv
           cd src/apiservice
-          pipenv install --dev --system
-          chmod +x docker-shell.sh
-          ./docker-shell.sh
+          pipenv install --dev --system --deploy
 
       # Step 4: Set PYTHONPATH to include the root directory (or src if relevant)
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
+      # Step 4: Build Docker image
+      - name: Build Docker image
+        run: |
+          docker build -t preppal-api-service -f src/apiservice/Dockerfile src/apiservice
 
-      # Step 5: Set CUDA_VISIBLE_DEVICES to disable GPU (Optional if GPU not needed)
-      - name: Disable GPU (CUDA)
-        run: echo "CUDA_VISIBLE_DEVICES=''" >> $GITHUB_ENV
+      # Step 5: Run Docker container (detached mode)
+      - name: Run Docker container
+        run: |
+          docker run --rm -d -p 9000:9000 --name preppal-api-container preppal-api-service
 
-        # Step 4: Run the Docker container using your script
-      # - name: Build and run Docker container
-      #   run: |
-      #     chmod +x docker-shell.sh
-      #     ./docker-shell.sh
-
-      # - name: Install SentenceTransformers with CPU support
-      #   run: |
-      #     pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
-      #     pip install sentence-transformers
-
-      # Step 6: Run pytest with coverage and generate HTML report
+      # Step 6: Run tests inside the container
       - name: Run tests with coverage
         run: |
-          pytest --cov=. --cov-report=html
+          docker exec preppal-api-container pytest --cov=. --cov-report=html
 
-      # Step 7: Upload coverage report as an artifact
+      # Step 7: Stop and remove Docker container
+      - name: Cleanup Docker container
+        run: |
+          docker stop preppal-api-container
+
+      # Step 8: Upload coverage report as an artifact
       - name: Upload coverage report
         uses: actions/upload-artifact@v3
         with:
