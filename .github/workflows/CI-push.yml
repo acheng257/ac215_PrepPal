@@ -107,7 +107,7 @@ jobs:
           docker run --rm -d -p 9000:9000 --name preppal-api-container preppal-api-service
           docker exec preppal-api-container echo $PATH
           docker exec preppal-api-container pip install pytest pytest-cov
-          docker exec preppal-api-container python -m pytest src/apiservices/test --cov=src/apiservices --cov-report=html
+          docker exec preppal-api-container python -m pytest --cov=. --cov-report=html
 
 
       # Step 7: Stop and remove Docker container
