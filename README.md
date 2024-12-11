@@ -57,7 +57,8 @@
 │   ├── finetuning_images
 │   │   ├── data_distribution_1.png
 │   │   ├── data_distribution_2.png
-│   └── └── training_validation_metric_preppal_v1.png
+│   │   ├── training_validation_metric_preppal_v1.png
+│   └── └── ml_workflow_success.png
 ├── src
 │   ├── apiservice
 │   │   ├── api
@@ -137,13 +138,6 @@
 │   │   ├── preprocess_recipes.py
 │   |   ├── model_rag.py
 │   │   └── README.md
-│   ├── ml-workflow
-│   │   ├── data-processor
-│   │   │   └── ...
-│   │   ├── model-training
-│   │   │   └── ...
-│   │   ├── workflow
-│   │   └── └── ...
 │   ├── llm-finetuning
 │   │   ├── dataset_creator
 │   │   │   ├── create_fine_tuning_data.py
