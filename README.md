@@ -139,8 +139,6 @@
 │   |   ├── model_rag.py
 │   │   └── README.md
 │   ├── ml-workflow
-│   │   ├── data-processor
-│   │   │   └── ...
 │   │   ├── model-training
 │   │   │   └── ...
 │   │   ├── workflow
