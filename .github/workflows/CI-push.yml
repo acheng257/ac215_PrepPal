@@ -108,6 +108,10 @@ jobs:
       - name: Run Docker container
         run: |
           docker run --rm -d -p 9000:9000 --name preppal-api-container preppal-api-service
+      # Step 6: Install pytest in the running container
+      - name: Install pytest
+        run: |
+          docker exec preppal-api-container pip install pytest pytest-cov
 
       # Step 6: Run tests inside the container
       - name: Run tests with coverage
