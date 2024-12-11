@@ -1,5 +1,4 @@
 import argparse
-import os
 import time
 import random
 import string
@@ -7,9 +6,9 @@ import vertexai
 from vertexai.preview.tuning import sft
 
 
-GCP_PROJECT = os.environ["GCP_PROJECT"]
-GCP_BUCKET_NAME = os.environ["GCS_BUCKET_NAME"]
-GCP_LOCATION = os.environ["GCP_REGION"]
+GCP_PROJECT = "preppal-438123"
+GCP_BUCKET_NAME = "preppal-data"
+GCP_LOCATION = "us-east1"
 
 GENERATIVE_SOURCE_MODEL = "gemini-1.5-flash-002"
 TRAIN_DATASET = f"gs://{GCP_BUCKET_NAME}/ml-workflow/ready_for_training/train.jsonl"
