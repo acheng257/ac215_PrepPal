@@ -104,19 +104,8 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t preppal-api-service -f src/apiservice/Dockerfile src/apiservice
-      - name: Check PATH variable
-        run: docker exec preppal-api-container echo $PATH
-
-      # Step 5: Run Docker container (detached mode)
-      - name: Run Docker container
-        run: |
           docker run --rm -d -p 9000:9000 --name preppal-api-container preppal-api-service
-      - name: Install pytest
-        run: |
-          docker exec preppal-api-container python -m pip install pytest pytest-cov
-
-      - name: Run tests with Python module
-        run: |
+          docker exec preppal-api-container echo $PATH
           docker exec preppal-api-container python -m pytest src/apiservices/test --cov=src/apiservices --cov-report=html
 
 
