@@ -348,6 +348,8 @@ From signing up and managing your pantry to receiving personalized recipe recomm
    <img src="assets/Frontend/home.png"  width="400">
 
 ## CI/CD
+This project utilizes a comprehensive CI/CD pipeline to automate and streamline critical aspects of development and deployment. The pipeline includes four workflows: the pre-commit workflow, which enforces code quality through linting, formatting, and security checks; the coverage workflow, which ensures robust test coverage by running automated test suites and generating reports; the deployment workflow, which builds Docker images, configures Google Cloud resources, and deploys the application to Kubernetes clusters with secure secrets management; and the ML tasks workflow, which automates the machine learning lifecycle.
+While the CI/CD pipeline is robust, some areas remain untested due to challenges in validation. Specifically, frontend interactions and user interface reactions were not thoroughly tested. Verifying the correctness of frontend behavior, such as dynamic rendering and user input handling, posed difficulties due to the complexity of simulating real-world user scenarios.
 
 ## Known Issues and Limitations / Future Work and Enhancements
 ### Pantry Updates
