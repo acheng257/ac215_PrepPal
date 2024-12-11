@@ -108,7 +108,7 @@
         - name: Build Docker image
           run: |
             docker build -t preppal-api-service -f src/apiservice/Dockerfile src/apiservice
-            docker run --rm -d -p 9000:9000 --name preppal-api-container preppal-api-service sh -c 'echo $PATH && pip install pytest pytest-cov && python -m pytest --cov=. --cov-report=html'
+            docker run --rm -d -p 9000:9000 --name preppal-api-container -v $(pwd)/coverage:/app/htmlcov preppal-api-service sh -c 'echo $PATH && pip install pytest pytest-cov && python -m pytest --cov=. --cov-report=html'
 
         # Step 7: Stop and remove Docker container
         - name: Cleanup Docker container
@@ -117,7 +117,7 @@
 
         # Step 8: Upload coverage report as an artifact
         - name: Upload coverage report
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
             name: coverage-report
             path: htmlcov  # The folder where pytest-cov stores HTML reports
