@@ -12,7 +12,7 @@ export GCP_ZONE="us-east1-c"
 export GCP_REGION="us-east1"
 export GOOGLE_APPLICATION_CREDENTIALS="/secrets/deployment.json"
 export GCS_BUCKET_NAME="preppal-data"
-export GCS_SERVICE_ACCOUNT="ml-workflow@preppal-438123.iam.gserviceaccount.com"
+export GCS_SERVICE_ACCOUNT="deployment@preppal-438123.iam.gserviceaccount.com"
 export GCS_PACKAGE_URI="ml-workflow/preppal_trainer_code"
 
 # Build the image based on the Dockerfile

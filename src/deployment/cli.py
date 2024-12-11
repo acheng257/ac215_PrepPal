@@ -164,18 +164,11 @@ def pipeline():
                 location=GCP_REGION,
                 staging_bucket=f"gs://preppal-data/{GCS_PACKAGE_URI}",
             )
-            .set_display_name("Model Training")
+            .set_display_name("Model Training and Deployment")
             .after(data_processor_task)
         )
-        # Model Deployment
-        model_deploy_task = (
-            model_deploy_job(
-                bucket_name=GCS_BUCKET_NAME,
-            )
-            .set_display_name("Model Deploy")
-            .after(model_training_task)
-        )
-        print("Output Test:", model_deploy_task)  # Prevent Flake8 rror...
+
+        print("Output Test:", model_training_task)  # Prevent Flake8 rror...
 
     # Build yaml file for pipeline
     compiler.Compiler().compile(ml_pipeline, package_path="pipeline.yaml")
@@ -247,12 +240,8 @@ def main(args=None):
         data_processor()
 
     if args.model_training:
-        print("Model Training")
+        print("Model Training and Deployment")
         model_training()
-
-    if args.model_deploy:
-        print("Model Deploy")
-        model_deploy()
 
     if args.pipeline:
         pipeline()
@@ -276,11 +265,6 @@ if __name__ == "__main__":
         "--model_training",
         action="store_true",
         help="Run just Model Training",
-    )
-    parser.add_argument(
-        "--model_deploy",
-        action="store_true",
-        help="Run just Model Deployment",
     )
     parser.add_argument(
         "--pipeline",
