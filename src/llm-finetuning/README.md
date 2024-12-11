@@ -1,6 +1,10 @@
 # LLM Fine-tuning
 <br>
 
+Note: This container is no longer really necessary, as the entire fine-tuning process now happens automatically. This is done via the ML workflow further described in the `src/deployment` container. The functionality of the `dataset-creator` container is taken over by `data-processor`, and the functionality of `gemini-finetuner` is taken over by the relevant parts of `deployment`. We still decided to keep this container here for further details on the fine-tuning aspect (evaluation, pricing, etc.).
+
+<br>
+
 This part of the application is where our LLM of choice (`gemini-1.5-flash-002`) is fine-tuned. This includes
 - the generation of a dataset for fine-tuning
 - fine-tuning the Gemini model
