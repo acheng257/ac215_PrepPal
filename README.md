@@ -57,7 +57,7 @@
 │   ├── finetuning_images
 │   │   ├── data_distribution_1.png
 │   │   ├── data_distribution_2.png
-│   └── └── training_validation_metric_preppal_v1.png
+│   │   ├── training_validation_metric_preppal_v1.png
 │   └── └── ml_workflow_success.png
 ├── src
 │   ├── apiservice
