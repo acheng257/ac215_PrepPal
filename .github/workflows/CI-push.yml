@@ -106,6 +106,7 @@ jobs:
           docker build -t preppal-api-service -f src/apiservice/Dockerfile src/apiservice
           docker run --rm -d -p 9000:9000 --name preppal-api-container preppal-api-service
           docker exec preppal-api-container echo $PATH
+          docker exec preppal-api-container pip install pytest pytest-cov
           docker exec preppal-api-container python -m pytest src/apiservices/test --cov=src/apiservices --cov-report=html
 
 
