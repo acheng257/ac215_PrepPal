@@ -138,11 +138,6 @@
 │   │   ├── preprocess_recipes.py
 │   |   ├── model_rag.py
 │   │   └── README.md
-│   ├── ml-workflow
-│   │   ├── model-training
-│   │   │   └── ...
-│   │   ├── workflow
-│   │   └── └── ...
 │   ├── llm-finetuning
 │   │   ├── dataset_creator
 │   │   │   ├── create_fine_tuning_data.py
