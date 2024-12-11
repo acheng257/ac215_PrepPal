@@ -1,4 +1,4 @@
 .DS_Store
 */__pycache__/
 .eslintcache
-src/ml-workflow/model-training/trainer.tar.gz
+src/ml-workflow

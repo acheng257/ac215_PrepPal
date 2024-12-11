@@ -121,4 +121,13 @@ Run the following command to create, deploy the cluster, and start all the Docke
 - Run this command to delete all resources allocated in GCP: `ansible-playbook deploy-k8s-cluster.yml -i inventory.yml --extra-vars cluster_state=absent`
 
 ## ML Workflow
-Deploy dataset creator and llm finetunning automatically in vertex ai pipeline.
+This container also contains the ML workflow functionality, meaning that it allows for an automatic data-preprocessing, training-dataset-creation, model fine-tuning, and model deployment process. This ML workflow pipeline can be started in the shell the following way:
+
+- Ensure that you are in `src/deployment`
+- Run `sh docker-shell.sh`
+- Run `python cli.py --pipeline`
+
+This will submit the pipeline, defined by the data-processor job followed by the model-training-and-deployment job, to Vertex AI. (If you just want to run the data-processor on Vertex AI, you can run `python cli.py --data_processor`). The data-processor job is defined in more detail in `src/data-processor`. After the data-processor has finished on Vertex AI, the pipeline starts the Model Training and Deployment job that runs a supervised tuning job (also executed on Vertex AI) using the data created by the data-processor job. Once that supervised tuning job has completed, the fine-tuned model is automatically uploaded to Vertex AI's model registry and deployed to Model Endpoints.
+
+An example of how this successfully executed pipeline looks like:
+<img src="../../reports/fine_tuning_images/ml_workflow_success.png"  width="800">
