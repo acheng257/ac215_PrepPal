@@ -1,0 +1,113 @@
+# PIPELINE DEFINITION
+# Name: ml-pipeline
+components:
+  comp-data-processor:
+    executorLabel: exec-data-processor
+  comp-model-training:
+    executorLabel: exec-model-training
+    inputDefinitions:
+      parameters:
+        location:
+          defaultValue: ''
+          isOptional: true
+          parameterType: STRING
+        project:
+          defaultValue: ''
+          isOptional: true
+          parameterType: STRING
+        staging_bucket:
+          defaultValue: ''
+          isOptional: true
+          parameterType: STRING
+deploymentSpec:
+  executors:
+    exec-data-processor:
+      container:
+        args:
+        - cli.py
+        - --generate
+        - --prepare
+        image: gcr.io/preppal-438123/preppal-data-processor:20241210222426
+    exec-model-training:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - model_training
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.4.0'\
+          \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&\
+          \  python3 -m pip install --quiet --no-warn-script-location 'google-cloud-aiplatform'\
+          \ 'google-generativeai' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef model_training(\n    project: str = \"\",  # GCP Project\n  \
+          \  location: str = \"\",  # GCP Region\n    staging_bucket: str = \"\",\
+          \  # Trainer Code Folder\n):\n    print(\"Model Training Job\")\n\n    import\
+          \ vertexai\n    import time\n    import google.cloud.aiplatform as aip\n\
+          \    from vertexai.preview.tuning import sft\n\n    # Initialize Vertex\
+          \ AI SDK for Python\n    aip.init(project=project, location=location, staging_bucket=staging_bucket)\n\
+          \n    vertexai.init(project=project, location=location)\n\n    GENERATIVE_SOURCE_MODEL\
+          \ = \"gemini-1.5-flash-002\"\n    GCP_BUCKET_NAME = \"preppal-data\"\n \
+          \   TRAIN_DATASET = f\"gs://{GCP_BUCKET_NAME}/ml-workflow/ready_for_training/train.jsonl\"\
+          \n    VALIDATION_DATASET = f\"gs://{GCP_BUCKET_NAME}/ml-workflow/ready_for_training/test.jsonl\"\
+          \n\n    sft_tuning_job = sft.train(\n        source_model=GENERATIVE_SOURCE_MODEL,\n\
+          \        train_dataset=TRAIN_DATASET,\n        validation_dataset=VALIDATION_DATASET,\n\
+          \        epochs=3,\n        adapter_size=4,\n        learning_rate_multiplier=1.0,\n\
+          \    )\n\n    time.sleep(60)\n    sft_tuning_job.refresh()\n\n    print(\"\
+          Check status of tuning job:\")\n    print(sft_tuning_job)\n    while not\
+          \ sft_tuning_job.has_ended:\n        time.sleep(60)\n        sft_tuning_job.refresh()\n\
+          \        print(\"Job in progress...\")\n\n    print(f\"Tuned model name:\
+          \ {sft_tuning_job.tuned_model_name}\")\n    print(f\"Tuned model endpoint\
+          \ name: {sft_tuning_job.tuned_model_endpoint_name}\")\n    print(f\"Experiment:\
+          \ {sft_tuning_job.experiment}\")\n\n    print(\"Training Job Complete\"\
+          )\n\n"
+        image: python:3.9
+pipelineInfo:
+  name: ml-pipeline
+root:
+  dag:
+    tasks:
+      data-processor:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-data-processor
+        taskInfo:
+          name: Data Processor
+      model-training:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-model-training
+        dependentTasks:
+        - data-processor
+        inputs:
+          parameters:
+            location:
+              runtimeValue:
+                constant: us-east1
+            project:
+              runtimeValue:
+                constant: preppal-438123
+            staging_bucket:
+              runtimeValue:
+                constant: gs://preppal-data/ml-workflow/preppal_trainer_code
+        taskInfo:
+          name: Model Training and Deployment
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.4.0

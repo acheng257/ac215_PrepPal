@@ -1,0 +1,67 @@
+---
+- name: "Build docker images and push them to GCR"
+  hosts: localhost
+  gather_facts: false
+  tasks:
+  - name: "Get timestamp for docker tag"
+    shell: "(date +%Y%m%d%H%M%S)"
+    register: tag
+  - name: Print tag
+    debug:
+      var: tag
+  - name: Build frontend container image
+    community.general.docker_image:
+      build:
+        path: /frontend-react
+        platform: linux/amd64/v2
+      name: gcr.io/{{ gcp_project }}/preppal-app-frontend-react:{{ tag.stdout}}
+      source: build
+  - name: Push frontend image to GCR
+    community.general.docker_image:
+      name: gcr.io/{{ gcp_project }}/preppal-app-frontend-react:{{ tag.stdout}}
+      repository: gcr.io/{{ gcp_project }}/preppal-app-frontend-react:{{ tag.stdout}}
+      push: yes
+      source: local
+  - name: Build api-service container image
+    community.general.docker_image:
+      build:
+        path: /apiservice
+        platform: linux/amd64/v2
+      name: gcr.io/{{ gcp_project }}/preppal-app-api-service:{{ tag.stdout}}
+      source: build
+  - name: Push api-service image to GCR
+    community.general.docker_image:
+      name: gcr.io/{{ gcp_project }}/preppal-app-api-service:{{ tag.stdout}}
+      repository: gcr.io/{{ gcp_project }}/preppal-app-api-service:{{ tag.stdout}}
+      push: yes
+      source: local
+  - name: Build llm-rag-cli container image
+    community.general.docker_image:
+      build:
+        path: /llm-rag
+        platform: linux/amd64/v2
+      name: gcr.io/{{ gcp_project }}/preppal-app-llm-rag-cli:{{ tag.stdout}}
+      source: build
+  - name: Push llm-rag-cli image to GCR
+    community.general.docker_image:
+      name: gcr.io/{{ gcp_project }}/preppal-app-llm-rag-cli:{{ tag.stdout}}
+      repository: gcr.io/{{ gcp_project }}/preppal-app-llm-rag-cli:{{ tag.stdout}}
+      push: yes
+      source: local
+  # - name: Build postgres-db container image
+  #   community.general.docker_image:
+  #     build:
+  #       path: /postgres-db
+  #       platform: linux/amd64/v2
+  #     name: gcr.io/{{ gcp_project }}/preppal-app-postgres-db:{{ tag.stdout}}
+  #     source: build
+  # - name: Push postgres-db image to GCR
+  #   community.general.docker_image:
+  #     name: gcr.io/{{ gcp_project }}/preppal-app-postgres-db:{{ tag.stdout}}
+  #     repository: gcr.io/{{ gcp_project }}/preppal-app-postgres-db:{{ tag.stdout}}
+  #     push: yes
+  #     source: local
+  - name: "Save docker tag"
+    shell: echo {{ tag.stdout}} > .docker-tag
+  - name: "Remove all unused containers"
+    shell: docker system prune -a

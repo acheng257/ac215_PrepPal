@@ -1,0 +1,47 @@
+repos:
+
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v9.15.0
+    hooks:
+      - id: eslint
+        entry: eslint --config src/frontend-react/eslint.config.mjs
+        files: \.jsx?$  # *.js, *.jsx, *.ts and *.tsx
+        types: [file]
+        additional_dependencies:
+          - eslint
+          - eslint-plugin-react
+        args:
+          - --fix
+          - --cache
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+
+  - repo: https://github.com/psf/black
+    rev: 24.10.0
+    hooks:
+      - id: black
+        args: [--line-length=200]
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.1.1
+    hooks:
+      - id: flake8
+        args:
+          - --max-line-length=200
+          - --ignore=E231,E203
+
+  - repo: https://github.com/AleksaC/hadolint-py
+    rev: v2.12.1b3
+    hooks:
+      - id: hadolint
+        args:
+          - --ignore=DL3008 # specify versions in apt-get (Container)
+          - --ignore=DL3013 # specify versions in pip install (Python)
+          - --ignore=DL3018 # specify versions in apk add (React)
+          - --ignore=DL4006 # weird pipefail error; not sure how to fix
+          - --failure-threshold=warning

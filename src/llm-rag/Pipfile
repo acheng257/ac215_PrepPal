@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+numpy = "*"
+isodate = "*"
+google-cloud-storage = "*"
+google-generativeai = "*"
+google-cloud-aiplatform = ">=1.38"
+pandas = "*"
+sentence-transformers = "*"
+langchain = "*"
+chromadb = "*"
+langchain-community = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.12"

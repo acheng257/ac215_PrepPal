@@ -1,0 +1,5 @@
+# misc
+.DS_Store
+/data/*
+/fine_tuning_data/*
+/fine_tuning_data_small/*

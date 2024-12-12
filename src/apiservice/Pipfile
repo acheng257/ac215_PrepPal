@@ -1,0 +1,35 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[[source]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cpu"
+verify_ssl = true
+
+[dev-packages]
+pytest = "*"
+pytest-cov = "*"
+
+[packages]
+chromadb = "==0.5.7"
+fastapi = "*"
+requests = "*"
+google-cloud-storage = "*"
+google-generativeai = "*"
+google-cloud-aiplatform = ">=1.38"
+uvicorn = "*"
+sentence-transformers = "*"
+user-agent = "*"
+python-multipart = "*"
+sqlalchemy = "*"
+asyncpg = "*"
+psycopg2-binary = "*"
+alembic = "*"
+bcrypt = "*"
+passlib = { version = "*", extras = ["bcrypt"] }
+
+
+[requires]
+python_version = "3.12"

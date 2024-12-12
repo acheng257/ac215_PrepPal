@@ -3,9 +3,9 @@
 set -e
 
 export BASE_DIR=$(pwd)
-export SECRETS_DIR=$(pwd)/../secrets/
+export SECRETS_DIR=$(pwd)/../../../secrets/
 export GCS_BUCKET_NAME="preppal-data"
-export GCP_PROJECT="preppal"
+export GCP_PROJECT="preppal-438123"
 export GCP_ZONE="us-east1"
 export GOOGLE_APPLICATION_CREDENTIALS="/secrets/data-service-account.json"
 

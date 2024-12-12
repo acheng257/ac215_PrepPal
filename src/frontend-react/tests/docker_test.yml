@@ -1,0 +1,48 @@
+schemaVersion: "2.0.0"
+
+metadataTest:
+  exposedPorts:
+    - "3000"
+  cmd: ["npm", "start"]
+
+fileExistenceTests:
+  - name: "Check .next directory exists"
+    path: "/app/.next"
+    shouldExist: true
+
+  - name: "Check public directory exists"
+    path: "/app/public"
+    shouldExist: true
+
+  - name: "Check package.json exists"
+    path: "/app/package.json"
+    shouldExist: true
+
+  - name: "Check package-lock.json exists"
+    path: "/app/package-lock.json"
+    shouldExist: true
+
+commandTests:
+  - name: "Check Node.js version in production image"
+    command: "node"
+    args: ["--version"]
+    expectedOutput: ["v18"]
+
+  - name: "Check npm version in production image"
+    command: "npm"
+    args: ["--version"]
+    expectedOutput: ["10.8.2"]
+
+  - name: "Check current working directory is /app"
+    command: "pwd"
+    expectedOutput: ["/app"]
+
+  - name: "Check Next.js build directory exists"
+    command: "ls"
+    args: [".next"]
+    expectedOutput: ["BUILD_ID"]
+
+  - name: "Verify Next.js public assets are copied"
+    command: "ls"
+    args: ["public"]
+    expectedOutput: ["assets"]
