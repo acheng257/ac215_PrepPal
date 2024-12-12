@@ -3,7 +3,7 @@
 ### Presentation  Video
 - [Youtube](https://youtu.be/IWOJvlfNOP4)
 ### Blog Post Link
-- [Medium Post] --add link
+- [Medium Post](https://medium.com/institute-for-applied-computational-science/preppal-discover-recipes-and-reduce-food-waste-557965b8db7f)
 
 ## Table of Contents
 1. [Project Organization](#project-organization)
