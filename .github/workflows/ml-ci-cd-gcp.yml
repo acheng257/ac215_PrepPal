@@ -8,7 +8,7 @@ on:
 
 jobs:
   Explore-GitHub-Actions:
-    if: contains(github.event.head_commit.message, '/run-')
+    if: contains(github.event.head_commit.message, '/run-ml')
     runs-on: ubuntu-latest
     steps:
       - run: echo "Comment ${{ github.event.head_commit.message }}"
@@ -47,11 +47,11 @@ jobs:
             --mount type=bind,source=$GOOGLE_APPLICATION_CREDENTIALS,target=/secrets/deployment.json \
             -e GOOGLE_APPLICATION_CREDENTIALS=/secrets/deployment.json \
             -e USE_GKE_GCLOUD_AUTH_PLUGIN=True \
-            -e GCP_PROJECT=ac215-project \
+            -e GCP_PROJECT=preppal-438123 \
             -e GCP_ZONE=us-central1-a \
-            -e GCS_BUCKET_NAME=cheese-app-ml-workflow-demo \
-            -e GCS_SERVICE_ACCOUNT=ml-workflow@ac215-project.iam.gserviceaccount.com \
-            -e GCP_REGION=us-central1 \
-            -e GCS_PACKAGE_URI=gs://cheese-app-trainer-code \
+            -e GCS_BUCKET_NAME=preppal-data \
+            -e GCS_SERVICE_ACCOUNT=deployment@preppal-438123.iam.gserviceaccount.comm \
+            -e GCP_REGION=us-east1 \
+            -e GCS_PACKAGE_URI=gs://ml-workflow/preppal_trainer_code\
             preppal-app-deployment sh run-ml-pipeline.sh
       - run: echo "Job's status is ${{ job.status }}."

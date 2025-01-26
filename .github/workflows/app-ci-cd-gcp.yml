@@ -24,14 +24,6 @@ jobs:
           credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
       - name: Configure Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
-      # - name: Debug Docker Configuration
-      #   run: |
-      #     echo "Checking Docker version"
-      #     docker --version || echo "Docker not installed"
-      #     echo "Checking Docker config directory"
-      #     ls -la ~/.docker || echo "No Docker directory"
-      #     echo "Checking Docker config file"
-      #     cat ~/.docker/config.json || echo "Docker config not found"
       - name: Configure Docker Client
         run: |-
           gcloud auth configure-docker # --quiet #authenticate to gcr
