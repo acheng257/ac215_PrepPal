@@ -10,7 +10,7 @@ import gcsfs
 from sklearn.model_selection import train_test_split
 from google.cloud import storage
 
-
+# --------------- Global Variables --------------------
 OUTPUT_FOLDER = "fine_tuning_data_small"
 GCS_BUCKET_NAME = os.environ["GCS_BUCKET_NAME"]
 DATASET = "preppal-data/llm_finetuning_data/reduced_dataset.csv"
